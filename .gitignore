@@ -1,18 +1,34 @@
+# ---------------------------
+# MAVEN & JAVA BUILD FILES
+# ---------------------------
 target/
+*.class
+*.log
+
+# Allow Maven wrapper JAR only
 !.mvn/wrapper/maven-wrapper.jar
+
+# Prevent nested target folders except in source directories
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+# ---------------------------
+# IDE: INTELLIJ IDEA
+# ---------------------------
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### Eclipse ###
+# Older IntelliJ configs that create noise
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+
+# ---------------------------
+# IDE: Eclipse (just in case)
+# ---------------------------
 .apt_generated
 .classpath
 .factorypath
@@ -21,18 +37,47 @@ target/
 .springBeans
 .sts4-cache
 
-### NetBeans ###
+# ---------------------------
+# IDE: NetBeans
+# ---------------------------
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# ---------------------------
+# VS CODE
+# ---------------------------
 .vscode/
 
-### Mac OS ###
+# ---------------------------
+# DATABASES (SQLite)
+# ---------------------------
+*.db
+*.sqlite
+*.db-journal
+*.sqlite3
+
+# If you store DB in a folder (recommended)
+database/*.db
+
+# ---------------------------
+# OS FILES
+# ---------------------------
 .DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---------------------------
+# TEMP FILES
+# ---------------------------
+*.tmp
+*.bak
+*.swp
+*.swo
