@@ -1,4 +1,4 @@
-package no.hiof.studytracker;
+package main.java.no.hiof.studytracker;
 
 import no.hiof.studytracker.database.DB;
 

@@ -81,3 +81,24 @@ Desktop.ini
 *.bak
 *.swp
 *.swo
+
+# ---------------------------
+# FRONTEND (Node / Vite / React)
+# ---------------------------
+
+# Node dependencies
+node_modules/
+
+# Vite production builds
+dist/
+dist-ssr/
+
+# Local env config
+*.local
+
+# NPM/Yarn/Pnpm debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
