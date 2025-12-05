@@ -1,0 +1,60 @@
+@startuml
+!theme plain
+
+' ---------------------------------------------------
+'                  ENTITY DEFINITIONS
+' ---------------------------------------------------
+
+entity "User_profile" as User {
+    + id : INTEGER <<PK>>
+    --
+    first_name : TEXT
+    last_name  : TEXT
+    username   : TEXT NOT NULL
+    email      : TEXT NOT NULL <<UNIQUE>>
+    password_hash : TEXT NOT NULL
+    gender     : TEXT
+    created_at : TEXT NOT NULL
+}
+
+entity "Sessions" as Sessions {
+    + id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    date : TEXT
+    hours : FLOAT
+    productivity_score : INTEGER
+    comment : TEXT
+    created_at : TEXT NOT NULL
+    updated_at : TEXT
+}
+
+entity "Notes" as Notes {
+    + id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    title : TEXT
+    content : TEXT
+    created_at : TEXT NOT NULL
+    updated_at : TEXT
+}
+
+entity "Articles" as Articles {
+    + id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    title : TEXT
+    content : TEXT
+    created_at : TEXT NOT NULL
+    updated_at : TEXT
+}
+
+' ---------------------------------------------------
+'                     RELATIONSHIPS
+' ---------------------------------------------------
+
+User ||--o{ Sessions : "has many"
+User ||--o{ Notes : "has many"
+User ||--o{ Articles : "has many"
+
+@enduml
