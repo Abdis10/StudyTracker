@@ -13,17 +13,36 @@ public class DB {
         try (Connection conn = DriverManager.getConnection(URL)) {
             Statement stmt = conn.createStatement();
 
-            String sql = """
-                CREATE TABLE IF NOT EXISTS sessions (
+            String createUsersTable = """
+                CREATE TABLE IF NOT EXISTS user_profile (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    date TEXT NOT NULL,
-                    hours INTEGER NOT NULL,
-                    productivity INTEGER,
-                    comment TEXT
+                    first_name TEXT,
+                    last_name TEXT,
+                    username TEXT,
+                    email TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    gender TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT
                 );
             """;
 
-            stmt.execute(sql);     // migration
+            String createSessionsTable = """
+                CREATE TABLE IF NOT EXISTS sessions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    date TEXT NOT NULL,
+                    hours REAL NOT NULL,
+                    productivity_score INTEGER,
+                    comment TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT,
+                    FOREIGN KEY (user_id) REFERENCES user_profile(id)
+                );
+            """;
+
+            stmt.execute(createUsersTable);
+            stmt.execute(createSessionsTable);     // migration
             System.out.println("Database Migrations fullført.");
         }
         catch (Exception e) {
@@ -36,4 +55,5 @@ public class DB {
     public static Connection getConnection()throws SQLException {
         return DriverManager.getConnection(URL);
     }
+
 }
