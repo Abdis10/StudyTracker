@@ -1,9 +1,6 @@
 package main.java.no.hiof.studytracker.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DB {
     private static final String URL = "jdbc:sqlite:database/studytracker.db";
