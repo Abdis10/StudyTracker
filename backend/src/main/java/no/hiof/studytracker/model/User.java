@@ -5,15 +5,17 @@ public class User {
     private String firstname;
     private String lastname;
     private String username;
+    private String email;
     private String password;
     private String gender;
     private String createdAt;
 
-    public User(int id, String firstname, String lastname, String username, String password, String gender, String createdAt) {
+    public User(int id, String firstname, String lastname, String username, String email, String password, String gender, String createdAt) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
+        this.email = email;
         this.password = password;
         this.gender = gender;
         this.createdAt = createdAt;
@@ -75,6 +77,14 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -82,6 +92,7 @@ public class User {
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
                 ", createdAt='" + createdAt + '\'' +
