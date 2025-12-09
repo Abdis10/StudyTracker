@@ -1,5 +1,6 @@
 package main.java.no.hiof.studytracker;
 
+import io.javalin.Javalin;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.model.Article;
 import main.java.no.hiof.studytracker.model.ArticleNote;
@@ -25,12 +26,20 @@ public class Application {
         }
 
 
-        User user1 = new User(1, "Abdullahi", "Ahmed", "Abdulla10", "abdis123@example.com","test12345", "male", "07.12.2025");
+        /*User user1 = new User(1, "Abdullahi", "Ahmed", "Abdulla10", "abdis123@example.com","test12345", "male", "07.12.2025");
         User user2 = new User(2, "Ibrahim", "Ahmed", "Ibra10", "ibra@example.com" ,"ibra12345", "male", "07.12.2025");
 
         UserDataRepository userDataRepository = new UserDataRepository();
         //userDataRepository.saveUser(user1);
-        userDataRepository.saveUser(user2);
+        userDataRepository.saveUser(user2);*/
+
+        Javalin app = Javalin.create().start(7000);
+
+        app.get("/", ctx -> {
+           ctx.result("Hei fra Javalin!");
+        });
+
+
 
     }
 }
