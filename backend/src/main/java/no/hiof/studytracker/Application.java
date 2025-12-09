@@ -1,6 +1,8 @@
 package main.java.no.hiof.studytracker;
 
 import io.javalin.Javalin;
+import main.java.no.hiof.studytracker.DTOs.SignupDTO;
+import main.java.no.hiof.studytracker.controllers.SignupController;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.model.Article;
 import main.java.no.hiof.studytracker.model.ArticleNote;
@@ -8,6 +10,7 @@ import main.java.no.hiof.studytracker.model.Note;
 import main.java.no.hiof.studytracker.model.User;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.repository.UserRepository;
+import main.java.no.hiof.studytracker.service.SignupService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,12 +37,20 @@ public class Application {
         userDataRepository.saveUser(user2);*/
 
         Javalin app = Javalin.create().start(7000);
+        SignupDTO signupDTO = new SignupDTO("Abdullahi", "Ahmed", "Abdulla07", "abdis12345@example.com","test12345", "male");
+        SignupDTO signupDTO1 = new SignupDTO();
+        UserDataRepository userDataRepository = new UserDataRepository();
+        SignupService signupService = new SignupService(signupDTO1, userDataRepository);
+        SignupController signupController = new SignupController(signupService);
+        signupController.signupUser(signupDTO);
 
         app.get("/", ctx -> {
            ctx.result("Hei fra Javalin!");
         });
 
+        app.get("/auth/signup", ctx -> {
 
+        });
 
     }
 }
