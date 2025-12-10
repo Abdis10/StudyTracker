@@ -1,79 +1,71 @@
 package main.java.no.hiof.studytracker.service;
 
 import main.java.no.hiof.studytracker.DTOs.SignupDTO;
+import main.java.no.hiof.studytracker.model.Errortype;
 import main.java.no.hiof.studytracker.model.User;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
-import java.util.ArrayList;
-
 public class SignupService {
-    private SignupDTO signupDTO;
     private UserDataRepository userDataRepository;
-    private boolean usernameExists = false;
-    private boolean emailExists = false;
-    private boolean userRegistered = false;
 
     public SignupService(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
     }
 
-    public void getSignupData(SignupDTO signupDTO) {
-        this.signupDTO = signupDTO;
-    }
 
-
-    public boolean validateSignupData() {
+    public SignupResult validateSignupData(SignupDTO signupDTO) {
+        SignupResult result = new SignupResult();
         String username = signupDTO.getUsername();
         String email = signupDTO.getEmail();
 
         if (userDataRepository.usernameExists(username)) {
-            usernameExists = true;
-            return true;
+            result.setSuccess(false);
+            result.setErrorType(Errortype.USERNAME_EXISTS);
+            result.setMessage("Username is taken!");
+            return result;
         }
 
         if (userDataRepository.emailExists(email)) {
-            emailExists = true;
-            return true;
+            result.setSuccess(false);
+            result.setErrorType(Errortype.EMAIL_EXISTS);
+            result.setMessage("Email already in use!");
+            return result;
         }
 
-        else {
-            usernameExists = false;
-            emailExists = false;
-            return false;
-        }
+        result.setSuccess(true);
+        result.setErrorType(Errortype.NONE);
+        result.setMessage("Account is ready to be created.");
+        return result;
+
     }
 
-    public String registerUser() {
-        if (validateSignupData() && usernameExists) {
-            return "Brukernavn eksisterer, vennligst velg nytt!";
-        }
-
-        if (validateSignupData() && emailExists) {
-            return "Mailadressen er allerede i bruk!";
-        }
-
-        if (!validateSignupData()) {
+    public boolean registerUser(SignupDTO signupDTO) {
             String pw = signupDTO.getPassword();
             String hashedPw = PasswordUtil.hashPw(pw);
-            SignupDTO signupDTO1 = new SignupDTO(signupDTO.getFirstname(), signupDTO.getLastname(),
-                    signupDTO.getUsername(), signupDTO.getEmail(), hashedPw, signupDTO.getGender()
-            );
-            String firstname = signupDTO1.getFirstname();
-            String lastname = signupDTO1.getLastname();
-            String signupDTO1Username = signupDTO1.getUsername();
-            String signupDTO1Email = signupDTO1.getEmail();
-            String password = signupDTO1.getPassword();
-            String gender = signupDTO1.getGender();
 
+            String firstname = signupDTO.getFirstname();
+            String lastname = signupDTO.getLastname();
+            String username = signupDTO.getUsername();
+            String email = signupDTO.getEmail();
+            String gender = signupDTO.getGender();
 
-            User user = new User(firstname, lastname, signupDTO1Username, signupDTO1Email, password, gender);
+            User user = new User(firstname, lastname, username, email, hashedPw, gender);
             userDataRepository.saveUser(user);
-        }
-        userRegistered = true;
-        return "Bruker har blitt registerert.";
+            return true;
     }
 
-    public boolean isUserRegistered() {
-        return userRegistered;
+    public SignupResult signup(SignupDTO signupDTO) {
+        SignupResult signupResult = validateSignupData(signupDTO);
+
+        if (!signupResult.isSuccess()) {
+            return signupResult;
+        } else {
+            registerUser(signupDTO);
+            signupResult = new SignupResult(true, Errortype.NONE, "User successfully registered.");
+            return signupResult;
+        }
+
     }
+
+
 }
