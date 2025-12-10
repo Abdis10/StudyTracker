@@ -21,6 +21,15 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public User(String firstname, String lastname, String username, String email, String password, String gender) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.gender = gender;
+    }
+
     public int getId() {
         return id;
     }
