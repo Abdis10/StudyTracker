@@ -2,13 +2,14 @@ package main.java.no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
 import main.java.no.hiof.studytracker.DTOs.SignupDTO;
+import main.java.no.hiof.studytracker.model.Errortype;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
+import main.java.no.hiof.studytracker.service.SignupResult;
 import main.java.no.hiof.studytracker.service.SignupService;
 
 public class SignupController {
     private SignupService signupService;
     private UserDataRepository userDataRepository;
-    private SignupDTO signupDTO;
 
     public SignupController(SignupService signupService, UserDataRepository userDataRepository) {
         this.signupService = signupService;
@@ -16,21 +17,20 @@ public class SignupController {
     }
 
     public void signupUser(Context ctx) {
-        signupDTO = ctx.bodyAsClass(SignupDTO.class);
-        signupService.getSignupData(signupDTO);
-        System.out.println(signupService.validateSignupData());
-        System.out.println("User existence status: " + signupService.registerUser());
+        SignupDTO signupDTO = ctx.bodyAsClass(SignupDTO.class);
 
-        if (signupService.isUserRegistered()) {
-            ctx.status(200).result("User is successfully created in database!");
+        SignupResult result = signupService.signup(signupDTO);
+
+        if (result.getErrorType() == Errortype.USERNAME_EXISTS) {
+            ctx.status(409).result(result.getMessage());
         }
 
-        else if (!signupService.isUserRegistered()) {
-            ctx.status(400).result("User already exists!");
+        else if (result.getErrorType() == Errortype.EMAIL_EXISTS) {
+            ctx.status(409).result(result.getMessage());
         }
 
-        else {
-            ctx.status(500).result("server error!");
+        else if (result.getErrorType() == Errortype.NONE) {
+            ctx.status(201).result(result.getMessage());
         }
     }
 }
