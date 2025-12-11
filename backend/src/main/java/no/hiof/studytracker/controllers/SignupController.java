@@ -11,6 +11,8 @@ import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.service.SignupResult;
 import main.java.no.hiof.studytracker.service.SignupService;
 
+import java.util.Map;
+
 public class SignupController {
     private SignupService signupService;
     private UserDataRepository userDataRepository;
@@ -28,12 +30,22 @@ public class SignupController {
             ctx.status(200).result("User registered successfully.");
         }
 
-        catch (UsernameAlreadyExistsException | EmailAlreadyExistsException e) {
-            ctx.status(409).json(e.getMessage());
+        catch (UsernameAlreadyExistsException e) {
+            ctx.status(409).json(Map.of(
+                    "error", e.getMessage(),
+                    "username", e.getUsername()
+            ));
+
+        } catch (EmailAlreadyExistsException e) {
+            ctx.status(409).json(Map.of(
+                    "error", e.getMessage(),
+                    "email", e.getEmail()
+            ));
 
         } catch (InvalidEmailFormatException | InvalidPasswordException e) {
-            ctx.status(400).json(e.getMessage());
-
+            ctx.status(400).json(Map.of(
+                    "error", e.getMessage()
+            ));
         } catch (Exception e) {
             // Felles fallback
             ctx.status(500).json("An unexpected error occurred");
