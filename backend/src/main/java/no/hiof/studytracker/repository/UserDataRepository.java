@@ -1,6 +1,9 @@
 package main.java.no.hiof.studytracker.repository;
 
 import main.java.no.hiof.studytracker.database.DB;
+import main.java.no.hiof.studytracker.exceptions.CustomException;
+import main.java.no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
+import main.java.no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
 import main.java.no.hiof.studytracker.model.User;
 
 import java.sql.*;
@@ -9,56 +12,38 @@ import java.time.LocalDateTime;
 public class UserDataRepository implements UserRepository {
     public UserDataRepository() {}
 
-
     public boolean usernameExists(String username) {
-        boolean usernameExists = false;
-        try (Connection connection = DB.getConnection()) {
-            String sql = "SELECT * FROM user_profile";
+        String sql = "SELECT 1 FROM user_profile WHERE username = ? LIMIT 1";
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Connection connection = DB.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            while ( rs.next() ) {
-                if (rs.getString("username").equalsIgnoreCase(username)){
-                    usernameExists = true;
-                }
+            stmt.setString(1, username);
 
-                else {
-                    usernameExists = false;
-                }
-            }
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // returnerer true hvis en rad finnes
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new CustomException("Database error while checking username", e);
         }
-
-        return usernameExists;
     }
 
     public boolean emailExists(String email) {
-        boolean emailExists = false;
-        try (Connection connection = DB.getConnection()) {
-            String sql = "SELECT * FROM user_profile";
+        String sql = "SELECT 1 FROM user_profile WHERE email = ? LIMIT 1";
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Connection connection = DB.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            while ( rs.next() ) {
-                if (rs.getString("email").equalsIgnoreCase(email)){
-                    emailExists = true;
-                }
+            stmt.setString(1, email);
 
-                else {
-                    emailExists = false;
-                }
-            }
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new CustomException("Database error while checking email", e);
         }
-
-        return emailExists;
     }
+
 
     public void saveUser(User user) {
         try (Connection connection = DB.getConnection()) {
@@ -78,7 +63,7 @@ public class UserDataRepository implements UserRepository {
 
             pstm.executeUpdate();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new CustomException("Kunne ikke lagre bruker i databasen", e);
         }
     }
 

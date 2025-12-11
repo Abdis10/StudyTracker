@@ -1,11 +1,9 @@
 package main.java.no.hiof.studytracker;
 
 import io.javalin.Javalin;
-import main.java.no.hiof.studytracker.DTOs.SignupDTO;
 import main.java.no.hiof.studytracker.controllers.SignupController;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
-import main.java.no.hiof.studytracker.service.SignupResult;
 import main.java.no.hiof.studytracker.service.SignupService;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,7 +22,6 @@ public class Application {
         }
 
         Javalin app = Javalin.create().start(7000);
-        SignupDTO signupDTO = new SignupDTO("Zak", "Ahmed", "Zak10", "zak12345@example.com","Zak12345", "male");
         UserDataRepository userDataRepository = new UserDataRepository();
         SignupService signupService = new SignupService(userDataRepository);
         SignupController signupController = new SignupController(signupService, userDataRepository);
