@@ -45,6 +45,26 @@ public class UserDataRepository implements UserRepository {
     }
 
 
+    public String passwordHashExists() {
+        String sql = "SELECT * FROM user_profile LIMIT 5";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                return  rs.getString("password_hash");
+            }
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
+    }
+
     public void saveUser(User user) {
         try (Connection connection = DB.getConnection()) {
             String userData = "INSERT INTO user_profile(first_name, last_name, username, email, password_hash, gender, created_at) VALUES(?, ? , ?, ?, ?, ?, ?)";
