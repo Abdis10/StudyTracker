@@ -40,8 +40,19 @@ public class DB {
                 );
             """;
 
+            String createSessionTokenTable = """
+                    CREATE TABLE IF NOT EXISTS session_token (
+                    session_token_id TEXT PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    created_at TEXT, 
+                    expires_at TEXT,
+                    FOREIGN KEY (user_id) REFERENCES user_profile(id)
+                    );
+            """;
+
             stmt.execute(createUsersTable);
             stmt.execute(createSessionsTable);     // migration
+            stmt.execute(createSessionTokenTable);
             System.out.println("Database Migrations fullført.");
         }
         catch (SQLException e) {
