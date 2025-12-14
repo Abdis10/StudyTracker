@@ -1,5 +1,6 @@
 package main.java.no.hiof.studytracker.service;
 
+import main.java.no.hiof.studytracker.exceptions.UserAuthenticationException;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -18,8 +19,14 @@ public class LoginService {
         }
     }
 
-    public String authenticatePassword() {
-        return userDataRepository.passwordHashExists();
+    public boolean authenticateUser(String email, String password) {
+        if (BCrypt.checkpw(password, userDataRepository.getPasswordHash(email))) {
+            return true;
+        }
+
+        else {
+            throw new UserAuthenticationException(email);
+        }
     }
 
 

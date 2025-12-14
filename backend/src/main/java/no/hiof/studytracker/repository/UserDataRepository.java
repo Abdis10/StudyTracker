@@ -2,8 +2,6 @@ package main.java.no.hiof.studytracker.repository;
 
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
-import main.java.no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
-import main.java.no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
 import main.java.no.hiof.studytracker.model.User;
 
 import java.sql.*;
@@ -39,27 +37,27 @@ public class UserDataRepository implements UserRepository {
             ResultSet rs = stmt.executeQuery();
             return rs.next();
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new CustomException("Database error while checking email", e);
         }
     }
 
 
-    public String passwordHashExists() {
-        String sql = "SELECT * FROM user_profile LIMIT 5";
+    public String getPasswordHash(String email) {
+        String sql = "SELECT 1, password_hash FROM user_profile WHERE email = ?";
 
         try (Connection connection = DB.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, email);
 
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                return  rs.getString("password_hash");
+                return rs.getString("password_hash");
             }
 
-
         } catch (Exception e) {
-            throw new RuntimeException(e);
+                throw new CustomException("Database error, couldn't find email");
         }
 
         return null;
@@ -83,7 +81,7 @@ public class UserDataRepository implements UserRepository {
 
             pstm.executeUpdate();
         } catch (Exception e) {
-            throw new CustomException("Kunne ikke lagre bruker i databasen", e);
+            throw new CustomException("Couldn't save user in database", e);
         }
     }
 

@@ -34,11 +34,7 @@ public class Application {
         // Login section
         LoginService loginService = new LoginService(userDataRepository);
         LoginController loginController = new LoginController(loginService);
-        // System.out.println(loginController.loginUser("Yasin123"));
 
-
-        System.out.println();
-        System.out.println(loginController.loginUser());
 
         app.get("/", ctx -> {
            ctx.result("Hei fra Javalin!");
@@ -48,8 +44,8 @@ public class Application {
             signupController.signupUser(ctx);
         });
 
-        /*app.get("/auth/login", ctx -> {
+        app.get("/auth/login", ctx -> {
             loginController.loginUser(ctx);
-        });*/
+        });
     }
 }
