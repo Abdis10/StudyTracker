@@ -1,5 +1,7 @@
 package main.java.no.hiof.studytracker.model;
 
+import java.util.UUID;
+
 public class SessionToken {
     private String sessionTokenId;
     private int userId;

@@ -1,8 +1,12 @@
 package main.java.no.hiof.studytracker.service;
 
 import main.java.no.hiof.studytracker.exceptions.UserAuthenticationException;
+import main.java.no.hiof.studytracker.model.SessionToken;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import org.mindrot.jbcrypt.BCrypt;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class LoginService {
     private final UserDataRepository userDataRepository;
@@ -29,6 +33,14 @@ public class LoginService {
         }
     }
 
+    public void createSessionToken(String email, String password) {
+        if (authenticateUser(email, password)) {
+            String token = UUID.randomUUID().toString();
+            int userID = Integer.parseInt(userDataRepository.getId(email));
+            String createdAt = LocalDateTime.now().toString();
 
+            //SessionToken sessionToken = new SessionToken();
+        }
+    }
 
 }
