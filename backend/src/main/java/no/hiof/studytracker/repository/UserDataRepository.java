@@ -85,5 +85,28 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
+    public void saveSessionToken() {
+
+    }
+
+    public String getId(String email) {
+        String sql = "SELECT id, 1 from user_profile WHERE email = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                return rs.getString("id");
+            }
+
+        } catch (Exception e) {
+            throw new CustomException("Couldn't get id for the user!", e);
+        }
+
+        return null;
+    }
+
 
 }
