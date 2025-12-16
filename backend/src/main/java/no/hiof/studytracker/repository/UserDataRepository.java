@@ -85,8 +85,20 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public void saveSessionToken() {
+    public void saveSessionToken(String sessionTokenId, int userId, String createdAt, String expiresAt) {
+        try (Connection connection = DB.getConnection()) {
+            String sessionData = "INSERT INTO session_token(session_token_id, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)";
+            PreparedStatement pstm = connection.prepareStatement(sessionData);
 
+            pstm.setString(1, sessionTokenId);
+            pstm.setInt(2, userId);
+            pstm.setString(3,createdAt);
+            pstm.setString(4, expiresAt);
+
+            pstm.executeUpdate();
+        } catch (Exception e) {
+            throw new CustomException("Couldn't save session token in database", e);
+        }
     }
 
     public String getId(String email) {
