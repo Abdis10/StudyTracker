@@ -37,9 +37,11 @@ public class LoginService {
         if (authenticateUser(email, password)) {
             String token = UUID.randomUUID().toString();
             int userID = Integer.parseInt(userDataRepository.getId(email));
-            String createdAt = LocalDateTime.now().toString();
-
-            //SessionToken sessionToken = new SessionToken();
+            LocalDateTime createdAt = LocalDateTime.now();
+            LocalDateTime expiresAt = createdAt.plusHours(1);
+            SessionToken sessionToken = new SessionToken(token, userID, createdAt.toString(), expiresAt.toString());
+            userDataRepository.saveSessionToken(sessionToken.getSessionTokenId(), sessionToken.getUserId(),
+                    sessionToken.getCreatedAt(), sessionToken.getExpiresAt());
         }
     }
 
