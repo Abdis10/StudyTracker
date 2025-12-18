@@ -21,11 +21,11 @@ public class LoginController {
 
         try {
             loginService.authenticateUser(email, password);
-            loginService.createSessionToken(email, password);
-            loginService.createSessionToken(email, password);
+            String token = loginService.createSessionToken(email, password);
             ctx.status(200).json(Map.of(
                     "messsage: ", "User is authenticated",
-                    "Authenticated user: ", loginDTO.getEmail()
+                    "Authenticated user: ", loginDTO.getEmail(),
+                    "Token: ", loginService.getSessionTokenId(token)
             ));
 
         } catch (UserAuthenticationException e) {
