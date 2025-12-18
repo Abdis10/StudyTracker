@@ -86,8 +86,9 @@ public class UserDataRepository implements UserRepository {
     }
 
     public void saveSessionToken(String sessionTokenId, int userId, String createdAt, String expiresAt) {
+        String sessionData = "INSERT INTO session_token(session_token_id, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)";
+
         try (Connection connection = DB.getConnection()) {
-            String sessionData = "INSERT INTO session_token(session_token_id, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)";
             PreparedStatement pstm = connection.prepareStatement(sessionData);
 
             pstm.setString(1, sessionTokenId);
@@ -114,11 +115,30 @@ public class UserDataRepository implements UserRepository {
             }
 
         } catch (Exception e) {
-            throw new CustomException("Couldn't get id for the user!", e);
+            throw new CustomException("User id doesn't exist!", e);
         }
 
         return null;
     }
 
+
+    public String sessionTokenId(int userID) {
+        String sql = "SELECT session_token_id FROM session_token WHERE user_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userID);
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                return rs.getString("session_token_id");
+            }
+
+        } catch (Exception e) {
+            throw new CustomException("Couldn't find any session token for user with id " + userID, e);
+        }
+
+        return null;
+    }
 
 }
