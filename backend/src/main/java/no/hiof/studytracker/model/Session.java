@@ -21,6 +21,15 @@ public class Session {
         this.updatedAt = updatedAt;
     }
 
+    public Session(int userId, String date, float hours, int productivityScore, String comment, String createdAt) {
+        this.userId = userId;
+        this.date = date;
+        this.hours = hours;
+        this.productivityScore = productivityScore;
+        this.comment = comment;
+        this.createdAt = createdAt;
+    }
+
     public int getId() {
         return id;
     }

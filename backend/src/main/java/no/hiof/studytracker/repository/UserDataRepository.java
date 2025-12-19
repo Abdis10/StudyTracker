@@ -2,6 +2,7 @@ package main.java.no.hiof.studytracker.repository;
 
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
+import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.model.User;
 
 import java.sql.*;
@@ -139,6 +140,47 @@ public class UserDataRepository implements UserRepository {
         }
 
         return null;
+    }
+
+    public int getIdByTokenId(String token) {
+        String sql = "SELECT user_id FROM session_token WHERE session_token_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, token);
+            ResultSet rs = pstm.executeQuery();
+
+            while (rs.next()) {
+                return rs.getInt("user_id");
+            }
+        }
+
+        catch (Exception e) {
+            throw new CustomException("Didn't find user id for the token:" + token, e);
+        }
+
+        return 0;
+    }
+
+    public void registerStudySession(Session session) {
+        String sql = "INSERT INTO sessions(user_id, date, hours, productivity_score, comment, created_at) VALUES(?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+
+            pstm.setInt(1, session.getUserId());
+            pstm.setString(2, session.getDate());
+            pstm.setFloat(3, session.getHours());
+            pstm.setInt(4, session.getProductivityScore());
+            pstm.setString(5, session.getComment());
+            pstm.setString(6, session.getCreatedAt());
+
+            pstm.executeUpdate();
+
+        } catch (Exception e) {
+            throw new CustomException("Couldn't save session in database", e);
+        }
+
     }
 
 }

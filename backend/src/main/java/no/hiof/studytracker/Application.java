@@ -2,11 +2,13 @@ package main.java.no.hiof.studytracker;
 
 import io.javalin.Javalin;
 import main.java.no.hiof.studytracker.controllers.LoginController;
+import main.java.no.hiof.studytracker.controllers.SessionController;
 import main.java.no.hiof.studytracker.controllers.SignupController;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.service.LoginService;
 import main.java.no.hiof.studytracker.service.PasswordUtil;
+import main.java.no.hiof.studytracker.service.SessionService;
 import main.java.no.hiof.studytracker.service.SignupService;
 
 import javax.print.attribute.standard.DateTimeAtCreation;
@@ -41,6 +43,10 @@ public class Application {
         LoginController loginController = new LoginController(loginService);
 
 
+        // Study session registration
+        SessionService sessionService = new SessionService(userDataRepository);
+        SessionController sessionController = new SessionController(sessionService);
+
         app.get("/", ctx -> {
            ctx.result("Hei fra Javalin!");
         });
@@ -51,6 +57,10 @@ public class Application {
 
         app.post("/auth/login", ctx -> {
             loginController.loginUser(ctx);
+        });
+
+        app.post("/session/session-registration", ctx -> {
+            sessionController.studySession(ctx);
         });
     }
 }
