@@ -1,6 +1,7 @@
 package main.java.no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
+import main.java.no.hiof.studytracker.exceptions.StudySessionException;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.service.SessionService;
 
@@ -15,15 +16,14 @@ public class SessionController {
 
     public void studySession(Context ctx) {
         try {
-            sessionService.validateSessionData(ctx);
-            sessionService.createStudySession(ctx);
+            sessionService.studySession(ctx);
             ctx.status(200).json(Map.of(
                     "message: ", "study session is successfully created"
             ));
 
-        } catch (Exception e) {
+        } catch (StudySessionException e) {
             ctx.status(401).json(Map.of(
-                    "message: ", "error when registring study session"));
+                    "message: ", e.getMessage()));
         }
     }
 }
