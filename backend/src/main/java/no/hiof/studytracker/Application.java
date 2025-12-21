@@ -5,6 +5,7 @@ import main.java.no.hiof.studytracker.controllers.LoginController;
 import main.java.no.hiof.studytracker.controllers.SessionController;
 import main.java.no.hiof.studytracker.controllers.SignupController;
 import main.java.no.hiof.studytracker.database.DB;
+import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.service.LoginService;
 import main.java.no.hiof.studytracker.service.PasswordUtil;
@@ -17,6 +18,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 
 public class Application {
@@ -62,5 +64,12 @@ public class Application {
         app.post("/session/session-registration", ctx -> {
             sessionController.studySession(ctx);
         });
+
+        app.get("/session/sessions", ctx -> {
+            sessionController.retrieveSessions(ctx);
+            System.out.println(ctx.header("Authorization").substring(7));
+        });
+
+
     }
 }

@@ -7,6 +7,7 @@ import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class SessionService {
     private UserDataRepository userDataRepository;
@@ -47,5 +48,11 @@ public class SessionService {
     public void studySession(Context ctx) {
         validateSessionData(ctx);
         createStudySession(ctx);
+    }
+
+    public ArrayList<SessionDataDTO> getAllSessions(Context ctx) {
+        String token = ctx.header("Authorization").substring(7);
+        int userId = userDataRepository.getIdByTokenId(token);
+        return userDataRepository.getSessions(userId);
     }
 }
