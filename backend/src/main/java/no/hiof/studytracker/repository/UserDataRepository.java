@@ -136,7 +136,7 @@ public class UserDataRepository implements UserRepository {
             }
 
         } catch (Exception e) {
-            throw new CustomException("Couldn't find any session token for user with id " + userID, e);
+            throw new CustomException("Couldn't find any session token for user with id " + userID);
         }
 
         return null;
@@ -156,7 +156,7 @@ public class UserDataRepository implements UserRepository {
         }
 
         catch (Exception e) {
-            throw new CustomException("Didn't find user id for the token:" + token, e);
+            throw new CustomException("Didn't find user id for the token:" + token);
         }
 
         return 0;
@@ -178,7 +178,23 @@ public class UserDataRepository implements UserRepository {
             pstm.executeUpdate();
 
         } catch (Exception e) {
-            throw new CustomException("Couldn't save session in database", e);
+            throw new CustomException("Couldn't save session in database");
+        }
+
+    }
+
+    public boolean doesTokenExist(String token) {
+        String sql = "SELECT session_token_id FROM session_token WHERE session_token_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, token);
+            ResultSet rs = pstm.executeQuery();
+            return rs.next();
+        }
+
+        catch (SQLException e) {
+            throw new CustomException("Unidentified token");
         }
 
     }

@@ -2,7 +2,7 @@ package main.java.no.hiof.studytracker.service;
 
 import io.javalin.http.Context;
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
-import main.java.no.hiof.studytracker.exceptions.StudySessionException;
+import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
@@ -18,12 +18,15 @@ public class SessionService {
     public void validateSessionData(Context ctx) {
         SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
         if (sessionDataDTO.getHours() < 0) {
-            throw new StudySessionException("Number of hours must be higher than 0");
+            throw new CustomException("Number of hours must be higher than 0", "INVALID_HOURS");
         }
 
-        if (sessionDataDTO.getToken().equalsIgnoreCase("")); {
-            throw new StudySessionException("Empty token from the request!");
+        String token = sessionDataDTO.getToken();
+        if (!userDataRepository.doesTokenExist(token)) {
+            throw new CustomException("Token couldn't be verified", "UNIDENTIFIED_TOKEN");
         }
+
+
     }
 
     public void createStudySession(Context ctx) {
