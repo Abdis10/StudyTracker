@@ -12,6 +12,14 @@ public class SessionDataDTO {
 
     public SessionDataDTO() {}
 
+    public SessionDataDTO(String date, float hours, int productivityScore, String comment, String createdAt) {
+        this.date = date;
+        this.hours = hours;
+        this.productivityScore = productivityScore;
+        this.comment = comment;
+        this.createdAt = createdAt;
+    }
+
     public String getToken() {
         return token;
     }
@@ -74,5 +82,16 @@ public class SessionDataDTO {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + '\n' +
+                "date: " + date + '\n' +
+                "hours: " + hours + '\n' +
+                "productivityScore: " + productivityScore + '\n' +
+                "comment: " + comment + '\n' +
+                "created at: " + createdAt + '\n' +
+                '}';
     }
 }

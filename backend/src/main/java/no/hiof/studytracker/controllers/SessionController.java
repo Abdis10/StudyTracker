@@ -1,9 +1,14 @@
 package main.java.no.hiof.studytracker.controllers;
 
+import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.json.JsonMapper;
+import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
+import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.service.SessionService;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SessionController {
@@ -24,6 +29,19 @@ public class SessionController {
             ctx.status(401).json(Map.of(
                     "message: ", e.getMessage(),
                     "errorcode", e.getErrorCode()));
+        }
+    }
+
+    public void retrieveSessions(Context cxt) {
+        try {
+            ArrayList<SessionDataDTO> allSessions = sessionService.getAllSessions(cxt);
+
+            for (SessionDataDTO dto : allSessions) {
+                cxt.status(200).json(dto);
+            }
+
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
         }
     }
 }

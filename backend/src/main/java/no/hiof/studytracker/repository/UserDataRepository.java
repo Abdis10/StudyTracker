@@ -1,5 +1,6 @@
 package main.java.no.hiof.studytracker.repository;
 
+import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
@@ -7,6 +8,7 @@ import main.java.no.hiof.studytracker.model.User;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class UserDataRepository implements UserRepository {
     public UserDataRepository() {}
@@ -195,6 +197,33 @@ public class UserDataRepository implements UserRepository {
 
         catch (SQLException e) {
             throw new CustomException("Unidentified token");
+        }
+    }
+
+    public ArrayList<SessionDataDTO> getSessions(int userId) {
+        String sql = "SELECT date, hours, productivity_score, comment, created_at FROM sessions WHERE user_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            ArrayList<SessionDataDTO> arrayOfSessions = new ArrayList<>();
+
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                SessionDataDTO sessionDataDTO = new SessionDataDTO(rs.getString("date"), rs.getFloat("hours"),
+                        rs.getInt("productivity_score"), rs.getString("comment"),
+                        rs.getString("created_At"));
+
+                arrayOfSessions.add(sessionDataDTO);
+            }
+
+            return arrayOfSessions;
+        }
+
+        catch (SQLException e) {
+            throw new CustomException("Database error!", e.getCause());
         }
 
     }
