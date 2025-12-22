@@ -2,12 +2,15 @@ package main.java.no.hiof.studytracker.service;
 
 import io.javalin.http.Context;
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
+import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SessionService {
     private UserDataRepository userDataRepository;
@@ -50,9 +53,13 @@ public class SessionService {
         createStudySession(ctx);
     }
 
-    public ArrayList<SessionDataDTO> getAllSessions(Context ctx) {
+    public ArrayList<SessionResponseDTO> getAllSessions(Context ctx) {
         String token = ctx.header("Authorization").substring(7);
         int userId = userDataRepository.getIdByTokenId(token);
-        return userDataRepository.getSessions(userId);
+
+        if (userDataRepository.getSessions(userId).size() != 0) {
+            return userDataRepository.getSessions(userId);
+        }
+        return null;
     }
 }
