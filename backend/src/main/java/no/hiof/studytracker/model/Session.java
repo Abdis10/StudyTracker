@@ -10,6 +10,9 @@ public class Session {
     private String createdAt;
     private String updatedAt;
 
+
+    public Session() {}
+
     public Session(int id, int userId, String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
         this.id = id;
         this.userId = userId;

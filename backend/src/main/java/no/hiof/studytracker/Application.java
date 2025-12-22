@@ -19,6 +19,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class Application {
@@ -67,9 +70,7 @@ public class Application {
 
         app.get("/session/sessions", ctx -> {
             sessionController.retrieveSessions(ctx);
-            System.out.println(ctx.header("Authorization").substring(7));
         });
-
 
     }
 }

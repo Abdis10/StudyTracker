@@ -1,6 +1,7 @@
 package main.java.no.hiof.studytracker.repository;
 
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
+import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
@@ -200,11 +201,11 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public ArrayList<SessionDataDTO> getSessions(int userId) {
-        String sql = "SELECT date, hours, productivity_score, comment, created_at FROM sessions WHERE user_id = ?";
+    public ArrayList<SessionResponseDTO> getSessions(int userId) {
+        String sql = "SELECT date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ?";
 
         try (Connection connection = DB.getConnection()) {
-            ArrayList<SessionDataDTO> arrayOfSessions = new ArrayList<>();
+            ArrayList<SessionResponseDTO> arrayOfSessions = new ArrayList<>();
 
             PreparedStatement pstm = connection.prepareStatement(sql);
             pstm.setInt(1, userId);
@@ -212,11 +213,11 @@ public class UserDataRepository implements UserRepository {
 
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
-                SessionDataDTO sessionDataDTO = new SessionDataDTO(rs.getString("date"), rs.getFloat("hours"),
+                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getString("date"), rs.getFloat("hours"),
                         rs.getInt("productivity_score"), rs.getString("comment"),
-                        rs.getString("created_At"));
+                        rs.getString("created_At"), rs.getString("updated_at"));
 
-                arrayOfSessions.add(sessionDataDTO);
+                arrayOfSessions.add(sessionResponseDTO);
             }
 
             return arrayOfSessions;

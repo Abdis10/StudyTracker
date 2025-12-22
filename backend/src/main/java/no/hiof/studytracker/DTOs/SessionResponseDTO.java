@@ -1,8 +1,6 @@
 package main.java.no.hiof.studytracker.DTOs;
 
-public class SessionDataDTO {
-    private String token;
-    private int userId;
+public class SessionResponseDTO {
     private String date;
     private float hours;
     private int productivityScore;
@@ -10,24 +8,16 @@ public class SessionDataDTO {
     private String createdAt;
     private String updatedAt;
 
-    public SessionDataDTO() {}
+    public SessionResponseDTO() {}
 
-    public SessionDataDTO(String date, float hours, int productivityScore, String comment, String createdAt) {
+    public SessionResponseDTO(String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
         this.date = date;
         this.hours = hours;
         this.productivityScore = productivityScore;
         this.comment = comment;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
 
     public String getDate() {
         return date;
@@ -75,16 +65,5 @@ public class SessionDataDTO {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "{" + '\n' +
-                "date: " + date + '\n' +
-                "hours: " + hours + '\n' +
-                "productivityScore: " + productivityScore + '\n' +
-                "comment: " + comment + '\n' +
-                "created at: " + createdAt + '\n' +
-                '}';
     }
 }
