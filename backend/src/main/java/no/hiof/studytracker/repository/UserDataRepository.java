@@ -145,7 +145,7 @@ public class UserDataRepository implements UserRepository {
         return null;
     }
 
-    public int getIdByTokenId(String token) {
+    public int getIdByToken(String token) {
         String sql = "SELECT user_id FROM session_token WHERE session_token_id = ?";
 
         try (Connection connection = DB.getConnection()) {
@@ -162,7 +162,7 @@ public class UserDataRepository implements UserRepository {
             throw new CustomException("Didn't find user id for the token:" + token);
         }
 
-        return 0;
+        return Integer.parseInt(null);
     }
 
     public void registerStudySession(Session session) {

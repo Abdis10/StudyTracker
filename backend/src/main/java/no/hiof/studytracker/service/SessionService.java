@@ -10,6 +10,7 @@ import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SessionService {
@@ -36,7 +37,7 @@ public class SessionService {
     public void createStudySession(Context ctx) {
             SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
             String token = sessionDataDTO.getToken();
-            int userId = userDataRepository.getIdByTokenId(token);
+            int userId = userDataRepository.getIdByToken(token);
 
             if (userId != 0) {
                 String createdAt = LocalDateTime.now().toString();
@@ -53,13 +54,33 @@ public class SessionService {
         createStudySession(ctx);
     }
 
-    public ArrayList<SessionResponseDTO> getAllSessions(Context ctx) {
-        String token = ctx.header("Authorization").substring(7);
-        int userId = userDataRepository.getIdByTokenId(token);
 
-        if (userDataRepository.getSessions(userId).size() != 0) {
-            return userDataRepository.getSessions(userId);
+    public boolean validateToken(String token) {
+        if (userDataRepository.doesTokenExist(token)) {
+            return true;
         }
-        return null;
+        return false;
     }
+
+    /*
+        Vi får 2 utfall når vi prøver å hente studieøkter
+        1. Success - token er gyldig og da returnere liste av studieøkter (eventuelt en tom liste)
+        2. Invalid_token - ugyldig token
+    */
+
+    public ArrayList<SessionResponseDTO>  getSessionsFromRepository(String token) {
+        int userId = userDataRepository.getIdByToken(token);
+        return userDataRepository.getSessions(userId);
+    }
+
+    public ArrayList<SessionResponseDTO> getSessions(String token) {
+        if (validateToken(token)) {
+            return getSessionsFromRepository(token);
+        }
+
+        else {
+            throw new CustomException("Invalid token", "UNAUTHORIZED_TOKEN");
+        }
+    }
+
 }
