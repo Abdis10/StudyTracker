@@ -7,11 +7,9 @@ import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SessionService {
     private UserDataRepository userDataRepository;
@@ -68,12 +66,18 @@ public class SessionService {
         2. Invalid_token - ugyldig token
     */
 
-    public ArrayList<SessionResponseDTO>  getSessionsFromRepository(String token) {
+    public List<SessionResponseDTO>  getSessionsFromRepository(String token) {
         int userId = userDataRepository.getIdByToken(token);
-        return userDataRepository.getSessions(userId);
+        List<SessionResponseDTO> listOfSessions = userDataRepository.getSessions(userId);
+
+        List<SessionResponseDTO> sortedList = listOfSessions.stream()
+                        .sorted(Comparator.comparing(SessionResponseDTO::getDate,
+                                Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                        .toList();
+        return sortedList;
     }
 
-    public ArrayList<SessionResponseDTO> getSessions(String token) {
+    public List<SessionResponseDTO> getSessions(String token) {
         if (validateToken(token)) {
             return getSessionsFromRepository(token);
         }

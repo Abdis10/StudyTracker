@@ -10,6 +10,7 @@ import main.java.no.hiof.studytracker.model.User;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserDataRepository implements UserRepository {
     public UserDataRepository() {}
@@ -201,7 +202,7 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public ArrayList<SessionResponseDTO> getSessions(int userId) {
+    public List<SessionResponseDTO> getSessions(int userId) {
         String sql = "SELECT date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ?";
 
         try (Connection connection = DB.getConnection()) {

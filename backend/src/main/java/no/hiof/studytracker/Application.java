@@ -5,23 +5,13 @@ import main.java.no.hiof.studytracker.controllers.LoginController;
 import main.java.no.hiof.studytracker.controllers.SessionController;
 import main.java.no.hiof.studytracker.controllers.SignupController;
 import main.java.no.hiof.studytracker.database.DB;
-import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.service.LoginService;
-import main.java.no.hiof.studytracker.service.PasswordUtil;
 import main.java.no.hiof.studytracker.service.SessionService;
 import main.java.no.hiof.studytracker.service.SignupService;
 
-import javax.print.attribute.standard.DateTimeAtCreation;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 public class Application {
@@ -71,6 +61,5 @@ public class Application {
         app.get("/session/sessions", ctx -> {
             sessionController.retrieveSessions(ctx);
         });
-
     }
 }
