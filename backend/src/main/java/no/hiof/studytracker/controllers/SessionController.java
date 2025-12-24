@@ -37,13 +37,11 @@ public class SessionController {
 
     public void retrieveSessions(Context cxt) {
         try {
-            ArrayList<SessionResponseDTO> allSessions = sessionService.getAllSessions(cxt);
-            cxt.status(200).json(allSessions);
-
+            String token = cxt.header("Authorization").substring(7);
+            cxt.status(200).json(sessionService.getSessions(token));
         } catch (CustomException e) {
-            cxt.status(500).json(Map.of(
-               "Message: ", e.getMessage(),
-               "Errorcode: ", e.getErrorCode()
+            cxt.status(401).json(Map.of(
+                    "message", e.getErrorCode()
             ));
         }
     }
