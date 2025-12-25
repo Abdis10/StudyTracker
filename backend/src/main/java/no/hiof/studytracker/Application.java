@@ -12,6 +12,8 @@ import main.java.no.hiof.studytracker.service.SignupService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Application {
@@ -38,7 +40,7 @@ public class Application {
         LoginController loginController = new LoginController(loginService);
 
 
-        // Study session registration
+        // Session operations section
         SessionService sessionService = new SessionService(userDataRepository);
         SessionController sessionController = new SessionController(sessionService);
 
@@ -60,6 +62,10 @@ public class Application {
 
         app.get("/session/sessions", ctx -> {
             sessionController.retrieveSessions(ctx);
+        });
+
+        app.put("/session/{sessionsId}", ctx -> {
+            sessionController.updateSession(ctx);
         });
     }
 }

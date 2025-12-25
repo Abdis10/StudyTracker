@@ -146,7 +146,7 @@ public class UserDataRepository implements UserRepository {
         return null;
     }
 
-    public int getIdByToken(String token) {
+    public int getUserIdByToken(String token) {
         String sql = "SELECT user_id FROM session_token WHERE session_token_id = ?";
 
         try (Connection connection = DB.getConnection()) {
@@ -227,6 +227,26 @@ public class UserDataRepository implements UserRepository {
         catch (SQLException e) {
             throw new CustomException("Database error!", e.getCause());
         }
+
+    }
+
+    public int getUserIdBySessionId(int sessionId) {
+        String sql = "SELECT user_id FROM sessions WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, sessionId);
+
+            ResultSet rs = pstm.executeQuery();
+            return rs.getInt("user_id");
+
+        } catch (SQLException e) {
+            throw new CustomException("Didn't find user-id that matches given session-id", e);
+        }
+    }
+
+
+    public void updateSession(int sessionId, SessionDataDTO sessionDataDTO) {
 
     }
 

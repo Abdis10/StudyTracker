@@ -7,7 +7,6 @@ import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -29,13 +28,12 @@ public class SessionService {
             throw new CustomException("Token couldn't be verified", "UNIDENTIFIED_TOKEN");
         }
 
-
     }
 
     public void createStudySession(Context ctx) {
             SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
             String token = sessionDataDTO.getToken();
-            int userId = userDataRepository.getIdByToken(token);
+            int userId = userDataRepository.getUserIdByToken(token);
 
             if (userId != 0) {
                 String createdAt = LocalDateTime.now().toString();
@@ -67,7 +65,7 @@ public class SessionService {
     */
 
     public List<SessionResponseDTO>  getSessionsFromRepository(String token) {
-        int userId = userDataRepository.getIdByToken(token);
+        int userId = userDataRepository.getUserIdByToken(token);
         List<SessionResponseDTO> listOfSessions = userDataRepository.getSessions(userId);
 
         List<SessionResponseDTO> sortedList = listOfSessions.stream()
@@ -85,6 +83,41 @@ public class SessionService {
         else {
             throw new CustomException("Invalid token", "UNAUTHORIZED_TOKEN");
         }
+    }
+
+
+    /*
+        1. Autentiser token
+        2. Hvis token er gyldig sjekk om den tilhører brukeren som ber om oppdateringen
+        3. Oppdater kun de feltene som brukeren ber endring om (la stå gamle verdier hvis de ikke er med i forespørselen)
+    */
+
+
+    public boolean doesTokenMatchUser(String token, int sessionId) {
+        int userIdByToken = userDataRepository.getUserIdByToken(token);
+        int userIdBySessionId = userDataRepository.getUserIdBySessionId(sessionId);
+        if (validateToken(token) && (userIdByToken == userIdBySessionId)) {
+            return true;
+        }
+        return false;
+    }
+
+    public HashMap<Object, Object> validateUpdateSessionData(HashMap<Object, Object> map) {
+        return null;
+    }
+
+
+    public void updateSessionData(SessionDataDTO sessionDataDTO, String token, int sessionId) {
+        if (doesTokenMatchUser(token, sessionId)) {
+            userDataRepository.updateSession(sessionId, sessionDataDTO);
+        }
+    }
+
+    public boolean isEmptyOrNull(Object o) {
+        if (o.equals("") || o.equals(null)) {
+            return true;
+        }
+        return false;
     }
 
 }

@@ -1,17 +1,11 @@
 package main.java.no.hiof.studytracker.controllers;
 
-import io.javalin.Javalin;
 import io.javalin.http.Context;
-import io.javalin.json.JsonMapper;
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
-import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
-import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.service.SessionService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SessionController {
     private SessionService sessionService;
@@ -45,4 +39,26 @@ public class SessionController {
             ));
         }
     }
+
+    public void updateSession(Context cxt) {
+        try {
+            int sessionId = Integer.parseInt(cxt.pathParam("sessionsId"));
+            SessionDataDTO sessionDataDTO = cxt.bodyAsClass(SessionDataDTO.class);
+            String token = cxt.header("Authorization").substring(7);
+
+            HashMap<Object, Object> map = new HashMap<>();
+            map.put("date", sessionDataDTO.getDate());
+            map.put("hours", sessionDataDTO.getHours());
+            map.put("productivityScore", sessionDataDTO.getProductivityScore());
+            map.put("comment", sessionDataDTO.getComment());
+
+            System.out.println(sessionService.validateUpdateSessionData(map));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 }
