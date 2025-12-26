@@ -102,19 +102,37 @@ public class SessionService {
         return false;
     }
 
-    public HashMap<Object, Object> validateUpdateSessionData(HashMap<Object, Object> map) {
-        return null;
-    }
-
-
-    public void updateSessionData(SessionDataDTO sessionDataDTO, String token, int sessionId) {
+    public boolean updateSessionInRepo(SessionDataDTO sessionDataDTO, String token, int sessionId) {
+        SessionDataDTO sessionDataDTO1 = new SessionDataDTO();
         if (doesTokenMatchUser(token, sessionId)) {
-            userDataRepository.updateSession(sessionId, sessionDataDTO);
+            String updatedAt = LocalDateTime.now().toString();
+            sessionDataDTO1 = sessionDataDTO;
+            sessionDataDTO1.setUpdatedAt(updatedAt);
+
+            if (isEmptyOrNullOrZero(sessionDataDTO.getDate())) {
+                sessionDataDTO1.setDate(userDataRepository.getSessionBySessionId(sessionId).getDate());
+            }
+            if (isEmptyOrNullOrZero(sessionDataDTO.getHours())) {
+                sessionDataDTO1.setHours(userDataRepository.getSessionBySessionId(sessionId).getHours());
+            }
+            if (isEmptyOrNullOrZero(sessionDataDTO.getProductivityScore())) {
+                sessionDataDTO1.setProductivityScore(userDataRepository.getSessionBySessionId(sessionId).getProductivityScore());
+            }
+            if (isEmptyOrNullOrZero(sessionDataDTO.getComment())) {
+                sessionDataDTO1.setComment(userDataRepository.getSessionBySessionId(sessionId).getComment());
+            }
+
+            sessionDataDTO1.setCreatedAt(userDataRepository.getSessionBySessionId(sessionId).getCreatedAt());
+            if (userDataRepository.updateSession(sessionId, sessionDataDTO1) == 1) {
+                return true;
+            }
         }
+
+        throw new CustomException("Session does not exist", "NON_EXISTENT_SESSION");
     }
 
-    public boolean isEmptyOrNull(Object o) {
-        if (o.equals("") || o.equals(null)) {
+    public boolean isEmptyOrNullOrZero(Object o) {
+        if (o.equals("") || o.equals(null) || o.equals(0) || o.toString().equals("0.0") ) {
             return true;
         }
         return false;
