@@ -245,9 +245,43 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
+    public SessionDataDTO getSessionBySessionId(int sessionId) {
+        String sql = "SELECT date, hours, productivity_score, comment, created_at FROM sessions WHERE id = ?";
 
-    public void updateSession(int sessionId, SessionDataDTO sessionDataDTO) {
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, sessionId);
 
+            ResultSet rs = pstm.executeQuery();
+            SessionDataDTO sessionDataDTO = new SessionDataDTO(rs.getString("date"), rs.getFloat("hours"),
+                    rs.getInt("productivity_score"), rs.getString("comment"), rs.getString("created_at"));
+
+            return sessionDataDTO;
+
+        } catch (SQLException e) {
+            throw new CustomException("Error in database when retrieving session by session-id", e);
+        }
+    }
+
+
+    public int updateSession(int sessionId, SessionDataDTO sessionDataDTO) {
+        String sql = "UPDATE sessions " +
+                "SET date = ?, hours = ?, productivity_score = ?, comment = ?, updated_at = ? " +
+                "WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, sessionDataDTO.getDate());
+            pstm.setFloat(2, sessionDataDTO.getHours());
+            pstm.setInt(3, sessionDataDTO.getProductivityScore());
+            pstm.setString(4, sessionDataDTO.getComment());
+            pstm.setString(5, sessionDataDTO.getUpdatedAt());
+            pstm.setInt(6, sessionId);
+
+            return pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new CustomException("Error when updating session in DB", e);
+        }
     }
 
 }

@@ -45,17 +45,14 @@ public class SessionController {
             int sessionId = Integer.parseInt(cxt.pathParam("sessionsId"));
             SessionDataDTO sessionDataDTO = cxt.bodyAsClass(SessionDataDTO.class);
             String token = cxt.header("Authorization").substring(7);
-
-            HashMap<Object, Object> map = new HashMap<>();
-            map.put("date", sessionDataDTO.getDate());
-            map.put("hours", sessionDataDTO.getHours());
-            map.put("productivityScore", sessionDataDTO.getProductivityScore());
-            map.put("comment", sessionDataDTO.getComment());
-
-            System.out.println(sessionService.validateUpdateSessionData(map));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            sessionService.updateSessionInRepo(sessionDataDTO, token, sessionId);
+            cxt.status(200).json(Map.of(
+                    "Message: ", "Session successfully updated"
+            ));
+        } catch (CustomException e) {
+            cxt.status(404).json(Map.of(
+               "Message: ", e.getErrorCode()
+            ));
         }
     }
 

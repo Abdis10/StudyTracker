@@ -1,6 +1,7 @@
 package main.java.no.hiof.studytracker;
 
 import io.javalin.Javalin;
+import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.controllers.LoginController;
 import main.java.no.hiof.studytracker.controllers.SessionController;
 import main.java.no.hiof.studytracker.controllers.SignupController;

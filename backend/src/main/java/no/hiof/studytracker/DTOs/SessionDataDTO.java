@@ -85,6 +85,10 @@ public class SessionDataDTO {
                 "productivityScore: " + productivityScore + '\n' +
                 "comment: " + comment + '\n' +
                 "created at: " + createdAt + '\n' +
+                "updated_at: " + updatedAt + '\n' +
                 '}';
     }
+
+
+
 }
