@@ -3,7 +3,10 @@ package main.java.no.hiof.studytracker.service;
 import io.javalin.http.Context;
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
+import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
+import main.java.no.hiof.studytracker.exceptions.InvalidTokenException;
+import main.java.no.hiof.studytracker.exceptions.InvalidTokenSessionIdException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
@@ -96,43 +99,112 @@ public class SessionService {
     public boolean doesTokenMatchUser(String token, int sessionId) {
         int userIdByToken = userDataRepository.getUserIdByToken(token);
         int userIdBySessionId = userDataRepository.getUserIdBySessionId(sessionId);
-        if (validateToken(token) && (userIdByToken == userIdBySessionId)) {
+        if ((userIdByToken == userIdBySessionId)) {
             return true;
         }
         return false;
     }
 
-    public boolean updateSessionInRepo(SessionDataDTO sessionDataDTO, String token, int sessionId) {
-        SessionDataDTO sessionDataDTO1 = new SessionDataDTO();
+
+    /**
+     * Updates an existing session by merging new values with existing data.
+     * Fields that are null or empty in the request are preserved from the database.
+     * Validates that the given token belongs to the owner of the session.
+     *
+     * @param updateSessionDTO  incoming update data (partial update)
+     * @param token             authentication token
+     * @param sessionId         id of the session to update
+     * @return true if update succeeds
+     * @throws CustomException  if token is invalid or session does not belong to user
+     */
+
+    public boolean updateSession(UpdateSessionDTO updateSessionDTO, String token, int sessionId) {
+        UpdateSessionDTO updateSessionDTO1 = new UpdateSessionDTO();
+
+        // Fetch existing session data for fallback values
+        UpdateSessionDTO existingSessionFromRepo = userDataRepository.getSessionBySessionId(sessionId);
+
+        // Verify that token owner matches session owner
         if (doesTokenMatchUser(token, sessionId)) {
+            // Set update timestamp
             String updatedAt = LocalDateTime.now().toString();
-            sessionDataDTO1 = sessionDataDTO;
-            sessionDataDTO1.setUpdatedAt(updatedAt);
+            updateSessionDTO1.setUpdatedAt(updatedAt);
 
-            if (isEmptyOrNullOrZero(sessionDataDTO.getDate())) {
-                sessionDataDTO1.setDate(userDataRepository.getSessionBySessionId(sessionId).getDate());
-            }
-            if (isEmptyOrNullOrZero(sessionDataDTO.getHours())) {
-                sessionDataDTO1.setHours(userDataRepository.getSessionBySessionId(sessionId).getHours());
-            }
-            if (isEmptyOrNullOrZero(sessionDataDTO.getProductivityScore())) {
-                sessionDataDTO1.setProductivityScore(userDataRepository.getSessionBySessionId(sessionId).getProductivityScore());
-            }
-            if (isEmptyOrNullOrZero(sessionDataDTO.getComment())) {
-                sessionDataDTO1.setComment(userDataRepository.getSessionBySessionId(sessionId).getComment());
+            // Preserve existing values when fields are null or empty
+            if (isEmptyOrNull(updateSessionDTO.getDate())) {
+                updateSessionDTO1.setDate(existingSessionFromRepo.getDate());
             }
 
-            sessionDataDTO1.setCreatedAt(userDataRepository.getSessionBySessionId(sessionId).getCreatedAt());
-            if (userDataRepository.updateSession(sessionId, sessionDataDTO1) == 1) {
-                return true;
+            else {
+                updateSessionDTO1.setDate(updateSessionDTO.getDate());
             }
+
+            if (isEmptyOrNull(updateSessionDTO.getComment())) {
+                updateSessionDTO1.setComment(existingSessionFromRepo.getComment());
+            }
+
+            else {
+                updateSessionDTO1.setComment(updateSessionDTO.getComment());
+            }
+
+            if (isNull(updateSessionDTO.getHours())) {
+                updateSessionDTO1.setHours(existingSessionFromRepo.getHours());
+            }
+
+            else {
+                updateSessionDTO1.setHours(updateSessionDTO.getHours());
+            }
+
+            if (isNull(updateSessionDTO.getProductivityScore())) {
+                updateSessionDTO1.setProductivityScore(existingSessionFromRepo.getProductivityScore());
+            }
+
+            else {
+                updateSessionDTO1.setProductivityScore(updateSessionDTO.getProductivityScore());
+            }
+
+            // Preserve original creation timestamp
+            updateSessionDTO1.setCreatedAt(existingSessionFromRepo.getCreatedAt());
+
+            // Execute update and verify that session exists
+            int valueOfUpdateSQLUpdateQuery = userDataRepository.updateSession(sessionId, updateSessionDTO1);
+
+            if (valueOfUpdateSQLUpdateQuery == 0) {             // No rows updated means session does not exist
+                throw new CustomException("Session does not exist", "NON_EXISTENT_SESSION");
+            }
+            return true;
         }
 
-        throw new CustomException("Session does not exist", "NON_EXISTENT_SESSION");
+        // Token does not match session owner
+        throw new InvalidTokenSessionIdException("Given token and session-id doesn't match user", "INVALID_TOKEN_SESSION_ID");
     }
 
-    public boolean isEmptyOrNullOrZero(Object o) {
-        if (o.equals("") || o.equals(null) || o.equals(0) || o.toString().equals("0.0") ) {
+
+    public void updateSessionInRepo(UpdateSessionDTO updateSessionDTO, String token, int sessionId) {
+        if (userDataRepository.doesTokenExist(token)) {
+            updateSession(updateSessionDTO, token, sessionId);
+        } else {
+            throw new InvalidTokenException("Unauthorized token is given", "UNAUTHENTICATED_TOKEN");
+        }
+    }
+
+
+    public boolean isEmptyOrNull(String s) {
+        if (Objects.equals(s, "") || s == null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isNull(Integer i) {
+        if (i == null) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isNull(Float f) {
+        if (f == null) {
             return true;
         }
         return false;
