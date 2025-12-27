@@ -2,6 +2,7 @@ package main.java.no.hiof.studytracker.repository;
 
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
+import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
@@ -245,7 +246,7 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public SessionDataDTO getSessionBySessionId(int sessionId) {
+    public UpdateSessionDTO getSessionBySessionId(int sessionId) {
         String sql = "SELECT date, hours, productivity_score, comment, created_at FROM sessions WHERE id = ?";
 
         try (Connection connection = DB.getConnection()) {
@@ -253,7 +254,7 @@ public class UserDataRepository implements UserRepository {
             pstm.setInt(1, sessionId);
 
             ResultSet rs = pstm.executeQuery();
-            SessionDataDTO sessionDataDTO = new SessionDataDTO(rs.getString("date"), rs.getFloat("hours"),
+            UpdateSessionDTO sessionDataDTO = new UpdateSessionDTO(rs.getString("date"), rs.getFloat("hours"),
                     rs.getInt("productivity_score"), rs.getString("comment"), rs.getString("created_at"));
 
             return sessionDataDTO;
@@ -264,18 +265,18 @@ public class UserDataRepository implements UserRepository {
     }
 
 
-    public int updateSession(int sessionId, SessionDataDTO sessionDataDTO) {
+    public int updateSession(int sessionId, UpdateSessionDTO updateSessionDTO) {
         String sql = "UPDATE sessions " +
                 "SET date = ?, hours = ?, productivity_score = ?, comment = ?, updated_at = ? " +
                 "WHERE id = ?";
 
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sql);
-            pstm.setString(1, sessionDataDTO.getDate());
-            pstm.setFloat(2, sessionDataDTO.getHours());
-            pstm.setInt(3, sessionDataDTO.getProductivityScore());
-            pstm.setString(4, sessionDataDTO.getComment());
-            pstm.setString(5, sessionDataDTO.getUpdatedAt());
+            pstm.setString(1, updateSessionDTO.getDate());
+            pstm.setFloat(2, updateSessionDTO.getHours());
+            pstm.setInt(3, updateSessionDTO.getProductivityScore());
+            pstm.setString(4, updateSessionDTO.getComment());
+            pstm.setString(5, updateSessionDTO.getUpdatedAt());
             pstm.setInt(6, sessionId);
 
             return pstm.executeUpdate();

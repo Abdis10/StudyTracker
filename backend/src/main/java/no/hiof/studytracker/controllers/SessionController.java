@@ -2,7 +2,10 @@ package main.java.no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
 import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
+import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
+import main.java.no.hiof.studytracker.exceptions.InvalidTokenException;
+import main.java.no.hiof.studytracker.exceptions.InvalidTokenSessionIdException;
 import main.java.no.hiof.studytracker.service.SessionService;
 
 import java.util.*;
@@ -43,19 +46,29 @@ public class SessionController {
     public void updateSession(Context cxt) {
         try {
             int sessionId = Integer.parseInt(cxt.pathParam("sessionsId"));
-            SessionDataDTO sessionDataDTO = cxt.bodyAsClass(SessionDataDTO.class);
+            UpdateSessionDTO updateSessionDTO = cxt.bodyAsClass(UpdateSessionDTO.class);
             String token = cxt.header("Authorization").substring(7);
-            sessionService.updateSessionInRepo(sessionDataDTO, token, sessionId);
+            sessionService.updateSessionInRepo(updateSessionDTO, token, sessionId);
             cxt.status(200).json(Map.of(
                     "Message: ", "Session successfully updated"
             ));
-        } catch (CustomException e) {
-            cxt.status(404).json(Map.of(
+        } catch (InvalidTokenSessionIdException e) {
+            cxt.status(401).json(Map.of(
                "Message: ", e.getErrorCode()
             ));
         }
+        catch (InvalidTokenException e) {
+            cxt.status(403).json(Map.of(
+                    "Message: ", e.getErrorCode()
+            ));
+        }
+
+        catch (CustomException e) {
+            cxt.status(404).json(Map.of(
+                    "Message: ", e.getErrorCode()
+            ));
+        }
+
     }
-
-
 
 }
