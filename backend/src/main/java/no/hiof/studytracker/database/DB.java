@@ -1,12 +1,14 @@
 package main.java.no.hiof.studytracker.database;
 
+import main.java.no.hiof.studytracker.exceptions.DatabaseException;
+
 import java.sql.*;
 
 public class DB {
     private static final String URL = "jdbc:sqlite:database/studytracker.db";
 
     // Kjør migrations (database‐endringer som er lagret som kode), Kalles kun ved app-oppstart
-    public static void migrate() throws SQLException {
+    public static void migrate() {
         try (Connection conn = DriverManager.getConnection(URL)) {
             Statement stmt = conn.createStatement();
 
@@ -38,19 +40,34 @@ public class DB {
                 );
             """;
 
+            String createSessionTokenTable = """
+                    CREATE TABLE IF NOT EXISTS session_token (
+                    session_token_id TEXT PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    created_at TEXT, 
+                    expires_at TEXT,
+                    FOREIGN KEY (user_id) REFERENCES user_profile(id)
+                    );
+            """;
+
             stmt.execute(createUsersTable);
             stmt.execute(createSessionsTable);     // migration
+            stmt.execute(createSessionTokenTable);
             System.out.println("Database Migrations fullført.");
         }
-        catch (Exception e) {
+        catch (SQLException e) {
             System.err.println("Database Migration-feil: " + e.getMessage());
-            throw new RuntimeException("Kunne ikke koble til SQlite");
+            throw new DatabaseException("Kunne ikke koble til SQLite!", "DB-CONNECTION-FAILED", e);
         }
 
     }
 
-    public static Connection getConnection()throws SQLException {
-        return DriverManager.getConnection(URL);
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(URL);
+        } catch (SQLException e) {
+            throw new DatabaseException("Feil ved opprettelse av av database-connection", "DB-CONNECTION-FAILED", e);
+        }
     }
 
 }

@@ -1,63 +1,72 @@
 package main.java.no.hiof.studytracker.repository;
 
+import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
+import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
+import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.database.DB;
+import main.java.no.hiof.studytracker.exceptions.CustomException;
+import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.model.User;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDataRepository implements UserRepository {
     public UserDataRepository() {}
 
-
     public boolean usernameExists(String username) {
-        boolean usernameExists = false;
-        try (Connection connection = DB.getConnection()) {
-            String sql = "SELECT * FROM user_profile";
+        String sql = "SELECT 1 FROM user_profile WHERE username = ? LIMIT 1";
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+        try (Connection connection = DB.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            while ( rs.next() ) {
-                if (rs.getString("username").equalsIgnoreCase(username)){
-                    usernameExists = true;
-                }
+            stmt.setString(1, username);
 
-                else {
-                    usernameExists = false;
-                }
-            }
+            ResultSet rs = stmt.executeQuery();
+            return rs.next(); // returnerer true hvis en rad finnes
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new CustomException("Database error while checking username", e);
         }
-
-        return usernameExists;
     }
 
     public boolean emailExists(String email) {
-        boolean emailExists = false;
+        String sql = "SELECT 1 FROM user_profile WHERE email = ? LIMIT 1";
+
+        try (Connection connection = DB.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+
+        } catch (Exception e) {
+            throw new CustomException("Database error while checking email", e);
+        }
+    }
+
+
+    public String getPasswordHash(String email) {
+        String sql = "SELECT 1, password_hash FROM user_profile WHERE email = ?";
+
         try (Connection connection = DB.getConnection()) {
-            String sql = "SELECT * FROM user_profile";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, email);
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery();
 
-            while ( rs.next() ) {
-                if (rs.getString("email").equalsIgnoreCase(email)){
-                    emailExists = true;
-                }
-
-                else {
-                    emailExists = false;
-                }
+            while (rs.next()) {
+                return rs.getString("password_hash");
             }
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+                throw new CustomException("Database error, couldn't find email");
         }
 
-        return emailExists;
+        return null;
     }
 
     public void saveUser(User user) {
@@ -78,8 +87,216 @@ public class UserDataRepository implements UserRepository {
 
             pstm.executeUpdate();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new CustomException("Couldn't save user in database", e);
         }
+    }
+
+    public void saveSessionToken(String sessionTokenId, int userId, String createdAt, String expiresAt) {
+        String sessionData = "INSERT INTO session_token(session_token_id, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sessionData);
+
+            pstm.setString(1, sessionTokenId);
+            pstm.setInt(2, userId);
+            pstm.setString(3,createdAt);
+            pstm.setString(4, expiresAt);
+
+            pstm.executeUpdate();
+        } catch (Exception e) {
+            throw new CustomException("Couldn't save session token in database", e);
+        }
+    }
+
+    public String getId(String email) {
+        String sql = "SELECT id, 1 from user_profile WHERE email = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                return rs.getString("id");
+            }
+
+        } catch (Exception e) {
+            throw new CustomException("User id doesn't exist!", e);
+        }
+
+        return null;
+    }
+
+
+    public String sessionTokenId(int userID) {
+        String sql = "SELECT session_token_id FROM session_token WHERE user_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userID);
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                return rs.getString("session_token_id");
+            }
+
+        } catch (Exception e) {
+            throw new CustomException("Couldn't find any session token for user with id " + userID);
+        }
+
+        return null;
+    }
+
+    public int getUserIdByToken(String token) {
+        String sql = "SELECT user_id FROM session_token WHERE session_token_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, token);
+            ResultSet rs = pstm.executeQuery();
+
+            while (rs.next()) {
+                return rs.getInt("user_id");
+            }
+        }
+
+        catch (Exception e) {
+            throw new CustomException("Didn't find user id for the token:" + token);
+        }
+
+        return Integer.parseInt(null);
+    }
+
+    public void registerStudySession(Session session) {
+        String sql = "INSERT INTO sessions(user_id, date, hours, productivity_score, comment, created_at) VALUES(?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+
+            pstm.setInt(1, session.getUserId());
+            pstm.setString(2, session.getDate());
+            pstm.setFloat(3, session.getHours());
+            pstm.setInt(4, session.getProductivityScore());
+            pstm.setString(5, session.getComment());
+            pstm.setString(6, session.getCreatedAt());
+
+            pstm.executeUpdate();
+
+        } catch (Exception e) {
+            throw new CustomException("Couldn't save session in database");
+        }
+
+    }
+
+    public boolean doesTokenExist(String token) {
+        String sql = "SELECT session_token_id FROM session_token WHERE session_token_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, token);
+            ResultSet rs = pstm.executeQuery();
+            return rs.next();
+        }
+
+        catch (SQLException e) {
+            throw new CustomException("Unidentified token");
+        }
+    }
+
+    public List<SessionResponseDTO> getSessions(int userId) {
+        String sql = "SELECT date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            ArrayList<SessionResponseDTO> arrayOfSessions = new ArrayList<>();
+
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getString("date"), rs.getFloat("hours"),
+                        rs.getInt("productivity_score"), rs.getString("comment"),
+                        rs.getString("created_At"), rs.getString("updated_at"));
+
+                arrayOfSessions.add(sessionResponseDTO);
+            }
+
+            return arrayOfSessions;
+        }
+
+        catch (SQLException e) {
+            throw new CustomException("Database error!", e.getCause());
+        }
+
+    }
+
+    public int getUserIdBySessionId(int sessionId) {
+        String sql = "SELECT user_id FROM sessions WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, sessionId);
+
+            ResultSet rs = pstm.executeQuery();
+            return rs.getInt("user_id");
+
+        } catch (SQLException e) {
+            throw new CustomException("Didn't find user-id that matches given session-id", e);
+        }
+    }
+
+    public UpdateSessionDTO getSessionBySessionId(int sessionId) {
+        String sql = "SELECT date, hours, productivity_score, comment, created_at FROM sessions WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, sessionId);
+
+            ResultSet rs = pstm.executeQuery();
+            UpdateSessionDTO sessionDataDTO = new UpdateSessionDTO(rs.getString("date"), rs.getFloat("hours"),
+                    rs.getInt("productivity_score"), rs.getString("comment"), rs.getString("created_at"));
+
+            return sessionDataDTO;
+
+        } catch (SQLException e) {
+            throw new CustomException("Error in database when retrieving session by session-id", e);
+        }
+    }
+
+
+    public int updateSession(int sessionId, UpdateSessionDTO updateSessionDTO) {
+        String sql = "UPDATE sessions " +
+                "SET date = ?, hours = ?, productivity_score = ?, comment = ?, updated_at = ? " +
+                "WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, updateSessionDTO.getDate());
+            pstm.setFloat(2, updateSessionDTO.getHours());
+            pstm.setInt(3, updateSessionDTO.getProductivityScore());
+            pstm.setString(4, updateSessionDTO.getComment());
+            pstm.setString(5, updateSessionDTO.getUpdatedAt());
+            pstm.setInt(6, sessionId);
+
+            return pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new CustomException("Error when updating session in DB", e);
+        }
+    }
+
+    public int deleteSession(int sessionId) {
+        String sql = "DELETE FROM sessions WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, sessionId);
+
+            return pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new CustomException("Error when deleting session in DB", e);
+        }
+
     }
 
 

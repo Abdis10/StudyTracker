@@ -1,14 +1,21 @@
 package main.java.no.hiof.studytracker;
 
 import io.javalin.Javalin;
-import main.java.no.hiof.studytracker.DTOs.SignupDTO;
+import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
+import main.java.no.hiof.studytracker.controllers.LoginController;
+import main.java.no.hiof.studytracker.controllers.SessionController;
 import main.java.no.hiof.studytracker.controllers.SignupController;
 import main.java.no.hiof.studytracker.database.DB;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
-import main.java.no.hiof.studytracker.service.SignupResult;
+import main.java.no.hiof.studytracker.service.LoginService;
+import main.java.no.hiof.studytracker.service.SessionService;
 import main.java.no.hiof.studytracker.service.SignupService;
+
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class Application {
@@ -24,10 +31,20 @@ public class Application {
         }
 
         Javalin app = Javalin.create().start(7000);
-        SignupDTO signupDTO = new SignupDTO("Zak", "Ahmed", "Zak10", "zak12345@example.com","Zak12345", "male");
         UserDataRepository userDataRepository = new UserDataRepository();
+
+        // Signup section
         SignupService signupService = new SignupService(userDataRepository);
         SignupController signupController = new SignupController(signupService, userDataRepository);
+
+        // Login section
+        LoginService loginService = new LoginService(userDataRepository);
+        LoginController loginController = new LoginController(loginService);
+
+
+        // Session operations section
+        SessionService sessionService = new SessionService(userDataRepository);
+        SessionController sessionController = new SessionController(sessionService);
 
         app.get("/", ctx -> {
            ctx.result("Hei fra Javalin!");
@@ -37,5 +54,24 @@ public class Application {
             signupController.signupUser(ctx);
         });
 
+        app.post("/auth/login", ctx -> {
+            loginController.loginUser(ctx);
+        });
+
+        app.post("/session/session-registration", ctx -> {
+            sessionController.studySession(ctx);
+        });
+
+        app.get("/session/sessions", ctx -> {
+            sessionController.retrieveSessions(ctx);
+        });
+
+        app.put("/session/{sessionsId}", ctx -> {
+            sessionController.updateSession(ctx);
+        });
+
+        app.delete("session/{sessionId}", ctx -> {
+           sessionController.deleteSession(ctx);
+        });
     }
 }

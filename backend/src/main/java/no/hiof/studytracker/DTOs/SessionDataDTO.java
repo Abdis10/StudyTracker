@@ -1,7 +1,7 @@
-package main.java.no.hiof.studytracker.model;
+package main.java.no.hiof.studytracker.DTOs;
 
-public class Session {
-    private int id;
+public class SessionDataDTO {
+    private String token;
     private int userId;
     private String date;
     private float hours;
@@ -10,22 +10,9 @@ public class Session {
     private String createdAt;
     private String updatedAt;
 
+    public SessionDataDTO() {}
 
-    public Session() {}
-
-    public Session(int id, int userId, String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
-        this.id = id;
-        this.userId = userId;
-        this.date = date;
-        this.hours = hours;
-        this.productivityScore = productivityScore;
-        this.comment = comment;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public Session(int userId, String date, float hours, int productivityScore, String comment, String createdAt) {
-        this.userId = userId;
+    public SessionDataDTO(String date, float hours, int productivityScore, String comment, String createdAt) {
         this.date = date;
         this.hours = hours;
         this.productivityScore = productivityScore;
@@ -33,21 +20,14 @@ public class Session {
         this.createdAt = createdAt;
     }
 
-    public int getId() {
-        return id;
+    public String getToken() {
+        return token;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     public String getDate() {
         return date;
@@ -99,15 +79,16 @@ public class Session {
 
     @Override
     public String toString() {
-        return "Session{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", date='" + date + '\'' +
-                ", hours=" + hours +
-                ", productivityScore=" + productivityScore +
-                ", comment='" + comment + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                ", updatedAt='" + updatedAt + '\'' +
+        return "{" + '\n' +
+                "date: " + date + '\n' +
+                "hours: " + hours + '\n' +
+                "productivityScore: " + productivityScore + '\n' +
+                "comment: " + comment + '\n' +
+                "created at: " + createdAt + '\n' +
+                "updated_at: " + updatedAt + '\n' +
                 '}';
     }
+
+
+
 }

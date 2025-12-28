@@ -2,10 +2,16 @@ package main.java.no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
 import main.java.no.hiof.studytracker.DTOs.SignupDTO;
+import main.java.no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
+import main.java.no.hiof.studytracker.exceptions.InvalidEmailFormatException;
+import main.java.no.hiof.studytracker.exceptions.InvalidPasswordException;
+import main.java.no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
 import main.java.no.hiof.studytracker.model.Errortype;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 import main.java.no.hiof.studytracker.service.SignupResult;
 import main.java.no.hiof.studytracker.service.SignupService;
+
+import java.util.Map;
 
 public class SignupController {
     private SignupService signupService;
@@ -19,18 +25,31 @@ public class SignupController {
     public void signupUser(Context ctx) {
         SignupDTO signupDTO = ctx.bodyAsClass(SignupDTO.class);
 
-        SignupResult result = signupService.signup(signupDTO);
-
-        if (result.getErrorType() == Errortype.USERNAME_EXISTS) {
-            ctx.status(409).result(result.getMessage());
+        try {
+            signupService.signup(signupDTO);
+            ctx.status(200).result("User registered successfully.");
         }
 
-        else if (result.getErrorType() == Errortype.EMAIL_EXISTS) {
-            ctx.status(409).result(result.getMessage());
+        catch (UsernameAlreadyExistsException e) {
+            ctx.status(409).json(Map.of(
+                    "error", e.getMessage(),
+                    "username", e.getUsername()
+            ));
+
+        } catch (EmailAlreadyExistsException e) {
+            ctx.status(409).json(Map.of(
+                    "error", e.getMessage(),
+                    "email", e.getEmail()
+            ));
+
+        } catch (InvalidEmailFormatException | InvalidPasswordException e) {
+            ctx.status(400).json(Map.of(
+                    "error", e.getMessage()
+            ));
+        } catch (Exception e) {
+            // Felles fallback
+            ctx.status(500).json("An unexpected error occurred");
         }
 
-        else if (result.getErrorType() == Errortype.NONE) {
-            ctx.status(201).result(result.getMessage());
-        }
     }
 }
