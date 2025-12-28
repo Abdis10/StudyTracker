@@ -1,6 +1,7 @@
 package main.java.no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
+import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.exceptions.InvalidTokenException;
@@ -18,7 +19,8 @@ public class SessionController {
 
     public void studySession(Context ctx) {
         try {
-            sessionService.studySession(ctx);
+            SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
+            sessionService.studySession(sessionDataDTO);
             ctx.status(201).json(Map.of(
                     "message: ", "study session is successfully created"
             ));
@@ -87,12 +89,6 @@ public class SessionController {
         } catch (CustomException e) {
             ctx.status(404).json(Map.of(
                     "Message: ", e.getErrorCode()
-            ));
-        }
-
-        catch (Exception e) {
-            ctx.status(500).json(Map.of(
-                    "Message: ", e.getMessage()
             ));
         }
     }

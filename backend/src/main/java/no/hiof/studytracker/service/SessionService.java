@@ -20,8 +20,7 @@ public class SessionService {
         this.userDataRepository = userDataRepository;
     }
 
-    public void validateSessionData(Context ctx) {
-        SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
+    public void validateSessionData(SessionDataDTO sessionDataDTO) {
         if (sessionDataDTO.getHours() < 0) {
             throw new CustomException("Number of hours must be higher than 0", "INVALID_HOURS");
         }
@@ -33,24 +32,22 @@ public class SessionService {
 
     }
 
-    public void createStudySession(Context ctx) {
-            SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
+    public void createStudySession(SessionDataDTO sessionDataDTO) {
             String token = sessionDataDTO.getToken();
             int userId = userDataRepository.getUserIdByToken(token);
 
             if (userId != 0) {
                 String createdAt = LocalDateTime.now().toString();
                 sessionDataDTO.setCreatedAt(createdAt);
-
                 Session session = new Session(userId, sessionDataDTO.getDate(), sessionDataDTO.getHours(), sessionDataDTO.getProductivityScore(),
                         sessionDataDTO.getComment(), sessionDataDTO.getCreatedAt());
                 userDataRepository.registerStudySession(session);
             }
     }
 
-    public void studySession(Context ctx) {
-        validateSessionData(ctx);
-        createStudySession(ctx);
+    public void studySession(SessionDataDTO sessionDataDTO) {
+        validateSessionData(sessionDataDTO);
+        createStudySession(sessionDataDTO);
     }
 
 
@@ -203,6 +200,17 @@ public class SessionService {
         return false;
     }
 
+    /**
+     * Delete session by token and sessionId
+     * Validate token, then check if token and sessionId belongs to the user of the token and sessionId
+     * This method throws an exception on failure and returns normally on success.
+     * @param token                         authentication token
+     * @param sessionId                     id of the session to be deleted
+     * @throws CustomException              if session doesn't exist
+     * @throws SessionOwnershipException    if the token does not have access to the specified session
+     * @throws InvalidTokenException        if token is Invalid
+     */
+
     public void deleteSessionForUser(String token, int sessionId) {
         if (userDataRepository.doesTokenExist(token)) {
             if (doesTokenMatchUser(token, sessionId)) {
@@ -212,7 +220,7 @@ public class SessionService {
                 }
             }
             else {
-                throw new SessionOwnershipException("Invalid token and sessionId, therefore can't delete session", "INVALID_TOKEN_SESSION_ID");
+                throw new SessionOwnershipException("Invalid token or sessionId, therefore can't delete session", "INVALID_TOKEN_SESSION_ID");
             }
         } else {
             throw new InvalidTokenException("Token couldn't be verified", "UNAUTHORIZED_TOKEN");
