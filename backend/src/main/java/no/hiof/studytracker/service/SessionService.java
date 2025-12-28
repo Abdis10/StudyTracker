@@ -6,7 +6,7 @@ import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
 import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.exceptions.InvalidTokenException;
-import main.java.no.hiof.studytracker.exceptions.InvalidTokenSessionIdException;
+import main.java.no.hiof.studytracker.exceptions.SessionOwnershipException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
 
@@ -89,13 +89,6 @@ public class SessionService {
     }
 
 
-    /*
-        1. Autentiser token
-        2. Hvis token er gyldig sjekk om den tilhører brukeren som ber om oppdateringen
-        3. Oppdater kun de feltene som brukeren ber endring om (la stå gamle verdier hvis de ikke er med i forespørselen)
-    */
-
-
     public boolean doesTokenMatchUser(String token, int sessionId) {
         int userIdByToken = userDataRepository.getUserIdByToken(token);
         int userIdBySessionId = userDataRepository.getUserIdBySessionId(sessionId);
@@ -176,7 +169,7 @@ public class SessionService {
         }
 
         // Token does not match session owner
-        throw new InvalidTokenSessionIdException("Given token and session-id doesn't match user", "INVALID_TOKEN_SESSION_ID");
+        throw new SessionOwnershipException("Given token and session-id doesn't match user", "INVALID_TOKEN_SESSION_ID");
     }
 
 
@@ -184,7 +177,7 @@ public class SessionService {
         if (userDataRepository.doesTokenExist(token)) {
             updateSession(updateSessionDTO, token, sessionId);
         } else {
-            throw new InvalidTokenException("Unauthorized token is given", "UNAUTHENTICATED_TOKEN");
+            throw new InvalidTokenException("Unauthorized token is given", "UNAUTHORIZED_TOKEN");
         }
     }
 
@@ -208,6 +201,22 @@ public class SessionService {
             return true;
         }
         return false;
+    }
+
+    public void deleteSessionForUser(String token, int sessionId) {
+        if (userDataRepository.doesTokenExist(token)) {
+            if (doesTokenMatchUser(token, sessionId)) {
+                int valueOfDeleteSessionQuery = userDataRepository.deleteSession(sessionId);
+                if (valueOfDeleteSessionQuery == 0) {
+                    throw new CustomException("Session couldn't be deleted", "NON_EXISTENT_SESSION_ID");
+                }
+            }
+            else {
+                throw new SessionOwnershipException("Invalid token and sessionId, therefore can't delete session", "INVALID_TOKEN_SESSION_ID");
+            }
+        } else {
+            throw new InvalidTokenException("Token couldn't be verified", "UNAUTHORIZED_TOKEN");
+        }
     }
 
 }

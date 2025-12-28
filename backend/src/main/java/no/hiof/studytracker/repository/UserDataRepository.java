@@ -285,4 +285,19 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
+    public int deleteSession(int sessionId) {
+        String sql = "DELETE FROM sessions WHERE id = ?";
+
+        try (Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, sessionId);
+
+            return pstm.executeUpdate();
+        } catch (SQLException e) {
+            throw new CustomException("Error when deleting session in DB", e);
+        }
+
+    }
+
+
 }
