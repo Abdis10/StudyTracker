@@ -69,5 +69,9 @@ public class Application {
         app.put("/session/{sessionsId}", ctx -> {
             sessionController.updateSession(ctx);
         });
+
+        app.delete("session/{sessionId}", ctx -> {
+           sessionController.deleteSession(ctx);
+        });
     }
 }

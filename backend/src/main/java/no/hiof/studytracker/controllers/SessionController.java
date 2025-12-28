@@ -1,11 +1,10 @@
 package main.java.no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
-import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
 import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.exceptions.InvalidTokenException;
-import main.java.no.hiof.studytracker.exceptions.InvalidTokenSessionIdException;
+import main.java.no.hiof.studytracker.exceptions.SessionOwnershipException;
 import main.java.no.hiof.studytracker.service.SessionService;
 
 import java.util.*;
@@ -52,23 +51,50 @@ public class SessionController {
             cxt.status(200).json(Map.of(
                     "Message: ", "Session successfully updated"
             ));
-        } catch (InvalidTokenSessionIdException e) {
+        } catch (SessionOwnershipException e) {
             cxt.status(401).json(Map.of(
                "Message: ", e.getErrorCode()
             ));
-        }
-        catch (InvalidTokenException e) {
+        } catch (InvalidTokenException e) {
             cxt.status(403).json(Map.of(
                     "Message: ", e.getErrorCode()
             ));
-        }
-
-        catch (CustomException e) {
+        } catch (CustomException e) {
             cxt.status(404).json(Map.of(
                     "Message: ", e.getErrorCode()
             ));
         }
+    }
 
+
+    public void deleteSession(Context ctx) {
+        try {
+            int sessionId = Integer.parseInt(ctx.pathParam("sessionId"));
+            String token = ctx.header("Authorization").substring(7);
+            sessionService.deleteSessionForUser(token, sessionId);
+            ctx.status(204).json(Map.of(
+                    "Message:", "Session is successfully deteted",
+                    "Deleted: ", true
+            ));
+        } catch (InvalidTokenException e) {
+            ctx.status(401).json(Map.of(
+                    "Message: ", e.getErrorCode()
+            ));
+        } catch (SessionOwnershipException e) {
+            ctx.status(403).json(Map.of(
+                    "Message: ", e.getErrorCode()
+            ));
+        } catch (CustomException e) {
+            ctx.status(404).json(Map.of(
+                    "Message: ", e.getErrorCode()
+            ));
+        }
+
+        catch (Exception e) {
+            ctx.status(500).json(Map.of(
+                    "Message: ", e.getMessage()
+            ));
+        }
     }
 
 }
