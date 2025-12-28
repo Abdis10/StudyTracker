@@ -20,8 +20,7 @@ public class SessionService {
         this.userDataRepository = userDataRepository;
     }
 
-    public void validateSessionData(Context ctx) {
-        SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
+    public void validateSessionData(SessionDataDTO sessionDataDTO) {
         if (sessionDataDTO.getHours() < 0) {
             throw new CustomException("Number of hours must be higher than 0", "INVALID_HOURS");
         }
@@ -33,24 +32,22 @@ public class SessionService {
 
     }
 
-    public void createStudySession(Context ctx) {
-            SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
+    public void createStudySession(SessionDataDTO sessionDataDTO) {
             String token = sessionDataDTO.getToken();
             int userId = userDataRepository.getUserIdByToken(token);
 
             if (userId != 0) {
                 String createdAt = LocalDateTime.now().toString();
                 sessionDataDTO.setCreatedAt(createdAt);
-
                 Session session = new Session(userId, sessionDataDTO.getDate(), sessionDataDTO.getHours(), sessionDataDTO.getProductivityScore(),
                         sessionDataDTO.getComment(), sessionDataDTO.getCreatedAt());
                 userDataRepository.registerStudySession(session);
             }
     }
 
-    public void studySession(Context ctx) {
-        validateSessionData(ctx);
-        createStudySession(ctx);
+    public void studySession(SessionDataDTO sessionDataDTO) {
+        validateSessionData(sessionDataDTO);
+        createStudySession(sessionDataDTO);
     }
 
 
