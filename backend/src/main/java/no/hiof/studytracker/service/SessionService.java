@@ -200,6 +200,17 @@ public class SessionService {
         return false;
     }
 
+    /**
+     * Delete session by token and sessionId
+     * Validate token, then check if token and sessionId belongs to the user of the token and sessionId
+     * This method throws an exception on failure and returns normally on success.
+     * @param token                         authentication token
+     * @param sessionId                     id of the session to be deleted
+     * @throws CustomException              if session doesn't exist
+     * @throws SessionOwnershipException    if the token does not have access to the specified session
+     * @throws InvalidTokenException        if token is Invalid
+     */
+
     public void deleteSessionForUser(String token, int sessionId) {
         if (userDataRepository.doesTokenExist(token)) {
             if (doesTokenMatchUser(token, sessionId)) {
@@ -209,7 +220,7 @@ public class SessionService {
                 }
             }
             else {
-                throw new SessionOwnershipException("Invalid token and sessionId, therefore can't delete session", "INVALID_TOKEN_SESSION_ID");
+                throw new SessionOwnershipException("Invalid token or sessionId, therefore can't delete session", "INVALID_TOKEN_SESSION_ID");
             }
         } else {
             throw new InvalidTokenException("Token couldn't be verified", "UNAUTHORIZED_TOKEN");
