@@ -1,5 +1,6 @@
 package main.java.no.hiof.studytracker.service;
 
+import main.java.no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.exceptions.UserAuthenticationException;
 import main.java.no.hiof.studytracker.model.SessionToken;
 import main.java.no.hiof.studytracker.repository.UserDataRepository;
@@ -27,13 +28,13 @@ public class LoginService {
         if (userDataRepository.emailExists(email)) {
             if (BCrypt.checkpw(password, userDataRepository.getPasswordHash(email))) {
                 return true;
+            } else {
+                return false;
             }
         }
         else {
             throw new UserAuthenticationException(email);
         }
-
-        return false;
     }
 
     public String createSessionToken(String email, String password) {
@@ -49,12 +50,12 @@ public class LoginService {
             return userDataRepository.sessionTokenId(userID);
         }
 
-        return "Unsuccessfull session token creation!";
+        else {
+            throw new CustomException("Couldn't validate user!", "INVALID_PASSWORD");
+        }
     }
 
     public String getSessionTokenId(String token) {
         return token;
     }
-
-
 }
