@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.repository;
+package no.hiof.studytracker.repository;
 
 import main.java.no.hiof.studytracker.model.User;
 

@@ -1,10 +1,10 @@
-package main.java.no.hiof.studytracker.controllers;
+package no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
-import main.java.no.hiof.studytracker.DTOs.LoginDTO;
-import main.java.no.hiof.studytracker.exceptions.CustomException;
-import main.java.no.hiof.studytracker.exceptions.UserAuthenticationException;
-import main.java.no.hiof.studytracker.service.LoginService;
+import no.hiof.studytracker.DTOs.LoginDTO;
+import no.hiof.studytracker.exceptions.CustomException;
+import no.hiof.studytracker.exceptions.UserAuthenticationException;
+import no.hiof.studytracker.service.LoginService;
 
 import java.util.Map;
 

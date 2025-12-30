@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.service;
+package no.hiof.studytracker.service;
 
 import main.java.no.hiof.studytracker.model.Errortype;
 

@@ -1,9 +1,9 @@
-package main.java.no.hiof.studytracker.service;
+package no.hiof.studytracker.service;
 
-import main.java.no.hiof.studytracker.exceptions.CustomException;
-import main.java.no.hiof.studytracker.exceptions.UserAuthenticationException;
+import no.hiof.studytracker.exceptions.CustomException;
+import no.hiof.studytracker.exceptions.UserAuthenticationException;
 import main.java.no.hiof.studytracker.model.SessionToken;
-import main.java.no.hiof.studytracker.repository.UserDataRepository;
+import no.hiof.studytracker.repository.UserDataRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.LocalDateTime;

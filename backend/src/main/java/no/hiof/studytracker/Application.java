@@ -1,21 +1,17 @@
-package main.java.no.hiof.studytracker;
+package no.hiof.studytracker;
 
 import io.javalin.Javalin;
-import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
-import main.java.no.hiof.studytracker.controllers.LoginController;
-import main.java.no.hiof.studytracker.controllers.SessionController;
-import main.java.no.hiof.studytracker.controllers.SignupController;
-import main.java.no.hiof.studytracker.database.DB;
-import main.java.no.hiof.studytracker.repository.UserDataRepository;
-import main.java.no.hiof.studytracker.service.LoginService;
-import main.java.no.hiof.studytracker.service.SessionService;
-import main.java.no.hiof.studytracker.service.SignupService;
+import no.hiof.studytracker.controllers.LoginController;
+import no.hiof.studytracker.controllers.SessionController;
+import no.hiof.studytracker.controllers.SignupController;
+import no.hiof.studytracker.database.DB;
+import no.hiof.studytracker.repository.UserDataRepository;
+import no.hiof.studytracker.service.LoginService;
+import no.hiof.studytracker.service.SessionService;
+import no.hiof.studytracker.service.SignupService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 
 public class Application {

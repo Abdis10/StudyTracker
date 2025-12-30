@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.DTOs;
+package no.hiof.studytracker.DTOs;
 
 public class SignupDTO {
     private String firstname;
