@@ -1,10 +1,9 @@
-package main.java.no.hiof.studytracker.repository;
+package no.hiof.studytracker.repository;
 
-import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
-import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
-import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
-import main.java.no.hiof.studytracker.database.DB;
-import main.java.no.hiof.studytracker.exceptions.CustomException;
+import no.hiof.studytracker.DTOs.SessionResponseDTO;
+import no.hiof.studytracker.DTOs.UpdateSessionDTO;
+import no.hiof.studytracker.database.DB;
+import no.hiof.studytracker.exceptions.CustomException;
 import main.java.no.hiof.studytracker.model.Session;
 import main.java.no.hiof.studytracker.model.User;
 

@@ -1,15 +1,13 @@
-package main.java.no.hiof.studytracker.controllers;
+package no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
-import main.java.no.hiof.studytracker.DTOs.SignupDTO;
-import main.java.no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
-import main.java.no.hiof.studytracker.exceptions.InvalidEmailFormatException;
-import main.java.no.hiof.studytracker.exceptions.InvalidPasswordException;
-import main.java.no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
-import main.java.no.hiof.studytracker.model.Errortype;
-import main.java.no.hiof.studytracker.repository.UserDataRepository;
-import main.java.no.hiof.studytracker.service.SignupResult;
-import main.java.no.hiof.studytracker.service.SignupService;
+import no.hiof.studytracker.DTOs.SignupDTO;
+import no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
+import no.hiof.studytracker.exceptions.InvalidEmailFormatException;
+import no.hiof.studytracker.exceptions.InvalidPasswordException;
+import no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
+import no.hiof.studytracker.repository.UserDataRepository;
+import no.hiof.studytracker.service.SignupService;
 
 import java.util.Map;
 

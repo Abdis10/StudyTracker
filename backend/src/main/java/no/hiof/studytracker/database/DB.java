@@ -1,6 +1,6 @@
-package main.java.no.hiof.studytracker.database;
+package no.hiof.studytracker.database;
 
-import main.java.no.hiof.studytracker.exceptions.DatabaseException;
+import no.hiof.studytracker.exceptions.DatabaseException;
 
 import java.sql.*;
 
