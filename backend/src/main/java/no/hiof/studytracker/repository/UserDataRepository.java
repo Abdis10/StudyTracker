@@ -4,8 +4,8 @@ import no.hiof.studytracker.DTOs.SessionResponseDTO;
 import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.exceptions.CustomException;
-import main.java.no.hiof.studytracker.model.Session;
-import main.java.no.hiof.studytracker.model.User;
+import no.hiof.studytracker.model.Session;
+import no.hiof.studytracker.model.User;
 
 import java.sql.*;
 import java.time.LocalDateTime;

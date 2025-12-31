@@ -5,7 +5,7 @@ import no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
 import no.hiof.studytracker.exceptions.InvalidEmailFormatException;
 import no.hiof.studytracker.exceptions.InvalidPasswordException;
 import no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
-import main.java.no.hiof.studytracker.model.User;
+import no.hiof.studytracker.model.User;
 import no.hiof.studytracker.repository.UserDataRepository;
 
 public class SignupService {

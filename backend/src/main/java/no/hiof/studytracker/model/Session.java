@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.model;
+package no.hiof.studytracker.model;
 
 public class Session {
     private int id;

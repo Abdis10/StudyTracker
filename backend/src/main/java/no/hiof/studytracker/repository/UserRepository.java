@@ -1,6 +1,6 @@
 package no.hiof.studytracker.repository;
 
-import main.java.no.hiof.studytracker.model.User;
+import no.hiof.studytracker.model.User;
 
 import java.util.ArrayList;
 

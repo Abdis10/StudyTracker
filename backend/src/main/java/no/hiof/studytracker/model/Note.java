@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.model;
+package no.hiof.studytracker.model;
 
 public class Note extends ArticleNote {
     public Note(int id, int userId, String title, String content, String createdAt, String updatedAt) {
