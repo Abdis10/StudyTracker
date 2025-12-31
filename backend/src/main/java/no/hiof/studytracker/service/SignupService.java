@@ -1,12 +1,12 @@
-package main.java.no.hiof.studytracker.service;
+package no.hiof.studytracker.service;
 
-import main.java.no.hiof.studytracker.DTOs.SignupDTO;
-import main.java.no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
-import main.java.no.hiof.studytracker.exceptions.InvalidEmailFormatException;
-import main.java.no.hiof.studytracker.exceptions.InvalidPasswordException;
-import main.java.no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
-import main.java.no.hiof.studytracker.model.User;
-import main.java.no.hiof.studytracker.repository.UserDataRepository;
+import no.hiof.studytracker.DTOs.SignupDTO;
+import no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
+import no.hiof.studytracker.exceptions.InvalidEmailFormatException;
+import no.hiof.studytracker.exceptions.InvalidPasswordException;
+import no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
+import no.hiof.studytracker.model.User;
+import no.hiof.studytracker.repository.UserDataRepository;
 
 public class SignupService {
     private final UserDataRepository userDataRepository;
@@ -35,7 +35,6 @@ public class SignupService {
         if (signupDTO.getPassword().length() < 8) {
             throw new InvalidPasswordException("Password must be at least 8 characters.");
         }
-
     }
 
     public void registerUser(SignupDTO signupDTO) {

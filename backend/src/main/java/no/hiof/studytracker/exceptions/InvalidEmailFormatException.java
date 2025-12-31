@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.exceptions;
+package no.hiof.studytracker.exceptions;
 
 public class InvalidEmailFormatException extends RuntimeException {
 

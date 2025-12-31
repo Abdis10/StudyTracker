@@ -1,14 +1,13 @@
-package main.java.no.hiof.studytracker.service;
+package no.hiof.studytracker.service;
 
-import io.javalin.http.Context;
-import main.java.no.hiof.studytracker.DTOs.SessionDataDTO;
-import main.java.no.hiof.studytracker.DTOs.SessionResponseDTO;
-import main.java.no.hiof.studytracker.DTOs.UpdateSessionDTO;
-import main.java.no.hiof.studytracker.exceptions.CustomException;
-import main.java.no.hiof.studytracker.exceptions.InvalidTokenException;
-import main.java.no.hiof.studytracker.exceptions.SessionOwnershipException;
-import main.java.no.hiof.studytracker.model.Session;
-import main.java.no.hiof.studytracker.repository.UserDataRepository;
+import no.hiof.studytracker.DTOs.SessionDataDTO;
+import no.hiof.studytracker.DTOs.SessionResponseDTO;
+import no.hiof.studytracker.DTOs.UpdateSessionDTO;
+import no.hiof.studytracker.exceptions.CustomException;
+import no.hiof.studytracker.exceptions.InvalidTokenException;
+import no.hiof.studytracker.exceptions.SessionOwnershipException;
+import no.hiof.studytracker.model.Session;
+import no.hiof.studytracker.repository.UserDataRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;

@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.controllers;
+package no.hiof.studytracker.controllers;
 
 public class UserController {
 }

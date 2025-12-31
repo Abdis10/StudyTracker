@@ -1,4 +1,4 @@
-package main.java.no.hiof.studytracker.DTOs;
+package no.hiof.studytracker.DTOs;
 
 public class SignupDTO {
     private String firstname;
@@ -46,5 +46,17 @@ public class SignupDTO {
 
     public String getGender() {
         return gender;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
