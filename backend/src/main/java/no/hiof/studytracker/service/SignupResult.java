@@ -1,6 +1,6 @@
 package no.hiof.studytracker.service;
 
-import main.java.no.hiof.studytracker.model.Errortype;
+import no.hiof.studytracker.model.Errortype;
 
 public class SignupResult {
     private boolean success;

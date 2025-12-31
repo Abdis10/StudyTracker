@@ -5,6 +5,7 @@ import no.hiof.studytracker.exceptions.EmailAlreadyExistsException;
 import no.hiof.studytracker.exceptions.InvalidEmailFormatException;
 import no.hiof.studytracker.exceptions.InvalidPasswordException;
 import no.hiof.studytracker.exceptions.UsernameAlreadyExistsException;
+import no.hiof.studytracker.model.User;
 import no.hiof.studytracker.repository.UserDataRepository;
 import no.hiof.studytracker.service.SignupService;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class SignupServiceTest {
@@ -96,6 +99,19 @@ public class SignupServiceTest {
 
         // act + assert
         Assertions.assertDoesNotThrow( () -> signupService.validateSignupData(signupDTO));
+    }
+
+
+    @Test
+    public void shouldCreateUser() {
+        // arrange
+        SignupDTO signupDTO = new SignupDTO("Mohammed", "Ahmed","Moha07",  "Moha123@example.com", "Moha123", "Male");
+
+        // act
+        signupService.registerUser(signupDTO);
+
+        // assert
+        Mockito.verify(mockUserDataRepository).saveUser(any(User.class));
     }
  }
 

@@ -6,7 +6,7 @@ import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.InvalidTokenException;
 import no.hiof.studytracker.exceptions.SessionOwnershipException;
-import main.java.no.hiof.studytracker.model.Session;
+import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.repository.UserDataRepository;
 
 import java.time.LocalDateTime;
