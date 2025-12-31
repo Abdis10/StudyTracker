@@ -35,7 +35,6 @@ public class SignupService {
         if (signupDTO.getPassword().length() < 8) {
             throw new InvalidPasswordException("Password must be at least 8 characters.");
         }
-
     }
 
     public void registerUser(SignupDTO signupDTO) {
