@@ -28,7 +28,6 @@ public class SessionService {
         if (!userDataRepository.doesTokenExist(token)) {
             throw new CustomException("Token couldn't be verified", "UNIDENTIFIED_TOKEN");
         }
-
     }
 
     public void createStudySession(SessionDataDTO sessionDataDTO) {
