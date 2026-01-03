@@ -2,6 +2,7 @@ package no.hiof.studytracker.Unittesting.service;
 
 import no.hiof.studytracker.DTOs.SessionDataDTO;
 import no.hiof.studytracker.DTOs.SessionResponseDTO;
+import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.repository.UserDataRepository;
@@ -11,10 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -127,4 +129,55 @@ public class SessionServiceTest {
         return dto;
     }
 
+    @Test
+    public void shouldReturnTrueIfTokenAndUserMatch() {
+        // arrange
+        String token = "token";
+        int sessionId = 1;
+        when(mockUserDataRepository.getUserIdByToken(token)).thenReturn(1);
+        when(mockUserDataRepository.getUserIdBySessionId(sessionId)).thenReturn(1);
+
+        // act
+        boolean result  = sessionService.doesTokenMatchUser(token, sessionId);
+
+        // assert
+        assertTrue(result);
+    }
+
+    @Test
+    void shouldReturnFalseIfTokenAndUserDoNotMatch() {
+        // arrange
+        String token = "token";
+        int sessionId = 1;
+        when(mockUserDataRepository.getUserIdByToken(token)).thenReturn(1);
+        when(mockUserDataRepository.getUserIdBySessionId(sessionId)).thenReturn(2);
+
+        // act
+        boolean result  = sessionService.doesTokenMatchUser(token, sessionId);
+
+        // assert
+        assertFalse(result);
+    }
+
+    @Spy
+    @InjectMocks
+    SessionService spySessionService;
+
+    @Test
+    void shouldReturnTrueIfTokenAndSessionAreValid() {
+        // arrange
+        String token = "token";
+        int sessionId = 1;
+        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", "2025-12-24");
+        when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
+        when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(updateSessionDTO);
+        when(mockUserDataRepository.updateSession(sessionId, updateSessionDTO)).thenReturn(1);
+
+        // act
+        boolean result = spySessionService.updateSession(updateSessionDTO, token, sessionId);
+
+        // assert
+        assertTrue(result);
+        verify(mockUserDataRepository.updateSession(anyInt(), any(UpdateSessionDTO.class)));
+    }
 }
