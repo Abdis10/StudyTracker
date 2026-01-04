@@ -2,7 +2,7 @@ package no.hiof.studytracker.service;
 
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.UserAuthenticationException;
-import main.java.no.hiof.studytracker.model.SessionToken;
+import no.hiof.studytracker.model.SessionToken;
 import no.hiof.studytracker.repository.UserDataRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
