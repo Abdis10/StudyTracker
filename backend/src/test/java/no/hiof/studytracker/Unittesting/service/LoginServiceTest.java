@@ -17,6 +17,57 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Testklasse for {@link LoginService}.
+ *
+ * <p>
+ * Denne klassen inneholder enhetstester for autentisering og sesjonshåndtering
+ * i service-laget. Testene fokuserer på korrekt validering av brukerdata,
+ * sikker håndtering av passord og riktig samhandling med
+ * {@link UserDataRepository}.
+ * </p>
+ *
+ * <h2>Teststrategi</h2>
+ * <ul>
+ *     <li>Avhengigheter mot databaselaget isoleres ved bruk av {@link org.mockito.Mock}.</li>
+ *     <li>{@link org.mockito.Spy} benyttes der intern metodekall må kontrolleres,
+ *         for eksempel ved opprettelse av sesjonstoken.</li>
+ *     <li>Repository-adferd stubbes for å simulere ulike autentiseringsscenarioer.</li>
+ * </ul>
+ *
+ * <h2>Hva som testes</h2>
+ * <ul>
+ *     <li><b>Autentisering</b>
+ *         <ul>
+ *             <li>Vellykket autentisering med gyldig e-post og passord</li>
+ *             <li>Feil passord returnerer {@code false}</li>
+ *             <li>Ukjent e-post resulterer i {@link UserAuthenticationException}</li>
+ *         </ul>
+ *     </li>
+ *
+ *     <li><b>Opprettelse av sesjonstoken</b>
+ *         <ul>
+ *             <li>Sesjonstoken opprettes når autentisering er vellykket</li>
+ *             <li>Sesjonstoken lagres i repository</li>
+ *             <li>Exception kastes dersom autentisering feiler</li>
+ *         </ul>
+ *     </li>
+ * </ul>
+ *
+ * <h2>Designprinsipper</h2>
+ * <ul>
+ *     <li>Hver test verifiserer én tydelig forretningsregel.</li>
+ *     <li>Happy path og feilstier testes separat.</li>
+ *     <li>Sikkerhetskritisk logikk (autentisering og token-håndtering) testes eksplisitt.</li>
+ *     <li>Bivirkninger verifiseres ved bruk av {@code verify()}.</li>
+ * </ul>
+ *
+ * <p>
+ * Testene er utformet for å gi tilstrekkelig dekning for en MVP-løsning,
+ * med fokus på korrekthet, sikkerhet og vedlikeholdbarhet.
+ * </p>
+ */
+
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {
 
