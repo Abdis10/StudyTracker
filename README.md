@@ -76,4 +76,5 @@ Frontend-mappen vil inneholde enten:
 | Frontend | React |
 | Versjonskontroll | Git + GitHub |
 
+📘 API documentation can be found in `API.md`
 
