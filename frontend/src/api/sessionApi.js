@@ -1,5 +1,8 @@
+
+const BASE_URL = import.meta.env.BASE_URL;
+
 async function registerSession(sessionData, token) {
-    const response = await fetch("http://localhost:7000/session/session-registration", {
+    const response = await fetch(BASE_URL + "/session/session-registration", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -19,7 +22,7 @@ async function registerSession(sessionData, token) {
 }
 
 async function getSessions(token) {
-    const response = await fetch("http://localhost:7000/session/sessions", {
+    const response = await fetch(BASE_URL + "/session/sessions", {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });
@@ -33,7 +36,7 @@ async function getSessions(token) {
 }
 
 async function updateSession(updateData, sessionId, token) {
-    const response = await fetch(`http://localhost:7000/session/${sessionId}`, {
+    const response = await fetch( BASE_URL + `/session/${sessionId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -52,7 +55,7 @@ async function updateSession(updateData, sessionId, token) {
 
 
 async function deleteSession(sessionId, token) {
-    const response = await fetch(`http://localhost:7000/session/${sessionId}`, {
+    const response = await fetch(BASE_URL + `/session/${sessionId}`, {
         method: "DELETE",
         headers: {"Authorization": `Bearer ${token}`}
     });
