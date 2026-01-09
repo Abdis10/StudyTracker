@@ -1,6 +1,8 @@
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 async function signup(formData) {
-    const response = await fetch("http://localhost:7000/auth/signup", {
+    const response = await fetch(BASE_URL+ "/auth/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(formData)
@@ -17,7 +19,7 @@ async function signup(formData) {
 
 
 async function login(loginformData) {
-    const response = await fetch("http://localhost:7000/auth/login", {
+    const response = await fetch(BASE_URL + "/auth/login", {
        method: "POST",
        headers: {"Content-Type": "application/json"},
        body: JSON.stringify(loginformData)
