@@ -1,36 +1,33 @@
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const BASE_URL = import.meta.env.BASE_URL;
-
-async function signup(formData) {
-    const response = await fetch(BASE_URL+ "/auth/signup", {
+export async function signup(signupformata) {
+    const response = await fetch( `${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(formData)
+        body: JSON.stringify(signupformata)
     });
 
-    if (!response.ok) {
-        return await response.json();
-    }
-
-    else {
-        return await response.json();
+    const data = response.json();
+    return {
+        success: response.ok,
+        data,
+        status: response.status
     }
 }
 
 
-async function login(loginformData) {
-    const response = await fetch(BASE_URL + "/auth/login", {
+export async function login(loginformData) {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
        method: "POST",
        headers: {"Content-Type": "application/json"},
        body: JSON.stringify(loginformData)
     });
 
-    if (!response.ok) {
-        return await response.json();
-    }
-
-    else {
-        return await response.json();
+    const data = response.json();
+    return {
+        success: response.ok,
+        data,
+        status: response.status
     }
 }
 
