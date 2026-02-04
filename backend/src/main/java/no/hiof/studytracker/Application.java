@@ -26,7 +26,11 @@ public class Application {
             e.printStackTrace();
         }
 
-        Javalin app = Javalin.create().start(7000);
+        Javalin app = Javalin.create(config -> {
+            config.bundledPlugins.enableCors(cors ->
+                cors.addRule(rule -> rule.anyHost())
+            );
+        }).start(7000);
         UserDataRepository userDataRepository = new UserDataRepository();
 
         // Signup section
