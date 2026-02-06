@@ -6,7 +6,6 @@ import Navbar from "../components/Navbar.jsx";
 function SignupPage() {
     return (
         <>
-            <Navbar/>
             <SignupForm />
         </>
 
