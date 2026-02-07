@@ -1,4 +1,4 @@
-
+import "../css/studySessionCard.css"
 
 function StudySessionCard() {
     return (

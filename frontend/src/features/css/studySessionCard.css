@@ -1,0 +1,57 @@
+.study-session-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Body */
+.study-session-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+/* Label */
+.study-session-card .label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Main time */
+.study-session-card .time {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* Divider */
+.study-session-card hr {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 0.75rem 0;
+}
+
+/* Summary section */
+.study-session-card .summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.study-session-card .summary p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+/* Highlighted values */
+.study-session-card .highlight {
+    font-weight: 600;
+    color: #2563eb;
+}

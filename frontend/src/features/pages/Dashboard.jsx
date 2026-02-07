@@ -1,23 +1,34 @@
 import Navbar from "../components/Navbar.jsx";
 import Card from "../components/Card.jsx";
 import StudySessionCard from "../components/StudySessionCard.jsx";
-
+import "../css/dashboard.css";
+import RecentStudySessionsCard from "../components/RecentStudySessionsCard.jsx";
 
 function Dashboard() {
     return (
         <div className="container">
-            <Navbar />
+            <div className="nav">
+                <Navbar />
+            </div>
             <div className="welcome-section">
                 <h1>Welcome Back, James!</h1>
-                <p>Track your study progess and stay on top of your productivity.</p>
+                <p className="msg">Track your study progess and stay on top of your productivity.</p>
             </div>
             <div className="study-summary-section">
                 <Card title="Study Summary">
                     <StudySessionCard />
                 </Card>
             </div>
-            <div className="Recent-s-sessions">
+            <div className="recent-s-sessions">
+                <Card title="Recent Study Sessions">
+                    <RecentStudySessionsCard />
+                </Card>
+            </div>
 
+            <div className="weekly-chart">
+                <Card title="Weekly Progess">
+
+                </Card>
             </div>
         </div>
     )
