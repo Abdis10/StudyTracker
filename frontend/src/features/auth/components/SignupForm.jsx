@@ -1,4 +1,4 @@
-import {use, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import { signup } from "../../../api/authApi.js";
 
 export default function SignupForm() {
@@ -11,12 +11,13 @@ export default function SignupForm() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordsMatch, setPasswordsMatch] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
         if (password === "" || confirmPassword === "") {
             setPasswordsMatch(undefined);
         }
-        else if (password ===! "" && confirmPassword ===! "") {
+        else {
             if (password === confirmPassword) {
                 setPasswordsMatch(true);
             }
@@ -43,12 +44,11 @@ export default function SignupForm() {
 
             if (result.success) {
                 // naviger videre / vis suksess
-                //console.log(result.data);
+                setSuccessMessage(result.data.message);
+                console.log(result.data);
             } else {
-                // vis feilmelding
-                const data = await result.data;
-                setErrorMessage(data.error);
-                console.log(data.error);
+                // vis feilmelding i UI
+                setErrorMessage(result.data.error);
             }
 
 
@@ -68,47 +68,56 @@ export default function SignupForm() {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <label> Firstname
+                    <fieldset>
+                        <legend>Firstname</legend>
                         <input
-                            type="firstname"
+                            type="text"
                             placeholder="Enter your firstname"
                             value={firstname}
                             onChange={(e) => setFirstname(e.target.value)}
+                            autoComplete="given-name"
                             required
                         />
-                    </label>
+                    </fieldset>
 
-                    <label> Lastname
-                    <input
-                        type="lastname"
-                        placeholder="Enter your lastname"
-                        value={lastname}
-                        onChange={(e) => setLastname(e.target.value)}
-                        required
-                    />
-                    </label>
-
-                    <label> Username
-                    <input
-                        type="username"
-                        placeholder="Enter a username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                    </label>
-
-                    <label> Gender
+                    <fieldset>
+                        <legend>Lastname</legend>
                         <input
-                            type="gender"
-                            placeholder="Your gender (F/M)"
+                            type="text"
+                            placeholder="Enter your lastname"
+                            value={lastname}
+                            onChange={(e) => setLastname(e.target.value)}
+                            required
+                        />
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Username</legend>
+                        <input
+                            type="text"
+                            placeholder="Enter a username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Gender</legend>
+                        <select
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
                             required
-                        />
-                    </label>
+                            style={{ border: 'none', outline: 'none', height: '100%', background: 'transparent', padding: '0 10px' }}
+                        >
+                            <option value="" disabled>Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </fieldset>
 
-                    <label> Email
+                    <fieldset>
+                        <legend>Email</legend>
                         <input
                             type="email"
                             placeholder="Enter your email"
@@ -116,31 +125,52 @@ export default function SignupForm() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
-                    </label>
+                    </fieldset>
 
-                    <label> Password
+                    <fieldset
+                        className={
+                            passwordsMatch === true
+                                ? "passTrue"
+                                : passwordsMatch === false
+                                    ? "passFalse"
+                                    : ""
+                        }
+                    >
+                        <legend>Password</legend>
                         <input
-                            className={passwordsMatch === undefined ? "" : passwordsMatch ?  "passTrue" : "passFalse"}
                             type="password"
                             placeholder="Create password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
-                    </label>
+                    </fieldset>
 
-                    <label> Confirm password
+                    <fieldset
+                        className={
+                            passwordsMatch === true
+                                ? "passTrue"
+                                : passwordsMatch === false
+                                    ? "passFalse"
+                                    : ""
+                        }
+                    >
+                        <legend>Confirm password</legend>
                         <input
-                            className={passwordsMatch === undefined ? "" : passwordsMatch ?  "passTrue" : "passFalse"}
                             type="password"
                             placeholder="Confirm password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                         />
-                    </label>
+                    </fieldset>
 
-                    {errorMessage !== "" ? (<p className="error-msg">{errorMessage}</p>) : null}
+                    {errorMessage !== "" ?
+                        ( <p className="error-msg">{errorMessage}</p>) : null
+                    }
+                    {successMessage !== "" ?
+                        (<p className="success-msg">{successMessage}</p>) : null
+                    }
 
                     <button type="submit" className="signup-btn">
                         Sign up

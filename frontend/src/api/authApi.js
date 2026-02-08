@@ -7,7 +7,7 @@ export async function signup(signupformata) {
         body: JSON.stringify(signupformata)
     });
 
-    const data = response.json();
+    const data = await response.json();
     return {
         success: response.ok,
         data,
