@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {use, useEffect, useState} from "react";
 import { signup } from "../../../api/authApi.js";
 
 export default function SignupForm() {
@@ -9,6 +9,22 @@ export default function SignupForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [passwordsMatch, setPasswordsMatch] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() => {
+        if (password === "" || confirmPassword === "") {
+            setPasswordsMatch(undefined);
+        }
+        else if (password ===! "" && confirmPassword ===! "") {
+            if (password === confirmPassword) {
+                setPasswordsMatch(true);
+            }
+            else {
+                setPasswordsMatch(false);
+            }
+        }
+    }, [password, confirmPassword]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,7 +47,8 @@ export default function SignupForm() {
             } else {
                 // vis feilmelding
                 const data = await result.data;
-                console.log(data)
+                setErrorMessage(data.error);
+                console.log(data.error);
             }
 
 
@@ -40,7 +57,6 @@ export default function SignupForm() {
         }
 
     };
-
 
 
     return (
@@ -52,54 +68,79 @@ export default function SignupForm() {
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <input
-                        type="firstname"
-                        placeholder="Enter your firstname"
-                        value={firstname}
-                        onChange={(e) => setFirstname(e.target.value)}
-                    />
+                    <label> Firstname
+                        <input
+                            type="firstname"
+                            placeholder="Enter your firstname"
+                            value={firstname}
+                            onChange={(e) => setFirstname(e.target.value)}
+                            required
+                        />
+                    </label>
 
+                    <label> Lastname
                     <input
                         type="lastname"
                         placeholder="Enter your lastname"
                         value={lastname}
                         onChange={(e) => setLastname(e.target.value)}
+                        required
                     />
+                    </label>
 
+                    <label> Username
                     <input
                         type="username"
                         placeholder="Enter a username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                     />
+                    </label>
 
-                    <input
-                        type="gender"
-                        placeholder="Your gender (F/M)"
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                    />
+                    <label> Gender
+                        <input
+                            type="gender"
+                            placeholder="Your gender (F/M)"
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                            required
+                        />
+                    </label>
 
-                    <input
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
+                    <label> Email
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </label>
 
-                    <input
-                        type="password"
-                        placeholder="Create password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <label> Password
+                        <input
+                            className={passwordsMatch === undefined ? "" : passwordsMatch ?  "passTrue" : "passFalse"}
+                            type="password"
+                            placeholder="Create password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </label>
 
-                    <input
-                        type="password"
-                        placeholder="Confirm password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
+                    <label> Confirm password
+                        <input
+                            className={passwordsMatch === undefined ? "" : passwordsMatch ?  "passTrue" : "passFalse"}
+                            type="password"
+                            placeholder="Confirm password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </label>
+
+                    {errorMessage !== "" ? (<p className="error-msg">{errorMessage}</p>) : null}
 
                     <button type="submit" className="signup-btn">
                         Sign up

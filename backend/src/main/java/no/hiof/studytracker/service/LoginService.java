@@ -33,7 +33,7 @@ public class LoginService {
             }
         }
         else {
-            throw new UserAuthenticationException(email);
+            throw new UserAuthenticationException();
         }
     }
 

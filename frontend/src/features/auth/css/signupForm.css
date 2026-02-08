@@ -1,0 +1,153 @@
+/* ===== Page ===== */
+.signup-page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9effd;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== Card ===== */
+.signup-box {
+    width: 620px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 2rem 2.25rem;
+}
+
+/* ===== Header ===== */
+.welcome-msg {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.signup-header-msg {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.subtitle {
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+/* ===== Form ===== */
+.signup-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+/* Labels wrap inputs (as in your JSX) */
+.signup-box label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    color: #1e293b;
+}
+
+
+/* Inputs */
+.signup-box input {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5f5;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.signup-box input::placeholder {
+    color: #94a3b8;
+}
+
+.signup-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ===== Button ===== */
+.signup-btn {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: #2563eb;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.signup-btn:hover {
+    background: #1d4ed8;
+}
+
+.signup-btn:active {
+    transform: scale(0.98);
+}
+
+
+/* ===== Password validation states ===== */
+
+/* Valid password */
+.passTrue {
+    border-color: #22c55e;               /* green */
+    background-color: #f0fdf4;
+}
+
+.passTrue:focus {
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+}
+
+/* Invalid password */
+.passFalse {
+    border-color: #ef4444;               /* red */
+    background-color: #fef2f2;
+}
+
+.passFalse:focus {
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+}
+
+/* ===== Form-level error message ===== */
+.error-msg {
+    width: 100%;
+    margin: 0.25rem 0 0.5rem 0;   /* tett på inputs, før button */
+    padding: 0.75rem 1rem;
+
+    border-radius: 6px;
+    border: 1px solid #fca5a5;
+    background-color: #fef2f2;
+
+    color: #991b1b;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
+/* Optional: icon styling if you add one later */
+.error-msg::before {
+    content: "⚠";
+    font-size: 1rem;
+}
+
+
+
+/* ===== Optional future states ===== */
+/* .error-msg { color: #dc2626; font-size: 0.85rem; } */
+/* .success-msg { color: #16a34a; font-size: 0.85rem; } */
