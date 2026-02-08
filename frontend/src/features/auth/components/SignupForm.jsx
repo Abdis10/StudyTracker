@@ -9,9 +9,9 @@ export default function SignupForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [passwordsMatch, setPasswordsMatch] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+    const [passwordsMatch, setPasswordsMatch] = useState(undefined);
+    const [formStatus, setFormStatus] = useState("idle");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         if (password === "" || confirmPassword === "") {
@@ -26,6 +26,16 @@ export default function SignupForm() {
             }
         }
     }, [password, confirmPassword]);
+
+    const handleInputChange = (setter) => (e) => {
+        setter(e.target.value);
+
+        if (formStatus !== "idle") {
+            setFormStatus("idle");
+            setMessage("");
+        }
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -44,16 +54,18 @@ export default function SignupForm() {
 
             if (result.success) {
                 // naviger videre / vis suksess
-                setSuccessMessage(result.data.message);
-                console.log(result.data);
+                setFormStatus("success");
+                setMessage(result.data?.message ?? "Signup successful");
             } else {
                 // vis feilmelding i UI
-                setErrorMessage(result.data.error);
+                setFormStatus("error");
+                setMessage(result.data?.error ?? "Signup failed");
             }
 
 
         } else {
-            console.log("Couldn't confirm password");
+            setFormStatus("error");
+            setMessage("Passwords do not match");
         }
 
     };
@@ -74,7 +86,7 @@ export default function SignupForm() {
                             type="text"
                             placeholder="Enter your firstname"
                             value={firstname}
-                            onChange={(e) => setFirstname(e.target.value)}
+                            onChange={handleInputChange(setFirstname)}
                             autoComplete="given-name"
                             required
                         />
@@ -86,7 +98,7 @@ export default function SignupForm() {
                             type="text"
                             placeholder="Enter your lastname"
                             value={lastname}
-                            onChange={(e) => setLastname(e.target.value)}
+                            onChange={handleInputChange(setLastname)}
                             required
                         />
                     </fieldset>
@@ -97,7 +109,7 @@ export default function SignupForm() {
                             type="text"
                             placeholder="Enter a username"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={handleInputChange(setUsername)}
                             required
                         />
                     </fieldset>
@@ -106,7 +118,7 @@ export default function SignupForm() {
                         <legend>Gender</legend>
                         <select
                             value={gender}
-                            onChange={(e) => setGender(e.target.value)}
+                            onChange={handleInputChange(setGender)}
                             required
                             style={{ border: 'none', outline: 'none', height: '100%', background: 'transparent', padding: '0 10px' }}
                         >
@@ -122,7 +134,7 @@ export default function SignupForm() {
                             type="email"
                             placeholder="Enter your email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={handleInputChange(setEmail)}
                             required
                         />
                     </fieldset>
@@ -141,7 +153,7 @@ export default function SignupForm() {
                             type="password"
                             placeholder="Create password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={handleInputChange(setPassword)}
                             required
                         />
                     </fieldset>
@@ -160,17 +172,18 @@ export default function SignupForm() {
                             type="password"
                             placeholder="Confirm password"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={handleInputChange(setConfirmPassword)}
                             required
                         />
                     </fieldset>
 
-                    {errorMessage !== "" ?
-                        ( <p className="error-msg">{errorMessage}</p>) : null
-                    }
-                    {successMessage !== "" ?
-                        (<p className="success-msg">{successMessage}</p>) : null
-                    }
+                    {formStatus === "error" && (
+                        <p className="error-msg">{message}</p>
+                    )}
+
+                    {formStatus === "success" && (
+                        <p className="success-msg">{message}</p>
+                    )}
 
                     <button type="submit" className="signup-btn">
                         Sign up
