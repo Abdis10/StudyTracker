@@ -1,14 +1,8 @@
 package no.hiof.studytracker.exceptions;
 
 public class EmailAlreadyExistsException extends RuntimeException{
-    private final String email;
-
-    public EmailAlreadyExistsException(String email) {
-        super("Email already exists: " + email);
-        this.email = email;
+    public EmailAlreadyExistsException() {
+        super("An account with this email may already exist.");
     }
 
-    public String getEmail() {
-        return email;
-    }
 }

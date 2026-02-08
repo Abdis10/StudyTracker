@@ -21,11 +21,11 @@ public class SignupService {
         String email = signupDTO.getEmail();
 
         if (userDataRepository.usernameExists(username)) {
-            throw new UsernameAlreadyExistsException(username);
+            throw new UsernameAlreadyExistsException();
         }
 
         if (userDataRepository.emailExists(email)) {
-            throw new EmailAlreadyExistsException(email);
+            throw new EmailAlreadyExistsException();
         }
 
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {

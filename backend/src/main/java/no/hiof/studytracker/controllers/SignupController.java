@@ -30,14 +30,12 @@ public class SignupController {
 
         catch (UsernameAlreadyExistsException e) {
             ctx.status(409).json(Map.of(
-                    "error", e.getMessage(),
-                    "username", e.getUsername()
+                    "error", e.getMessage()
             ));
 
         } catch (EmailAlreadyExistsException e) {
             ctx.status(409).json(Map.of(
-                    "error", e.getMessage(),
-                    "email", e.getEmail()
+                    "error", e.getMessage()
             ));
 
         } catch (InvalidEmailFormatException | InvalidPasswordException e) {
