@@ -25,7 +25,9 @@ public class SignupController {
 
         try {
             signupService.signup(signupDTO);
-            ctx.status(200).result("User registered successfully.");
+            ctx.status(201).json(Map.of(
+                    "message", "User registered successfully"
+            ));
         }
 
         catch (UsernameAlreadyExistsException e) {
