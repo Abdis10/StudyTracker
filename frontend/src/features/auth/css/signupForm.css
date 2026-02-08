@@ -1,4 +1,4 @@
-/* ===== Page ===== */
+/* ===== 1. Grunnleggende oppsett ===== */
 .signup-page-container {
     min-height: 100vh;
     display: flex;
@@ -6,124 +6,120 @@
     justify-content: center;
     background: #e9effd;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 20px;
 }
 
-/* ===== Card ===== */
+/* ===== 2. Kortet (Containeren) ===== */
 .signup-box {
-    width: 620px;
+    width: 100%;
+    max-width: 620px;
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    padding: 2rem 2.25rem;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
 }
 
-/* ===== Header ===== */
+/* ===== 3. Overskrift og tekst ===== */
 .welcome-msg {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .signup-header-msg {
     margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 800;
     color: #1e293b;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
-    margin-top: 0.4rem;
-    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-size: 1rem;
     color: #64748b;
 }
 
-/* ===== Form ===== */
+/* ===== 4. Skjema og Layout (Grid) ===== */
 .signup-box form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* To kolonner */
+    gap: 1.2rem;
 }
 
-/* Labels wrap inputs (as in your JSX) */
-.signup-box label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-
-    text-align: center;
-    font-size: 15px;
-    font-weight: bold;
-    color: #1e293b;
+/* Felt som skal strekke seg over hele bredden */
+.signup-box fieldset:nth-child(5), /* Email */
+.signup-box fieldset:nth-child(6), /* Password */
+.signup-box fieldset:nth-child(7), /* Confirm Password */
+.error-msg,
+.signup-btn {
+    grid-column: span 2;
 }
 
+/* ===== 5. Inputs og Fieldset ===== */
+.signup-box fieldset {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 0 10px;
+    height: 56px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    background: #fff;
+}
 
-/* Inputs */
+.signup-box legend {
+    padding: 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    background: #ffffff;
+    margin-left: 5px;
+}
+
 .signup-box input {
-    padding: 0.65rem 0.75rem;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    border: 1px solid #cbd5f5;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border: none;
+    outline: none;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 12px;
+    font-size: 1rem;
+    background: transparent;
+    color: #1e293b;
+    text-align: left; /* Bedre lesbarhet enn sentrert */
 }
 
 .signup-box input::placeholder {
-    color: #94a3b8;
+    color: #cbd5e1;
+    font-size: 0.9rem;
 }
 
-.signup-box input:focus {
-    outline: none;
+/* ===== 6. Interaktive tilstander (Focus/Validation) ===== */
+.signup-box fieldset:focus-within {
     border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* ===== Button ===== */
-.signup-btn {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #ffffff;
-    background: #2563eb;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+.signup-box fieldset:focus-within legend {
+    color: #2563eb;
 }
 
-.signup-btn:hover {
-    background: #1d4ed8;
+/* Passord-matching farger */
+.signup-box fieldset.passTrue {
+    border-color: #10b981;
+    background: #f0fdf4;
 }
 
-.signup-btn:active {
-    transform: scale(0.98);
+.signup-box fieldset.passFalse {
+    border-color: #ef4444;
+    background: #fef2f2;
 }
 
-
-/* ===== Password validation states ===== */
-
-/* Valid password */
-.passTrue {
-    border-color: #22c55e;               /* green */
-    background-color: #f0fdf4;
-}
-
-.passTrue:focus {
-    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
-}
-
-/* Invalid password */
-.passFalse {
-    border-color: #ef4444;               /* red */
-    background-color: #fef2f2;
-}
-
-.passFalse:focus {
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
-}
-
-/* ===== Form-level error message ===== */
+/* ===== 7. Knapp og Feilmeldinger ===== */
 .error-msg {
     width: 100%;
-    margin: 0.25rem 0 0.5rem 0;   /* tett på inputs, før button */
+    margin-top: 0.75rem;
     padding: 0.75rem 1rem;
 
     border-radius: 6px;
@@ -139,15 +135,68 @@
     gap: 0.5rem;
 }
 
-
-/* Optional: icon styling if you add one later */
+/* icon styling */
 .error-msg::before {
     content: "⚠";
     font-size: 1rem;
 }
 
+.success-msg {
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
 
+    border-radius: 6px;
+    border: 1px solid #b2fdb2;
+    background-color: #f1fff1;
 
-/* ===== Optional future states ===== */
-/* .error-msg { color: #dc2626; font-size: 0.85rem; } */
-/* .success-msg { color: #16a34a; font-size: 0.85rem; } */
+    color: #76fb41;
+    font-size: 0.9rem;
+    font-weight: bolder;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.success-msg::before {
+    content: "✅";
+    font-size: 1rem;
+}
+
+.signup-btn {
+    margin-top: 1rem;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: #2563eb;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.signup-btn:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.signup-btn:active {
+    transform: scale(0.98);
+}
+
+/* ===== 8. Responsivitet for mobil ===== */
+@media (max-width: 550px) {
+    .signup-box {
+        padding: 1.5rem;
+    }
+
+    .signup-box form {
+        grid-template-columns: 1fr; /* Én kolonne på små skjermer */
+    }
+
+    .signup-box fieldset:nth-child(n) {
+        grid-column: span 1;
+    }
+}
