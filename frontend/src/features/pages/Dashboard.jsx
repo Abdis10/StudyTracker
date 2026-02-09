@@ -3,15 +3,19 @@ import Card from "../components/Card.jsx";
 import StudySessionCard from "../components/StudySessionCard.jsx";
 import "../css/dashboard.css";
 import RecentStudySessionsCard from "../components/RecentStudySessionsCard.jsx";
+import useAuth from "../auth/useAuth.js";
 
 function Dashboard() {
+    const { isAuth, user } = useAuth();
+    console.log(isAuth);
+
     return (
         <div className="container">
             <div className="nav">
                 <Navbar />
             </div>
             <div className="welcome-section">
-                <h1>Welcome Back, James!</h1>
+                <h1>Welcome Back, Ahmed!</h1>
                 <p className="msg">Track your study progess and stay on top of your productivity.</p>
             </div>
             <div className="study-summary-section">

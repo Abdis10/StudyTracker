@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import { signup } from "../../../api/authApi.js";
+import {useNavigate} from "react-router-dom";
 
 export default function SignupForm() {
     const [firstname, setFirstname] = useState("");
@@ -12,6 +13,7 @@ export default function SignupForm() {
     const [passwordsMatch, setPasswordsMatch] = useState(undefined);
     const [formStatus, setFormStatus] = useState("idle");
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (password === "" || confirmPassword === "") {
@@ -55,7 +57,12 @@ export default function SignupForm() {
             if (result.success) {
                 // naviger videre / vis suksess
                 setFormStatus("success");
-                setMessage(result.data?.message ?? "Signup successful");
+                setMessage("🎉 Your account has been created. You will be redirected to login in a moment…");
+
+                const timoutId = setTimeout( () => {
+                    navigate("/login", {replace: true});
+                }, 6000);
+                return () => clearTimeout(timoutId);
             } else {
                 // vis feilmelding i UI
                 setFormStatus("error");

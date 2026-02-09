@@ -23,7 +23,7 @@ export async function login(loginformData) {
        body: JSON.stringify(loginformData)
     });
 
-    const data = response.json();
+    const data = await response.json();
     return {
         success: response.ok,
         data,
