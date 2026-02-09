@@ -1,9 +1,13 @@
 import {useState} from "react";
 import {login} from "../../../api/authApi.js";
+import useAuth from "../useAuth.js";
+import {replace, useNavigate} from "react-router-dom";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    let { setIsAuth, user } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -13,15 +17,15 @@ export default function LoginForm() {
             "email": email,
             "password": password
         }
-
         const result = await login(userData);
-
 
         if (result.success) {
             // naviger videre
-            console.log(result.success)
-        } else {
-
+            setIsAuth(true);
+            console.log("LOGIN SUCCESS – navigating");
+            navigate("/dashboard", {replace: true}); // replace gjør at brukeren ikke kan gå tilbake til login
+            const data = result.data;
+            console.log(data);
         }
     }
 
