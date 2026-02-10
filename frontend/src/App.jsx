@@ -6,8 +6,9 @@ import Dashboard from "./features/pages/Dashboard.jsx";
 import ProtectedRoute from "./features/auth/ProtectedRoute.jsx";
 
 function App() {
+    console.log(import.meta.env);
 
-  return (
+    return (
         <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />

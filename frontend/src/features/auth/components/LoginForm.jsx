@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {login} from "../../../api/authApi.js";
 import useAuth from "../useAuth.js";
-import {replace, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
@@ -17,7 +17,9 @@ export default function LoginForm() {
             "email": email,
             "password": password
         }
+        console.log(userData);
         const result = await login(userData);
+        console.log(result);
 
         if (result.success) {
             // naviger videre
