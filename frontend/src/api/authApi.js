@@ -1,7 +1,6 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export async function signup(signupformata) {
-    const response = await fetch( `${BASE_URL}/auth/signup`, {
+    const response = await fetch( "auth/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(signupformata)
@@ -17,7 +16,7 @@ export async function signup(signupformata) {
 
 
 export async function login(loginformData) {
-    const response = await fetch(`${BASE_URL}/auth/login`, {
+    const response = await fetch("/auth/login", {
        method: "POST",
        headers: {"Content-Type": "application/json"},
        body: JSON.stringify(loginformData)

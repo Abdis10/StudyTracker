@@ -6,7 +6,10 @@ import no.hiof.studytracker.model.SessionToken;
 import no.hiof.studytracker.repository.UserDataRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.UUID;
 
 public class LoginService {
@@ -41,8 +44,9 @@ public class LoginService {
         if (authenticateUser(email, password)) {
             String token = UUID.randomUUID().toString();
             int userID = Integer.parseInt(userDataRepository.getId(email));
-            LocalDateTime createdAt = LocalDateTime.now();
-            LocalDateTime expiresAt = createdAt.plusHours(1);
+            Instant createdAt = Instant.now();
+            TemporalAmount tma = Duration.ofMinutes(60);
+            Instant expiresAt = createdAt.plus(tma);
             SessionToken sessionToken = new SessionToken(token, userID, createdAt.toString(), expiresAt.toString());
             userDataRepository.saveSessionToken(sessionToken.getSessionTokenId(), sessionToken.getUserId(),
                     sessionToken.getCreatedAt(), sessionToken.getExpiresAt());

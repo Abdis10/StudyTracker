@@ -4,10 +4,10 @@ import StudySessionCard from "../components/StudySessionCard.jsx";
 import "../css/dashboard.css";
 import RecentStudySessionsCard from "../components/RecentStudySessionsCard.jsx";
 import useAuth from "../auth/useAuth.js";
+import {useNavigate} from "react-router-dom";
 
 function Dashboard() {
     const { isAuth, user } = useAuth();
-    console.log(isAuth);
 
     return (
         <div className="container">

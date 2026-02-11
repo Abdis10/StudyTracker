@@ -298,5 +298,54 @@ public class UserDataRepository implements UserRepository {
 
     }
 
+    public String getSessionTokenIdExpiresAt(String token) {
+        String sql = "SELECT expires_at FROM session_token WHERE session_token_id = ? ";
 
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setString(1, token);
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next())
+                return rs.getString("expires_at");
+
+        } catch (SQLException e) {
+            throw new CustomException("Error when getting sessionTokenId his expires_at ", e);
+        }
+        return null;
+    }
+
+    public String getUsernameByUserid(int id) {
+        String sql = "SELECT username FROM user_profile WHERE id = ?";
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, id);
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next())
+                return rs.getString("username");
+
+        } catch (SQLException e) {
+            throw new CustomException("Error when getting username by id", e);
+        }
+        return null;
+
+    }
+
+    public String getEmailByUserId(int id) {
+        String sql = "SELECT email FROM user_profile WHERE id = ?";
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, id);
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next())
+                return rs.getString("email");
+
+        } catch (SQLException e) {
+            throw new CustomException("Error when getting email by id", e);
+        }
+        return null;
+
+    }
 }
