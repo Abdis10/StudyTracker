@@ -84,7 +84,7 @@ public class Application {
            sessionController.deleteSession(ctx);
         });
 
-        app.get("/authenticateSession", ctx -> {
+        app.get("/auth/validate-session", ctx -> {
             authenticationController.sessionExpiration(ctx);
         });
     }

@@ -17,7 +17,6 @@ export default function LoginForm() {
             "email": email,
             "password": password
         }
-        console.log(userData);
         const result = await login(userData);
         console.log(result);
 
@@ -27,6 +26,8 @@ export default function LoginForm() {
             console.log("LOGIN SUCCESS – navigating");
             navigate("/dashboard", {replace: true}); // replace gjør at brukeren ikke kan gå tilbake til login
             const data = result.data;
+            localStorage.removeItem("token");
+            localStorage.setItem("token", data.token);
             console.log(data);
         }
     }

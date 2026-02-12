@@ -8,7 +8,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.UUID;
 
@@ -51,7 +50,7 @@ public class LoginService {
             userDataRepository.saveSessionToken(sessionToken.getSessionTokenId(), sessionToken.getUserId(),
                     sessionToken.getCreatedAt(), sessionToken.getExpiresAt());
 
-            return userDataRepository.sessionTokenId(userID);
+            return token;
         }
 
         else {
