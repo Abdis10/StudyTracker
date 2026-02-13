@@ -1,0 +1,106 @@
+/*
+    CSS FOR LOGINFORM
+*/
+
+.login-page-container {
+    font-family: "Times New Roman";
+    display: flex;
+    justify-content: center;
+    column-gap-gap: 500px;
+    height: 100vh;
+    width: 100%;
+}
+
+.login-header-msg {
+    color: #76fb41;
+    font-weight: bolder;
+    font-size: 60px;
+}
+
+.subtitle {
+    margin-top: -15px;
+    font-size: 25px;
+}
+
+.login-box {
+    width: 70%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 300px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: center;
+}
+
+input {
+    font-family: "Times New Roman";
+    font-weight: bolder;
+    margin: 10px;
+    padding: 20px;
+    width: 500px;
+    border-radius: 10px;
+    border-color: #b2fdb2;;
+}
+
+input::placeholder {
+    color: black;
+    text-align: center;
+    font-size: 15px;
+}
+
+.login-btn {
+    width: 200px;
+    border: 3px solid #b2fdb2;;
+    border-radius: 10px;
+    background-color: #7bfd7b;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.signup-bar {
+    width: 30%;
+    background: #2A7B9B;
+    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(123, 237, 224, 1) 100%);
+    color: white;
+    font-family: "Times New Roman";
+    text-align: center;
+    border: 3px #2A7B9B;
+    border-radius: 10px;
+    border-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn {
+    width: 200px;
+    border: 3px solid #b2fdb2;;
+    border-radius: 10px;
+    background-color: #7bfd7b;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.sidebar-header {
+    font-size: 45px;
+}
+
+.sidebar-p {
+    margin-top: -10px;
+    font-size: 20px;
+}
+
+

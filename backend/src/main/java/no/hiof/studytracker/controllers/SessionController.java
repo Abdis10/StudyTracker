@@ -19,7 +19,9 @@ public class SessionController {
 
     public void studySession(Context ctx) {
         try {
+            String token = ctx.header("Authorization").substring(7);
             SessionDataDTO sessionDataDTO = ctx.bodyAsClass(SessionDataDTO.class);
+            sessionDataDTO.setToken(token);
             sessionService.studySession(sessionDataDTO);
             ctx.status(201).json(Map.of(
                     "message: ", "study session is successfully created"

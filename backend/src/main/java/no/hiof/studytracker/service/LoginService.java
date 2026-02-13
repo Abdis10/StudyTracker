@@ -1,12 +1,15 @@
 package no.hiof.studytracker.service;
 
+import no.hiof.studytracker.DTOs.LoginResponseDTO;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.UserAuthenticationException;
 import no.hiof.studytracker.model.SessionToken;
 import no.hiof.studytracker.repository.UserDataRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 import java.util.UUID;
 
 public class LoginService {
@@ -33,21 +36,25 @@ public class LoginService {
             }
         }
         else {
-            throw new UserAuthenticationException(email);
+            throw new UserAuthenticationException();
         }
     }
 
-    public String createSessionToken(String email, String password) {
+    public LoginResponseDTO createSessionToken(String email, String password) {
         if (authenticateUser(email, password)) {
             String token = UUID.randomUUID().toString();
             int userID = Integer.parseInt(userDataRepository.getId(email));
-            LocalDateTime createdAt = LocalDateTime.now();
-            LocalDateTime expiresAt = createdAt.plusHours(1);
+            Instant createdAt = Instant.now();
+            TemporalAmount tma = Duration.ofMinutes(60);
+            Instant expiresAt = createdAt.plus(tma);
             SessionToken sessionToken = new SessionToken(token, userID, createdAt.toString(), expiresAt.toString());
             userDataRepository.saveSessionToken(sessionToken.getSessionTokenId(), sessionToken.getUserId(),
                     sessionToken.getCreatedAt(), sessionToken.getExpiresAt());
 
-            return userDataRepository.sessionTokenId(userID);
+            String firstname = userDataRepository.getUserFirstname(userID);
+            String username = userDataRepository.getUsernameByUserid(userID);
+            LoginResponseDTO loginResponseDTO = new LoginResponseDTO(firstname, username, email, token);
+            return loginResponseDTO;
         }
 
         else {

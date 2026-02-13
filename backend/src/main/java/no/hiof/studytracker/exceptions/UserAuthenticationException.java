@@ -1,14 +1,9 @@
 package no.hiof.studytracker.exceptions;
 
-public class UserAuthenticationException extends RuntimeException{
-    private String email;
+public class UserAuthenticationException extends RuntimeException {
 
-    public UserAuthenticationException(String email) {
-        super("Invalid authentication of user with: " + email);
-        this.email = email;
+    public UserAuthenticationException() {
+        super("User authentication failed");
     }
 
-    public String getEmail() {
-        return email;
-    }
 }

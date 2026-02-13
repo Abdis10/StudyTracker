@@ -1,17 +1,23 @@
 package no.hiof.studytracker;
 
 import io.javalin.Javalin;
+import no.hiof.studytracker.controllers.AuthenticationController;
 import no.hiof.studytracker.controllers.LoginController;
 import no.hiof.studytracker.controllers.SessionController;
 import no.hiof.studytracker.controllers.SignupController;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.repository.UserDataRepository;
+import no.hiof.studytracker.service.AuthenticationService;
 import no.hiof.studytracker.service.LoginService;
 import no.hiof.studytracker.service.SessionService;
 import no.hiof.studytracker.service.SignupService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 
 
 public class Application {
@@ -26,7 +32,11 @@ public class Application {
             e.printStackTrace();
         }
 
-        Javalin app = Javalin.create().start(7000);
+        Javalin app = Javalin.create(config -> {
+            config.bundledPlugins.enableCors(cors ->
+                cors.addRule(rule -> rule.anyHost())
+            );
+        }).start(7000);
         UserDataRepository userDataRepository = new UserDataRepository();
 
         // Signup section
@@ -41,6 +51,10 @@ public class Application {
         // Session operations section
         SessionService sessionService = new SessionService(userDataRepository);
         SessionController sessionController = new SessionController(sessionService);
+
+        // Session authentication
+        AuthenticationService authenticationService = new AuthenticationService(userDataRepository);
+        AuthenticationController authenticationController = new AuthenticationController(authenticationService);
 
         app.get("/", ctx -> {
            ctx.result("Hei fra Javalin!");
@@ -66,8 +80,12 @@ public class Application {
             sessionController.updateSession(ctx);
         });
 
-        app.delete("session/{sessionId}", ctx -> {
+        app.delete("/session/{sessionId}", ctx -> {
            sessionController.deleteSession(ctx);
+        });
+
+        app.get("/auth/validate-session", ctx -> {
+            authenticationController.sessionExpiration(ctx);
         });
     }
 }

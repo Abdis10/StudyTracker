@@ -25,19 +25,19 @@ public class SignupController {
 
         try {
             signupService.signup(signupDTO);
-            ctx.status(200).result("User registered successfully.");
+            ctx.status(201).json(Map.of(
+                    "message", "User registered successfully"
+            ));
         }
 
         catch (UsernameAlreadyExistsException e) {
             ctx.status(409).json(Map.of(
-                    "error", e.getMessage(),
-                    "username", e.getUsername()
+                    "error", e.getMessage()
             ));
 
         } catch (EmailAlreadyExistsException e) {
             ctx.status(409).json(Map.of(
-                    "error", e.getMessage(),
-                    "email", e.getEmail()
+                    "error", e.getMessage()
             ));
 
         } catch (InvalidEmailFormatException | InvalidPasswordException e) {
