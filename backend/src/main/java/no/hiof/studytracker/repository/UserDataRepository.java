@@ -348,4 +348,21 @@ public class UserDataRepository implements UserRepository {
         return null;
 
     }
+
+
+    public String getUserFirstname(int id) {
+        String sql = "SELECT first_name FROM user_profile WHERE id = ?";
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, id);
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next())
+                return rs.getString("first_name");
+
+        } catch (SQLException e) {
+            throw new CustomException("Error when getting user's firstname by id", e);
+        }
+        return null;
+    }
 }

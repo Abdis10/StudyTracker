@@ -2,6 +2,7 @@ package no.hiof.studytracker.controllers;
 
 import io.javalin.http.Context;
 import no.hiof.studytracker.DTOs.LoginDTO;
+import no.hiof.studytracker.DTOs.LoginResponseDTO;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.UserAuthenticationException;
 import no.hiof.studytracker.service.LoginService;
@@ -22,12 +23,8 @@ public class LoginController {
 
         try {
             loginService.authenticateUser(email, password);
-            String token = loginService.createSessionToken(email, password);
-            ctx.status(200).json(Map.of(
-                    "messsage", "User is authenticated",
-                    "authenticated user", loginDTO.getEmail(),
-                    "token", loginService.getSessionTokenId(token)
-            ));
+            LoginResponseDTO loginResponseDTO = loginService.createSessionToken(email, password);
+            ctx.status(200).json(loginResponseDTO);
 
         } catch (UserAuthenticationException e) {
             ctx.status(401).json(Map.of(
