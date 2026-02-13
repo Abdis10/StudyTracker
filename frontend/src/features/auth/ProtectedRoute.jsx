@@ -9,9 +9,7 @@ function ProtectedRoute( {children} ) {
         return <Loading />;
     } else if (!isAuth) {
         return <Navigate to="/login" replace />;
-    }
-
-    else {
+    } else {
         return children;
     }
 }

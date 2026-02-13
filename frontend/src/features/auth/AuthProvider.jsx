@@ -4,7 +4,7 @@ import {validateSession} from "../../api/authApi.js";
 
 function AuthProvider( {children} ) {
     const [isAuth, setIsAuth] = useState(false);
-    const [isChecking, setIsChecking] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
     const [user, setUser] = useState(null);
 
     const value = {
@@ -28,16 +28,21 @@ function AuthProvider( {children} ) {
                 return;
             }
 
-            const result = await validateSession(token);
-            console.log(result);
-            if (result.success) {
-                setIsAuth(true);
-                setUser(result.data);
-            } else {
+            try {
+                const result = await validateSession(token);
+                console.log(result);
+
+                if (result.success) {
+                    setIsAuth(true);
+                    setUser(result.data);
+                }
+            } catch (e) {
                 localStorage.removeItem("token");
                 setIsAuth(false);
                 setUser(null);
             }
+
+
             setIsChecking(false);
         }
         checkAuth();

@@ -1,5 +1,6 @@
 package no.hiof.studytracker.service;
 
+import no.hiof.studytracker.DTOs.LoginResponseDTO;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.UserAuthenticationException;
 import no.hiof.studytracker.model.SessionToken;
@@ -39,7 +40,7 @@ public class LoginService {
         }
     }
 
-    public String createSessionToken(String email, String password) {
+    public LoginResponseDTO createSessionToken(String email, String password) {
         if (authenticateUser(email, password)) {
             String token = UUID.randomUUID().toString();
             int userID = Integer.parseInt(userDataRepository.getId(email));
@@ -50,7 +51,10 @@ public class LoginService {
             userDataRepository.saveSessionToken(sessionToken.getSessionTokenId(), sessionToken.getUserId(),
                     sessionToken.getCreatedAt(), sessionToken.getExpiresAt());
 
-            return token;
+            String firstname = userDataRepository.getUserFirstname(userID);
+            String username = userDataRepository.getUsernameByUserid(userID);
+            LoginResponseDTO loginResponseDTO = new LoginResponseDTO(firstname, username, email, token);
+            return loginResponseDTO;
         }
 
         else {

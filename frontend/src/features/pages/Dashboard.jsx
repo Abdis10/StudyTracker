@@ -15,7 +15,7 @@ function Dashboard() {
                 <Navbar />
             </div>
             <div className="welcome-section">
-                <h1>Welcome Back, Ahmed!</h1>
+                <h1>Welcome Back, {user.firstname} !</h1>
                 <p className="msg">Track your study progess and stay on top of your productivity.</p>
             </div>
             <div className="study-summary-section">

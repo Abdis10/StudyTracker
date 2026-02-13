@@ -29,7 +29,8 @@ public class AuthenticationService {
                 int userId = userDataRepository.getUserIdByToken(token);
                 String email = userDataRepository.getEmailByUserId(userId);
                 String username = userDataRepository.getUsernameByUserid(userId);
-                TokenValidationResponse validationResponse = new TokenValidationResponse(username, userId, email);
+                String firstname = userDataRepository.getUserFirstname(userId);
+                TokenValidationResponse validationResponse = new TokenValidationResponse(username, firstname, userId, email);
                 return validationResponse;
             }
         } else {
