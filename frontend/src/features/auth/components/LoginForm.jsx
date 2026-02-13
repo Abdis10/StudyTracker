@@ -6,7 +6,7 @@ import { useNavigate} from "react-router-dom";
 export default function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    let { setIsAuth, user } = useAuth();
+    let { setIsAuth, setUser } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -22,6 +22,7 @@ export default function LoginForm() {
 
         if (result.success) {
             // naviger videre
+            setUser(result.data);
             setIsAuth(true);
             console.log("LOGIN SUCCESS – navigating");
             navigate("/dashboard", {replace: true}); // replace gjør at brukeren ikke kan gå tilbake til login

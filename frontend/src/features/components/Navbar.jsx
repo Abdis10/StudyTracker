@@ -1,10 +1,13 @@
 import "../css/navbar.css";
+import useAuth from "../auth/useAuth.js";
 
 function Navbar() {
+    const {user} = useAuth();
+
     return (
         <nav className="navbar">
             {/* Left: Logo */}
-            <img src="" />
+            <img className="user-img"  src="" />
             <div className="navbar-left">
                 <div className="logo">
                     📘 <span>StudyTracker</span>
@@ -24,7 +27,7 @@ function Navbar() {
                 <button className="icon-btn">🔔</button>
 
                 <div className="user-menu">
-                    <span className="username">Hi, James!</span>
+                    <span className="username">Hi, {user.username}!</span>
                     <span className="caret">▾</span>
                 </div>
             </div>
