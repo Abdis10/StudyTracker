@@ -46,3 +46,32 @@
 .msg {
     font-size: 20px;
 }
+
+
+/* Dim background */
+.container-blended {
+    opacity: 0.3;
+    pointer-events: none; /* prevents clicking behind modal */
+}
+
+/* Fullscreen overlay */
+.logout-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 999;
+}
+
+/* Modal box */
+.logout-box {
+    background: white;
+    border-radius: 24px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+    text-align: center;
+}
+
