@@ -1,7 +1,9 @@
 import "../css/navbar.css";
 import useAuth from "../auth/useAuth.js";
+import { LogOut } from 'lucide-react';
+import {useState} from "react";
 
-function Navbar() {
+function Navbar( {onClickLogout} ) {
     const {user} = useAuth();
 
     return (
@@ -28,7 +30,11 @@ function Navbar() {
 
                 <div className="user-menu">
                     <span className="username">Hi, {user.username}!</span>
-                    <span className="caret">▾</span>
+                    <div className="logout">
+                        <LogOut onClick={() => {
+                            onClickLogout(true);
+                        }} />
+                    </div>
                 </div>
             </div>
         </nav>
