@@ -48,7 +48,7 @@ function Dashboard() {
             {logoutIsClicked && (
                 <div className="logout-overlay">
                     <div className="logout-box">
-                        <LogoutCard />
+                        <LogoutCard onClickLogout={setLogoutIsClicked} />
                     </div>
                 </div>
             )}
