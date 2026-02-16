@@ -4,7 +4,6 @@ import StudySessionCard from "../components/StudySessionCard.jsx";
 import "../css/dashboard.css";
 import RecentStudySessionsCard from "../components/RecentStudySessionsCard.jsx";
 import useAuth from "../auth/useAuth.js";
-import {useNavigate} from "react-router-dom";
 import LogoutCard from "../components/LogoutCard.jsx";
 import {useState} from "react";
 
@@ -15,7 +14,7 @@ function Dashboard() {
 
     return (
         <>
-            <div className={`${logoutIsClicked ? "container-blended" : "container"}`}>
+            <div className={`${logoutIsClicked ? "dashboard-container-dimmed" : "dashboard-container"}`}>
                 <div className="nav">
                     <Navbar onClickLogout={setLogoutIsClicked} />
                 </div>

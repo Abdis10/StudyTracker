@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import LoginPage from "./features/pages/LoginPage.jsx";
 import SignupPage from "./features/pages/SignupPage.jsx";
 import Dashboard from "./features/pages/Dashboard.jsx";
 import ProtectedRoute from "./features/auth/ProtectedRoute.jsx";
+import StudySessionsPage from "./features/pages/StudySessionsPage.jsx";
 
 function App() {
     return (
@@ -15,6 +15,13 @@ function App() {
                     <ProtectedRoute>
                         <Dashboard />
                     </ProtectedRoute>
+                   }
+            />
+            <Route path="/sessions"
+                   element={
+                       <ProtectedRoute>
+                           <StudySessionsPage />
+                       </ProtectedRoute>
                    }
             />
         </Routes>
