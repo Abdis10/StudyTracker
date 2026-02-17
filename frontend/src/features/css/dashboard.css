@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-.container {
+.dashboard-container {
     background-color: #e9effd;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -49,7 +49,7 @@
 
 
 /* Dim background */
-.container-blended {
+.dashboard-container-dimmed {
     opacity: 0.3;
     pointer-events: none; /* prevents clicking behind modal */
 }
