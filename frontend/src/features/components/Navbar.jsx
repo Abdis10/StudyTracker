@@ -1,8 +1,10 @@
 import "../css/navbar.css";
 import useAuth from "../auth/useAuth.js";
 import { BookOpenCheck, LogOut } from 'lucide-react';
+import { NavLink } from "react-router-dom";
+
 function Navbar( { onClickLogout } ) {
-    const { user, setActiveSection, highlightSection } = useAuth();
+    const { user} = useAuth();
 
     return (
         <nav className="navbar">
@@ -15,10 +17,29 @@ function Navbar( { onClickLogout } ) {
 
             {/* Center: Navigation links */}
             <ul className="navbar-links">
-                <li className={highlightSection === "dashboard" ? "active" : ""} onClick={(e) => setActiveSection("dashboard")}>Dashboard</li>
-                <li className={highlightSection === "sessions" ? "active" : ""} onClick={(e) => setActiveSection("sessions")}>Sessions</li>
-                <li className={highlightSection === "subjects" ? "active" : ""} onClick={(e) => setActiveSection("subjects")}>Subjects</li>
-                <li className={highlightSection === "reports" ? "active" : ""} onClick={(e) => setActiveSection("reports")}>Reports</li>
+                <li>
+                    <NavLink to="/dashboard"
+                             end
+                             className={({ isActive }) =>
+                                 isActive ? "navbar-link active" : "navbar-link"
+                             }
+                    >
+                        Dashboard
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/sessions"
+                        className={({ isActive }) =>
+                            isActive ? "navbar-link active" : "navbar-link"
+                        }
+                    >
+                        Sessions
+                    </NavLink>
+
+                </li>
+                <li>Subjects</li>
+                <li>Reports</li>
             </ul>
 
             {/* Right: User actions */}

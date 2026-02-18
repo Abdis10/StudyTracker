@@ -5,7 +5,6 @@ import StudySessions from "../components/StudySessions.jsx";
 function StudySessionsPage() {
     return (
         <>
-            <Navbar />
             <StudySessions />
         </>
     )
