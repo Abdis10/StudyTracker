@@ -4,22 +4,16 @@ import StudySessionCard from "../components/StudySessionCard.jsx";
 import "../css/dashboard.css";
 import RecentStudySessionsCard from "../components/RecentStudySessionsCard.jsx";
 import useAuth from "../auth/useAuth.js";
-import {useNavigate} from "react-router-dom";
 import LogoutCard from "../components/LogoutCard.jsx";
 import {useState} from "react";
 
 function Dashboard() {
     const { setIsAuth, user } = useAuth();
-    const [logoutIsClicked, setLogoutIsClicked] = useState(false);
-    console.log(logoutIsClicked);
+
 
     return (
         <>
-            <div className={`${logoutIsClicked ? "container-blended" : "container"}`}>
-                <div className="nav">
-                    <Navbar onClickLogout={setLogoutIsClicked} />
-                </div>
-
+            <div className="dashboard-container">
                 <div className="welcome-section">
                     <h1>Welcome Back, {user.firstname} !</h1>
                     <p className="msg">
@@ -43,15 +37,6 @@ function Dashboard() {
                     <Card title="Weekly Progress" />
                 </div>
             </div>
-
-            {/* ✅ Modal OUTSIDE grid */}
-            {logoutIsClicked && (
-                <div className="logout-overlay">
-                    <div className="logout-box">
-                        <LogoutCard onClickLogout={setLogoutIsClicked} />
-                    </div>
-                </div>
-            )}
         </>
     )
 }

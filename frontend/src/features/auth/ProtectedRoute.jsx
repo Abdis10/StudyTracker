@@ -1,5 +1,5 @@
 import useAuth from "./useAuth.js";
-import {Navigate} from "react-router-dom";
+import {Navigate, Outlet} from "react-router-dom";
 import Loading from "../components/Loading.jsx";
 
 function ProtectedRoute( {children} ) {
@@ -10,7 +10,7 @@ function ProtectedRoute( {children} ) {
     } else if (!isAuth) {
         return <Navigate to="/login" replace />;
     } else {
-        return children;
+        return <Outlet />
     }
 }
 

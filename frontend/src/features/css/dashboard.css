@@ -2,17 +2,13 @@
     box-sizing: border-box;
 }
 
-.container {
+.dashboard-container {
     background-color: #e9effd;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
 }
 
-.nav {
-    grid-column: 1/5;
-    grid-row: 1;
-}
 
 .welcome-section {
     border: 5px solid white;
@@ -47,31 +43,4 @@
     font-size: 20px;
 }
 
-
-/* Dim background */
-.container-blended {
-    opacity: 0.3;
-    pointer-events: none; /* prevents clicking behind modal */
-}
-
-/* Fullscreen overlay */
-.logout-overlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    z-index: 999;
-}
-
-/* Modal box */
-.logout-box {
-    background: white;
-    border-radius: 24px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
-    text-align: center;
-}
 

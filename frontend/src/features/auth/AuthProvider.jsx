@@ -13,7 +13,7 @@ function AuthProvider( {children} ) {
         isChecking,
         setIsAuth,
         setUser,
-        setIsChecking
+        setIsChecking,
     };
 
 

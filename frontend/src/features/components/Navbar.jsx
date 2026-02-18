@@ -1,25 +1,43 @@
 import "../css/navbar.css";
 import useAuth from "../auth/useAuth.js";
-import { LogOut } from 'lucide-react';
-import {useState} from "react";
+import { BookOpenCheck, LogOut } from 'lucide-react';
+import { NavLink } from "react-router-dom";
 
-function Navbar( {onClickLogout} ) {
-    const {user} = useAuth();
+function Navbar( { onClickLogout } ) {
+    const { user} = useAuth();
 
     return (
         <nav className="navbar">
-            {/* Left: Logo */}
-            <img className="user-img"  src="" />
             <div className="navbar-left">
                 <div className="logo">
-                    📘 <span>StudyTracker</span>
+                    <BookOpenCheck size={32} className="logo-icon-svg" />
+                    <span className="logo-text">StudyTracker</span>
                 </div>
             </div>
 
             {/* Center: Navigation links */}
             <ul className="navbar-links">
-                <li className="active">Dashboard</li>
-                <li>Tasks</li>
+                <li>
+                    <NavLink to="/dashboard"
+                             end
+                             className={({ isActive }) =>
+                                 isActive ? "navbar-link active" : "navbar-link"
+                             }
+                    >
+                        Dashboard
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/sessions"
+                        className={({ isActive }) =>
+                            isActive ? "navbar-link active" : "navbar-link"
+                        }
+                    >
+                        Sessions
+                    </NavLink>
+
+                </li>
                 <li>Subjects</li>
                 <li>Reports</li>
             </ul>
@@ -29,7 +47,7 @@ function Navbar( {onClickLogout} ) {
                 <button className="icon-btn">🔔</button>
 
                 <div className="user-menu">
-                    <span className="username">Hi, {user.username}!</span>
+                <span className="username">Hi, {user?.username ?? "Ahmed"}!</span>
                     <div className="logout">
                         <LogOut onClick={() => {
                             onClickLogout(true);
