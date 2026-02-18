@@ -6,32 +6,14 @@ function AuthProvider( {children} ) {
     const [isAuth, setIsAuth] = useState(false);
     const [isChecking, setIsChecking] = useState(true);
     const [user, setUser] = useState(null);
-    const [activeSection, setActiveSection] = useState(null);
-    const [highlightSection, setHighlightSection] = useState(null);
-
-    useEffect(() => {
-        if (activeSection === "dashboard") {
-            setHighlightSection("dashboard");
-        } else if (activeSection === "sessions") {
-            setHighlightSection("sessions");
-        } else if (activeSection === "subjects") {
-            setHighlightSection("subjects");
-        } else {
-            setHighlightSection("reports");
-        }
-    }, [activeSection]);
 
     const value = {
         isAuth,
         user,
         isChecking,
-        activeSection,
-        highlightSection,
         setIsAuth,
         setUser,
         setIsChecking,
-        setActiveSection,
-        setHighlightSection
     };
 
 
