@@ -47,6 +47,10 @@
     border-collapse: collapse;
 }
 
+table {
+    table-layout: fixed;
+}
+
 thead {
     background: #f3f4f6;
 }
@@ -73,7 +77,8 @@ tbody tr:hover {
 
 /* Productivity Badges */
 .productivity {
-    padding: 4px 8px;
+    width: 80px;
+    padding: 10px;
     border-radius: 6px;
     font-weight: 500;
     font-size: 12px;

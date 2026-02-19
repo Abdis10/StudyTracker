@@ -1,7 +1,37 @@
 import { Plus } from "lucide-react";
 import "../css/studySessions.css";
+import {useEffect, useState} from "react";
+import useAuth from "../auth/useAuth.js";
+import {getSessions} from "../../api/sessionApi.js";
 
 function StudySessions() {
+    const { isAuth } = useAuth();
+    const [sessions, setSessions] = useState([]);
+    useEffect(() => {
+        if (isAuth) {
+            const sessionData =  async () => {
+                try {
+                    const token = localStorage.getItem("token");
+                    const result = await getSessions(token);
+                    setSessions(result.data);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+            sessionData();
+        }
+
+    }, []);
+
+
+    const getProductivityClass = (score) => {
+        if (score >= 7) return "high";
+        if (score <= 4) return "low";
+        return "medium";
+    }
+
+    console.log(sessions);
+
     return (
         <div className="sessions-page-container">
             <div className="study-sessions">
@@ -14,42 +44,36 @@ function StudySessions() {
                 </div>
 
                 <div className="session-display">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Hours</th>
-                            <th>Productivity</th>
-                            <th>Comments</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>May 8, 2024</td>
-                            <td>2.5 h</td>
-                            <td><span className="productivity high">8/10</span></td>
-                            <td>Felt focused and productive</td>
-                        </tr>
-                        <tr>
-                            <td>May 9, 2024</td>
-                            <td>1.5 h</td>
-                            <td><span className="productivity medium">6/10</span></td>
-                            <td>Distracted first hour</td>
-                        </tr>
-                        <tr>
-                            <td>May 10, 2024</td>
-                            <td>3 h</td>
-                            <td><span className="productivity high">9/10</span></td>
-                            <td>Deep work session</td>
-                        </tr>
-                        <tr>
-                            <td>May 11, 2024</td>
-                            <td>2 h</td>
-                            <td><span className="productivity low">4/10</span></td>
-                            <td>Tired but consistent</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    {sessions.length > 0 ? (
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Hours</th>
+                                <th>Productivity</th>
+                                <th>Comment</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {sessions.map(({ id, date, hours, productivityScore, comment }) => (
+                                <tr key={id}>
+                                    <td>{date}</td>
+                                    <td>{hours}</td>
+                                    <td>
+                                        <span className={`productivity ${getProductivityClass(productivityScore)}`}>
+                                        {productivityScore}/10
+                                    </span>
+                                    </td>
+                                    <td>{comment}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div className="empty-state">
+                            <h3>Hi, you have no sessions registered now... 🔎</h3>
+                        </div>
+                    )}
                 </div>
             </div>
 

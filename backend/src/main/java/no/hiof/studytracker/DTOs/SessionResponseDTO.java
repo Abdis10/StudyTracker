@@ -1,6 +1,7 @@
 package no.hiof.studytracker.DTOs;
 
 public class SessionResponseDTO {
+    private int id;
     private String date;
     private float hours;
     private int productivityScore;
@@ -10,7 +11,8 @@ public class SessionResponseDTO {
 
     public SessionResponseDTO() {}
 
-    public SessionResponseDTO(String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
+    public SessionResponseDTO(int id, String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
+        this.id = id;
         this.date = date;
         this.hours = hours;
         this.productivityScore = productivityScore;
@@ -65,5 +67,13 @@ public class SessionResponseDTO {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

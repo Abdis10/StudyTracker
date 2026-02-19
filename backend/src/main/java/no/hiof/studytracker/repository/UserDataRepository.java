@@ -203,7 +203,7 @@ public class UserDataRepository implements UserRepository {
     }
 
     public List<SessionResponseDTO> getSessions(int userId) {
-        String sql = "SELECT date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ?";
+        String sql = "SELECT id, date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ?";
 
         try (Connection connection = DB.getConnection()) {
             ArrayList<SessionResponseDTO> arrayOfSessions = new ArrayList<>();
@@ -214,7 +214,7 @@ public class UserDataRepository implements UserRepository {
 
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
-                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getString("date"), rs.getFloat("hours"),
+                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getInt("id"), rs.getString("date"), rs.getFloat("hours"),
                         rs.getInt("productivity_score"), rs.getString("comment"),
                         rs.getString("created_At"), rs.getString("updated_at"));
 
