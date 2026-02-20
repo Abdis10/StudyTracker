@@ -9,6 +9,10 @@ export default defineConfig({
       "/auth": {
         target: "http://localhost:7000",
         changeOrigin: true
+      },
+      "/session": {
+        target: "http://localhost:7000",
+        changeOrigin: true
       }
     }
   }
