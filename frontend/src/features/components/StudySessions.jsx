@@ -2,11 +2,31 @@ import { Plus } from "lucide-react";
 import "../css/studySessions.css";
 import {useEffect, useState} from "react";
 import useAuth from "../auth/useAuth.js";
-import {getSessions} from "../../api/sessionApi.js";
+import {getSessions, registerSession} from "../../api/sessionApi.js";
+import LogSessionCard from "./LogSessionCard.jsx";
 
 function StudySessions() {
     const { isAuth } = useAuth();
     const [sessions, setSessions] = useState([]);
+    const [showCard, setShowCard] = useState(false);
+    const [data, setData] = useState({});
+
+    useEffect(() => {
+        if (!showCard) {
+            const sessionRegistration = async () => {
+                try {
+                    const token = localStorage.getItem("token");
+                    const result = await registerSession(data, token);
+                    console.log(result.message);
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            sessionRegistration();
+        }
+    }, [data]);
+
     useEffect(() => {
         if (isAuth) {
             const sessionData =  async () => {
@@ -15,13 +35,13 @@ function StudySessions() {
                     const result = await getSessions(token);
                     setSessions(result.data);
                 } catch (e) {
-                    console.log(e);
+                    console.error(e);
                 }
             }
             sessionData();
         }
 
-    }, []);
+    }, [isAuth]);
 
 
     const getProductivityClass = (score) => {
@@ -37,7 +57,7 @@ function StudySessions() {
             <div className="study-sessions">
                 <div className="sessions-header">
                     <h2>Study Sessions</h2>
-                    <button className="log-btn">
+                    <button className="log-btn" onClick={() => setShowCard(true)}>
                         <Plus size={18} />
                         Log Session
                     </button>
@@ -80,6 +100,13 @@ function StudySessions() {
             <div className="session-diagram">
                 {/* Chart later */}
             </div>
+            {showCard && (
+                <LogSessionCard onClose={() => setShowCard(false)} onSave={(newSession) => {
+                setSessions(prev => [...prev, newSession]);
+                setShowCard(false);
+                setData(newSession);
+                }} />
+            )}
         </div>
     );
 }
