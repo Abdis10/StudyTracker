@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import {MoreVertical, Plus} from "lucide-react";
 import "../css/studySessions.css";
 import {useEffect, useState} from "react";
 import useAuth from "../auth/useAuth.js";
@@ -10,7 +10,7 @@ function StudySessions() {
     const [sessions, setSessions] = useState([]);
     const [showCard, setShowCard] = useState(false);
     const [data, setData] = useState({});
-
+    const [openMenuId, setOpenMenuId] = useState(null);
     useEffect(() => {
         if (!showCard) {
             const sessionRegistration = async () => {
@@ -52,6 +52,16 @@ function StudySessions() {
 
     console.log(sessions);
 
+    const handleEdit = (id) => {
+        console.log("Edit session:", id);
+        setOpenMenuId(null);
+    };
+
+    const handleDelete = (id) => {
+        console.log("Delete session:", id);
+        setOpenMenuId(null);
+    };
+
     return (
         <div className="sessions-page-container">
             <div className="study-sessions">
@@ -72,6 +82,7 @@ function StudySessions() {
                                 <th>Hours</th>
                                 <th>Productivity</th>
                                 <th>Comment</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -80,11 +91,33 @@ function StudySessions() {
                                     <td>{date}</td>
                                     <td>{hours}</td>
                                     <td>
-                                        <span className={`productivity ${getProductivityClass(productivityScore)}`}>
-                                        {productivityScore}/10
-                                    </span>
+            <span className={`productivity ${getProductivityClass(productivityScore)}`}>
+                {productivityScore}/10
+            </span>
                                     </td>
                                     <td>{comment}</td>
+
+                                    <td>
+                                        <div className="menu-wrapper">
+                                            <button onClick={() =>
+                                                setOpenMenuId(openMenuId === id ? null : id)
+                                            }>
+                                                <MoreVertical size={18} />
+                                            </button>
+
+                                            {openMenuId === id && (
+                                                <div className="dropdown">
+                                                    <button onClick={() => handleEdit(id)}>Edit</button>
+                                                    <button
+                                                        className="danger"
+                                                        onClick={() => handleDelete(id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
                                 </tr>
                             ))}
                             </tbody>
