@@ -2,7 +2,7 @@ import {MoreVertical, Plus} from "lucide-react";
 import "../css/studySessions.css";
 import {useEffect, useState} from "react";
 import useAuth from "../auth/useAuth.js";
-import {getSessions, registerSession} from "../../api/sessionApi.js";
+import {getSessions, registerSession, updateSession} from "../../api/sessionApi.js";
 import LogSessionCard from "./LogSessionCard.jsx";
 
 function StudySessions() {
@@ -11,6 +11,8 @@ function StudySessions() {
     const [showCard, setShowCard] = useState(false);
     const [data, setData] = useState({});
     const [openMenuId, setOpenMenuId] = useState(null);
+    const [editingSession, setEditingSession] = useState(null);
+
     useEffect(() => {
         if (!showCard) {
             const sessionRegistration = async () => {
@@ -53,7 +55,9 @@ function StudySessions() {
     console.log(sessions);
 
     const handleEdit = (id) => {
-        console.log("Edit session:", id);
+        const sessionToEdit = sessions.find( s => s.id === id);
+        setEditingSession(sessionToEdit);
+        setShowCard(true);
         setOpenMenuId(null);
     };
 
@@ -91,9 +95,9 @@ function StudySessions() {
                                     <td>{date}</td>
                                     <td>{hours}</td>
                                     <td>
-            <span className={`productivity ${getProductivityClass(productivityScore)}`}>
-                {productivityScore}/10
-            </span>
+                                    <span className={`productivity ${getProductivityClass(productivityScore)}`}>
+                                        {productivityScore}/10
+                                    </span>
                                     </td>
                                     <td>{comment}</td>
 
@@ -134,11 +138,25 @@ function StudySessions() {
                 {/* Chart later */}
             </div>
             {showCard && (
-                <LogSessionCard onClose={() => setShowCard(false)} onSave={(newSession) => {
-                setSessions(prev => [...prev, newSession]);
-                setShowCard(false);
-                setData(newSession);
-                }} />
+                <LogSessionCard initialData={editingSession}
+                                onClose={() => {
+                                    setShowCard(false);
+                                    setEditingSession(null);
+                                }}
+                                onSave={(updatedSession) => {
+                                    // Update existing session
+                                    if(editingSession) {
+                                        setSessions(prev =>
+                                        prev.map(s => s.id === updatedSession.id ? updatedSession : s));
+                                    } else {
+                                        // Create new session
+                                        setSessions(prev => [...prev, updatedSession]);
+                                    }
+                                    setShowCard(false);
+                                    setEditingSession(null);
+                                    setData(updatedSession);
+                                }}
+                />
             )}
         </div>
     );
