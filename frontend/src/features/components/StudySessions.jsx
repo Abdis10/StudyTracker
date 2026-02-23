@@ -9,11 +9,10 @@ function StudySessions() {
     const { isAuth } = useAuth();
     const [sessions, setSessions] = useState([]);
     const [showCard, setShowCard] = useState(false);
-    const [data, setData] = useState({});
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingSession, setEditingSession] = useState(null);
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (!showCard) {
             const sessionRegistration = async () => {
                 try {
@@ -27,7 +26,7 @@ function StudySessions() {
 
             sessionRegistration();
         }
-    }, [data]);
+    }, [data]);*/
 
     useEffect(() => {
         if (isAuth) {
@@ -56,6 +55,7 @@ function StudySessions() {
 
     const handleEdit = (id) => {
         const sessionToEdit = sessions.find( s => s.id === id);
+        console.log(sessionToEdit);
         setEditingSession(sessionToEdit);
         setShowCard(true);
         setOpenMenuId(null);
@@ -66,12 +66,36 @@ function StudySessions() {
         setOpenMenuId(null);
     };
 
+    const handleSessionRegistration = async (sessionData) => {
+        try {
+            const token = localStorage.getItem("token");
+            const result = await registerSession(sessionData, token);
+            console.log(result.message);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+
+    const handleUpdateSession = async (sessionData) => {
+        try {
+            const token = localStorage.getItem("token");
+            const result = await updateSession(sessionData, sessionData.id, token);
+            console.log(result.message);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     return (
         <div className="sessions-page-container">
             <div className="study-sessions">
                 <div className="sessions-header">
                     <h2>Study Sessions</h2>
-                    <button className="log-btn" onClick={() => setShowCard(true)}>
+                    <button className="log-btn" onClick={() => {
+                        setEditingSession(null);
+                        setShowCard(true);
+                    }}>
                         <Plus size={18} />
                         Log Session
                     </button>
@@ -143,18 +167,20 @@ function StudySessions() {
                                     setShowCard(false);
                                     setEditingSession(null);
                                 }}
-                                onSave={(updatedSession) => {
+                                onSave={ async (updatedSession) => {
                                     // Update existing session
-                                    if(editingSession) {
+                                    if (editingSession) {
+                                        await handleUpdateSession(updatedSession);
                                         setSessions(prev =>
-                                        prev.map(s => s.id === updatedSession.id ? updatedSession : s));
+                                            prev.map(s => s.id === updatedSession.id ? updatedSession : s));
+
                                     } else {
                                         // Create new session
+                                        await handleSessionRegistration(updatedSession);
                                         setSessions(prev => [...prev, updatedSession]);
                                     }
                                     setShowCard(false);
                                     setEditingSession(null);
-                                    setData(updatedSession);
                                 }}
                 />
             )}
