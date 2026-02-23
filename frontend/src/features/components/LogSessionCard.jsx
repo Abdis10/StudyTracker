@@ -1,7 +1,7 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import "../css/logSessionCard.css";
 
-function LogSessionCard({ onClose, onSave }) {
+function LogSessionCard({ onClose, onSave, initialData } ) {
     const [date, setDate] = useState("");
     const [hours, setHours] = useState("");
     const [productivityScore, setProductivity] = useState(5);
@@ -19,6 +19,15 @@ function LogSessionCard({ onClose, onSave }) {
 
         onSave(newSession);
     };
+
+    useEffect(() => {
+        if (initialData) {
+            setDate(initialData.date);
+            setHours(initialData.hours);
+            setProductivity(initialData.productivityScore);
+            setComment(initialData.comment);
+        }
+    }, [initialData]);
 
     return (
         <div className="logsession-overlay">
