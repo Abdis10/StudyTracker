@@ -11,6 +11,8 @@ function StudySessions() {
     const [showCard, setShowCard] = useState(false);
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingSession, setEditingSession] = useState(null);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [data, setData] = useState({});
 
     /*useEffect(() => {
         if (!showCard) {
@@ -77,10 +79,10 @@ function StudySessions() {
     };
 
 
-    const handleUpdateSession = async (sessionData) => {
+    const handleUpdateSession =  (sessionData, id) => {
         try {
             const token = localStorage.getItem("token");
-            const result = await updateSession(sessionData, sessionData.id, token);
+            const result = updateSession(sessionData, id, token);
             console.log(result.message);
         } catch (e) {
             console.error(e);
@@ -170,14 +172,24 @@ function StudySessions() {
                                 onSave={ async (updatedSession) => {
                                     // Update existing session
                                     if (editingSession) {
-                                        await handleUpdateSession(updatedSession);
-                                        setSessions(prev =>
-                                            prev.map(s => s.id === updatedSession.id ? updatedSession : s));
+                                        try {
+                                            const editedSessionId = editingSession.id;
+                                            updatedSession.id = editingSession.id;
+                                            handleUpdateSession(updatedSession, editedSessionId);
+                                            setSessions(prev =>
+                                                prev.map(s => s.id === updatedSession.id ? updatedSession : s));
+                                        } catch (e) {
+                                            setErrorMsg(e.message);
+                                        }
 
                                     } else {
                                         // Create new session
-                                        await handleSessionRegistration(updatedSession);
-                                        setSessions(prev => [...prev, updatedSession]);
+                                        try {
+                                            await handleSessionRegistration(updatedSession);
+                                            setSessions(prev => [...prev, updatedSession]);
+                                        } catch (e) {
+                                            setErrorMsg(e.message);
+                                        }
                                     }
                                     setShowCard(false);
                                     setEditingSession(null);
