@@ -2,8 +2,9 @@ import {MoreVertical, Plus} from "lucide-react";
 import "../css/studySessions.css";
 import {useEffect, useState} from "react";
 import useAuth from "../auth/useAuth.js";
-import {getSessions, registerSession, updateSession} from "../../api/sessionApi.js";
+import {deleteSession, getSessions, registerSession, updateSession} from "../../api/sessionApi.js";
 import LogSessionCard from "./LogSessionCard.jsx";
+import {toast, Toaster} from "react-hot-toast";
 
 function StudySessions() {
     const { isAuth } = useAuth();
@@ -11,24 +12,7 @@ function StudySessions() {
     const [showCard, setShowCard] = useState(false);
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingSession, setEditingSession] = useState(null);
-    const [errorMsg, setErrorMsg] = useState("");
-    const [data, setData] = useState({});
-
-    /*useEffect(() => {
-        if (!showCard) {
-            const sessionRegistration = async () => {
-                try {
-                    const token = localStorage.getItem("token");
-                    const result = await registerSession(data, token);
-                    console.log(result.message);
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-
-            sessionRegistration();
-        }
-    }, [data]);*/
+    const [sessionUpdator, setSessionUpdator] = useState(false);
 
     useEffect(() => {
         if (isAuth) {
@@ -44,7 +28,7 @@ function StudySessions() {
             sessionData();
         }
 
-    }, [isAuth]);
+    }, [sessionUpdator]);
 
 
     const getProductivityClass = (score) => {
@@ -63,8 +47,22 @@ function StudySessions() {
         setOpenMenuId(null);
     };
 
-    const handleDelete = (id) => {
-        console.log("Delete session:", id);
+    const handleDelete = async (id) =>  {
+        try {
+            const token = localStorage.getItem("token");
+            const result = await deleteSession(id, token);
+            if (result.success) {
+                toast.success("Session is successfully deleted.");
+                console.log(result);
+                setSessionUpdator(true);
+            } else {
+                toast.error("Couldn't delete session!");
+                setSessionUpdator(false);
+            }
+        } catch (e) {
+            console.error("Network error", e);
+            toast.error("Something went wrong with the connection to the server!");
+        }
         setOpenMenuId(null);
     };
 
@@ -72,9 +70,18 @@ function StudySessions() {
         try {
             const token = localStorage.getItem("token");
             const result = await registerSession(sessionData, token);
-            console.log(result.message);
+
+            if (result.success) {
+                toast.success(result.data.message);
+                console.log(result.data.message);
+                setSessionUpdator(true);
+            } else {
+                toast.error(result.data.message);
+                setSessionUpdator(false);
+            }
         } catch (e) {
-            console.error(e);
+            console.error("Network error", e);
+            toast.error("Something went wrong with the connection to the server!");
         }
     };
 
@@ -83,14 +90,23 @@ function StudySessions() {
         try {
             const token = localStorage.getItem("token");
             const result = updateSession(sessionData, id, token);
-            console.log(result.message);
+            if (result.success) {
+                toast.success(result.data.message);
+                console.log(result.data.message);
+                setSessionUpdator(true);
+            } else {
+                toast.error(result.data.message);
+                setSessionUpdator(false);
+            }
         } catch (e) {
-            console.error(e);
+            console.error("Network error", e);
+            toast.error("Something went wrong with the connection to the server!");
         }
     };
 
     return (
         <div className="sessions-page-container">
+            <div><Toaster/></div>
             <div className="study-sessions">
                 <div className="sessions-header">
                     <h2>Study Sessions</h2>
@@ -137,10 +153,16 @@ function StudySessions() {
 
                                             {openMenuId === id && (
                                                 <div className="dropdown">
-                                                    <button onClick={() => handleEdit(id)}>Edit</button>
+                                                    <button onClick={() => {
+                                                        setSessionUpdator(false);
+                                                        handleEdit(id);
+                                                    }}>Edit</button>
                                                     <button
                                                         className="danger"
-                                                        onClick={() => handleDelete(id)}
+                                                        onClick={()=> {
+                                                            setSessionUpdator(true);
+                                                            handleDelete(id);
+                                                        }}
                                                     >
                                                         Delete
                                                     </button>
@@ -188,7 +210,7 @@ function StudySessions() {
                                             await handleSessionRegistration(updatedSession);
                                             setSessions(prev => [...prev, updatedSession]);
                                         } catch (e) {
-                                            setErrorMsg(e.message);
+                                            setMessage(e);
                                         }
                                     }
                                     setShowCard(false);

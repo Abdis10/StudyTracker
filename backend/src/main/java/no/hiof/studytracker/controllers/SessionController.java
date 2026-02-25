@@ -24,7 +24,7 @@ public class SessionController {
             sessionDataDTO.setToken(token);
             sessionService.studySession(sessionDataDTO);
             ctx.status(201).json(Map.of(
-                    "message: ", "study session is successfully created"
+                    "message", "study session is successfully created"
             ));
 
         } catch (CustomException e) {
@@ -76,21 +76,18 @@ public class SessionController {
             int sessionId = Integer.parseInt(ctx.pathParam("sessionId"));
             String token = ctx.header("Authorization").substring(7);
             sessionService.deleteSessionForUser(token, sessionId);
-            ctx.status(204).json(Map.of(
-                    "Message:", "Session is successfully deteted",
-                    "Deleted: ", true
-            ));
+            ctx.status(204);
         } catch (InvalidTokenException e) {
             ctx.status(401).json(Map.of(
-                    "Message: ", e.getErrorCode()
+                    "Message", e.getErrorCode()
             ));
         } catch (SessionOwnershipException e) {
             ctx.status(403).json(Map.of(
-                    "Message: ", e.getErrorCode()
+                    "Message", e.getErrorCode()
             ));
         } catch (CustomException e) {
             ctx.status(404).json(Map.of(
-                    "Message: ", e.getErrorCode()
+                    "Message", e.getErrorCode()
             ));
         }
     }
