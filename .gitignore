@@ -15,8 +15,8 @@ target/
 # ---------------------------
 # IDE: INTELLIJ IDEA
 # ---------------------------
-.idea/
-*.iws
+.idea/*
+!.idea/runConfigurations*.iws
 *.iml
 *.ipr
 
