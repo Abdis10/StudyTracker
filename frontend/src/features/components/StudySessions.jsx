@@ -5,6 +5,7 @@ import useAuth from "../auth/useAuth.js";
 import {deleteSession, getSessions, registerSession, updateSession} from "../../api/sessionApi.js";
 import LogSessionCard from "./LogSessionCard.jsx";
 import {toast, Toaster} from "react-hot-toast";
+import {Pie, PieChart, Tooltip} from "recharts";
 
 function StudySessions() {
     const { isAuth } = useAuth();
@@ -13,6 +14,11 @@ function StudySessions() {
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingSession, setEditingSession] = useState(null);
     const [sessionUpdator, setSessionUpdator] = useState(false);
+    const [data, setData] = useState({
+        high: [],
+        medium: [],
+        low: []
+    });
 
     useEffect(() => {
         if (isAuth) {
@@ -20,7 +26,11 @@ function StudySessions() {
                 try {
                     const token = localStorage.getItem("token");
                     const result = await getSessions(token);
-                    setSessions(result.data);
+
+                    if (result.success) {
+                        setSessions(result.data);
+                        console.log(sessions);
+                    }
                 } catch (e) {
                     console.error(e);
                 }
@@ -104,6 +114,39 @@ function StudySessions() {
         }
     };
 
+    const addScore = (category, score) => {
+        setData(prev => ({
+            ...prev, [category]: [...prev[category], score]
+        }));
+    };
+
+    const calculateStats = (sessions) => {
+        const initialStats = { high: [], medium: [], low: [] };
+
+        const newStats = sessions.reduce( (acc, session) => {
+         const category = getProductivityClass(session.productivityScore);
+
+         return {
+             ...acc,
+            [category]: [...acc[category], session.productivityScore]
+         };
+        }, initialStats);
+        setData(newStats);
+    }
+
+    useEffect(() => {
+        if (sessions && sessions.length > 0) {
+            calculateStats(sessions);
+        }
+    }, [sessions]);
+
+    const COLORS = ["#22C55E", "#ffd400", "#EF4444"];
+    const dataWithColors = Object.keys(data).map((key, index) => ({
+      name: key,
+      value: data[key].length,
+      fill: COLORS[index % COLORS.length]
+    })).filter(item => item.value > 0);
+
     return (
         <div className="sessions-page-container">
             <div><Toaster/></div>
@@ -184,6 +227,17 @@ function StudySessions() {
 
             <div className="session-diagram">
                 {/* Chart later */}
+                <PieChart width={400} height={400}>
+                    <Pie
+                        data={dataWithColors}
+                        dataKey="value"
+                        nameKey="name"
+                        outerRadius={150}
+                        innerRadius={60}
+                    />
+                    <Tooltip />
+                </PieChart>
+
             </div>
             {showCard && (
                 <LogSessionCard initialData={editingSession}
