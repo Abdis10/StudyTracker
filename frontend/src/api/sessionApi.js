@@ -53,10 +53,8 @@ export async function deleteSession(sessionId, token) {
         method: "DELETE",
         headers: {"Authorization": `Bearer ${token}`}
     });
-    const data = await response.json();
     return {
         success: response.ok,
-        data,
         status: response.status
     }
 }
