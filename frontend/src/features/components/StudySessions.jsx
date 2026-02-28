@@ -226,7 +226,7 @@ function StudySessions() {
             </div>
 
             <div className="session-diagram">
-                {/* Chart later */}
+                <h3>Productivity rate</h3>
                 <PieChart width={400} height={400}>
                     <Pie
                         data={dataWithColors}
@@ -234,10 +234,24 @@ function StudySessions() {
                         nameKey="name"
                         outerRadius={150}
                         innerRadius={60}
+                        paddingAngle={4}
+                        cornerRadius={8}
                     />
-                    <Tooltip />
+                    <Tooltip  />
                 </PieChart>
-
+                <div className="pie-legend">
+                    {dataWithColors.map((item) => (
+                        <div key={item.name} className="legend-item">
+                              <span
+                                  className="legend-color"
+                                  style={{ backgroundColor: item.fill }}
+                              />
+                              <span className="legend-text">
+                                 {item.value} {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                              </span>
+                        </div>
+                    ))}
+                </div>
             </div>
             {showCard && (
                 <LogSessionCard initialData={editingSession}
