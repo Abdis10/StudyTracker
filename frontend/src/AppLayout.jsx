@@ -7,7 +7,6 @@ import "../src/features/css/applayout.css";
 
 function AppLayout() {
     const [logoutIsClicked, setLogoutIsClicked] = useState(false);
-    console.log(logoutIsClicked);
     return (
         <>
             <div className={`${logoutIsClicked ? "background-dimmed" : "container"}`}>
