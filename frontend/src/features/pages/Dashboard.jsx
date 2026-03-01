@@ -9,8 +9,6 @@ import {useState} from "react";
 
 function Dashboard() {
     const { setIsAuth, user } = useAuth();
-
-
     return (
         <>
             <div className="dashboard-container">
