@@ -1,11 +1,12 @@
-import {MoreVertical, Plus} from "lucide-react";
+import { MoreVertical, Plus } from "lucide-react";
 import "../css/studySessions.css";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../auth/useAuth.js";
-import {deleteSession, getSessions, registerSession, updateSession} from "../../api/sessionApi.js";
+import { deleteSession, getSessions, registerSession, updateSession } from "../../api/sessionApi.js";
 import LogSessionCard from "./LogSessionCard.jsx";
-import {toast, Toaster} from "react-hot-toast";
-import {Pie, PieChart, Tooltip} from "recharts";
+import { toast, Toaster } from "react-hot-toast";
+import { Pie, PieChart, Tooltip } from "recharts";
+import { logger } from "../utils/Logger.js";
 
 function StudySessions() {
     const { isAuth } = useAuth();
@@ -14,63 +15,54 @@ function StudySessions() {
     const [openMenuId, setOpenMenuId] = useState(null);
     const [editingSession, setEditingSession] = useState(null);
     const [sessionUpdator, setSessionUpdator] = useState(false);
-    const [data, setData] = useState({
-        high: [],
-        medium: [],
-        low: []
-    });
+    const [data, setData] = useState({ high: [], medium: [], low: [] });
 
     useEffect(() => {
         if (isAuth) {
-            const sessionData =  async () => {
+            const sessionData = async () => {
                 try {
                     const token = localStorage.getItem("token");
                     const result = await getSessions(token);
 
                     if (result.success) {
                         setSessions(result.data);
-                        console.log(sessions);
                     }
                 } catch (e) {
-                    console.error(e);
+                    logger.error("Fetching sessions failed:", e);
                 }
-            }
+            };
             sessionData();
         }
-
-    }, [sessionUpdator]);
-
+    }, [sessionUpdator, isAuth]);
 
     const getProductivityClass = (score) => {
         if (score >= 7) return "high";
         if (score <= 4) return "low";
         return "medium";
-    }
-
-    console.log(sessions);
+    };
 
     const handleEdit = (id) => {
-        const sessionToEdit = sessions.find( s => s.id === id);
-        console.log(sessionToEdit);
+        const sessionToEdit = sessions.find(s => s.id === id);
+        logger.log("Editing session:", sessionToEdit);
         setEditingSession(sessionToEdit);
         setShowCard(true);
         setOpenMenuId(null);
     };
 
-    const handleDelete = async (id) =>  {
+    const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem("token");
             const result = await deleteSession(id, token);
+
             if (result.success) {
                 toast.success("Session is successfully deleted.");
-                console.log(result);
-                setSessionUpdator(true);
+                logger.log("Delete result:", result);
+                setSessionUpdator(prev => !prev);
             } else {
                 toast.error("Couldn't delete session!");
-                setSessionUpdator(false);
             }
         } catch (e) {
-            console.error("Network error", e);
+            logger.error("Delete network error:", e);
             toast.error("Something went wrong with the connection to the server!");
         }
         setOpenMenuId(null);
@@ -83,80 +75,79 @@ function StudySessions() {
 
             if (result.success) {
                 toast.success(result.data.message);
-                console.log(result.data.message);
-                setSessionUpdator(true);
+                logger.log("Register message:", result.data.message);
+                setSessionUpdator(prev => !prev);
             } else {
                 toast.error(result.data.message);
-                setSessionUpdator(false);
             }
         } catch (e) {
-            console.error("Network error", e);
+            logger.error("Register network error:", e);
             toast.error("Something went wrong with the connection to the server!");
         }
     };
 
-
-    const handleUpdateSession =  (sessionData, id) => {
+    const handleUpdateSession = async (sessionData, id) => {
         try {
             const token = localStorage.getItem("token");
-            const result = updateSession(sessionData, id, token);
+            const result = await updateSession(sessionData, id, token);
+
             if (result.success) {
                 toast.success(result.data.message);
-                console.log(result.data.message);
-                setSessionUpdator(true);
+                logger.log("Update message:", result.data.message);
+                setSessionUpdator(prev => !prev);
             } else {
                 toast.error(result.data.message);
-                setSessionUpdator(false);
             }
         } catch (e) {
-            console.error("Network error", e);
+            logger.error("Update network error:", e);
             toast.error("Something went wrong with the connection to the server!");
         }
-    };
-
-    const addScore = (category, score) => {
-        setData(prev => ({
-            ...prev, [category]: [...prev[category], score]
-        }));
     };
 
     const calculateStats = (sessions) => {
         const initialStats = { high: [], medium: [], low: [] };
 
-        const newStats = sessions.reduce( (acc, session) => {
-         const category = getProductivityClass(session.productivityScore);
-
-         return {
-             ...acc,
-            [category]: [...acc[category], session.productivityScore]
-         };
+        const newStats = sessions.reduce((acc, session) => {
+            const category = getProductivityClass(session.productivityScore);
+            return {
+                ...acc,
+                [category]: [...acc[category], session.productivityScore]
+            };
         }, initialStats);
+
         setData(newStats);
-    }
+    };
 
     useEffect(() => {
-        if (sessions && sessions.length > 0) {
+        if (sessions.length > 0) {
             calculateStats(sessions);
         }
     }, [sessions]);
 
     const COLORS = ["#22C55E", "#ffd400", "#EF4444"];
-    const dataWithColors = Object.keys(data).map((key, index) => ({
-      name: key,
-      value: data[key].length,
-      fill: COLORS[index % COLORS.length]
-    })).filter(item => item.value > 0);
+
+    const dataWithColors = Object.keys(data)
+        .map((key, index) => ({
+            name: key,
+            value: data[key].length,
+            fill: COLORS[index % COLORS.length]
+        }))
+        .filter(item => item.value > 0);
 
     return (
         <div className="sessions-page-container">
-            <div><Toaster/></div>
+            <Toaster />
+
             <div className="study-sessions">
                 <div className="sessions-header">
                     <h2>Study Sessions</h2>
-                    <button className="log-btn" onClick={() => {
-                        setEditingSession(null);
-                        setShowCard(true);
-                    }}>
+                    <button
+                        className="log-btn"
+                        onClick={() => {
+                            setEditingSession(null);
+                            setShowCard(true);
+                        }}
+                    >
                         <Plus size={18} />
                         Log Session
                     </button>
@@ -180,12 +171,11 @@ function StudySessions() {
                                     <td>{date}</td>
                                     <td>{hours}</td>
                                     <td>
-                                    <span className={`productivity ${getProductivityClass(productivityScore)}`}>
-                                        {productivityScore}/10
-                                    </span>
+                                            <span className={`productivity ${getProductivityClass(productivityScore)}`}>
+                                                {productivityScore}/10
+                                            </span>
                                     </td>
                                     <td>{comment}</td>
-
                                     <td>
                                         <div className="menu-wrapper">
                                             <button onClick={() =>
@@ -196,16 +186,10 @@ function StudySessions() {
 
                                             {openMenuId === id && (
                                                 <div className="dropdown">
-                                                    <button onClick={() => {
-                                                        setSessionUpdator(false);
-                                                        handleEdit(id);
-                                                    }}>Edit</button>
+                                                    <button onClick={() => handleEdit(id)}>Edit</button>
                                                     <button
                                                         className="danger"
-                                                        onClick={()=> {
-                                                            setSessionUpdator(true);
-                                                            handleDelete(id);
-                                                        }}
+                                                        onClick={() => handleDelete(id)}
                                                     >
                                                         Delete
                                                     </button>
@@ -226,7 +210,7 @@ function StudySessions() {
             </div>
 
             <div className="session-diagram">
-                {/* Chart later */}
+                <h3>Productivity rate</h3>
                 <PieChart width={400} height={400}>
                     <Pie
                         data={dataWithColors}
@@ -234,42 +218,46 @@ function StudySessions() {
                         nameKey="name"
                         outerRadius={150}
                         innerRadius={60}
+                        paddingAngle={4}
+                        cornerRadius={8}
                     />
                     <Tooltip />
                 </PieChart>
 
+                <div className="pie-legend">
+                    {dataWithColors.map(item => (
+                        <div key={item.name} className="legend-item">
+                            <span
+                                className="legend-color"
+                                style={{ backgroundColor: item.fill }}
+                            />
+                            <span className="legend-text">
+                                {item.value} {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                            </span>
+                        </div>
+                    ))}
+                </div>
             </div>
-            {showCard && (
-                <LogSessionCard initialData={editingSession}
-                                onClose={() => {
-                                    setShowCard(false);
-                                    setEditingSession(null);
-                                }}
-                                onSave={ async (updatedSession) => {
-                                    // Update existing session
-                                    if (editingSession) {
-                                        try {
-                                            const editedSessionId = editingSession.id;
-                                            updatedSession.id = editingSession.id;
-                                            handleUpdateSession(updatedSession, editedSessionId);
-                                            setSessions(prev =>
-                                                prev.map(s => s.id === updatedSession.id ? updatedSession : s));
-                                        } catch (e) {
-                                            setErrorMsg(e.message);
-                                        }
 
-                                    } else {
-                                        // Create new session
-                                        try {
-                                            await handleSessionRegistration(updatedSession);
-                                            setSessions(prev => [...prev, updatedSession]);
-                                        } catch (e) {
-                                            setMessage(e);
-                                        }
-                                    }
-                                    setShowCard(false);
-                                    setEditingSession(null);
-                                }}
+            {showCard && (
+                <LogSessionCard
+                    initialData={editingSession}
+                    onClose={() => {
+                        setShowCard(false);
+                        setEditingSession(null);
+                    }}
+                    onSave={async (updatedSession) => {
+                        if (editingSession) {
+                            const editedSessionId = editingSession.id;
+                            updatedSession.id = editedSessionId;
+                            await handleUpdateSession(updatedSession, editedSessionId);
+                        } else {
+                            await handleSessionRegistration(updatedSession);
+                        }
+
+                        setShowCard(false);
+                        setEditingSession(null);
+                    }}
                 />
             )}
         </div>
