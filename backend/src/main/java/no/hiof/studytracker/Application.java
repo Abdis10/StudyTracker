@@ -27,12 +27,12 @@ public class Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7000"));
         Javalin app = Javalin.create(config -> {
             config.bundledPlugins.enableCors(cors ->
                 cors.addRule(rule -> rule.anyHost())
             );
-        }).start(7000);
+        }).start(port);
         UserDataRepository userDataRepository = new UserDataRepository();
 
         // Signup section
