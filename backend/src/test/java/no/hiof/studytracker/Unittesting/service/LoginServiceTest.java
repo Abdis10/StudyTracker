@@ -1,5 +1,6 @@
 package no.hiof.studytracker.Unittesting.service;
 
+import no.hiof.studytracker.DTOs.LoginResponseDTO;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.UserAuthenticationException;
 import no.hiof.studytracker.repository.UserDataRepository;
@@ -133,17 +134,24 @@ public class LoginServiceTest {
         // arrange
         String email = "Ibra12345@example.com";
         String pw = "StrongPass123";
+
         doReturn(true).when(spyLogicService).authenticateUser(email, pw);
+
         when(mockUserDataRepository.getId(email)).thenReturn("1");
-        when(mockUserDataRepository.sessionTokenId(1)).thenReturn("token");
+        when(mockUserDataRepository.getUserFirstname(1)).thenReturn("Ibrahim");
+        when(mockUserDataRepository.getUsernameByUserid(1)).thenReturn("IbraUser");
 
         // act
-        String token = spyLogicService.createSessionToken(email, pw);
+        LoginResponseDTO response = spyLogicService.createSessionToken(email, pw);
 
         // assert
-        verify(mockUserDataRepository).saveSessionToken(anyString(), anyInt(), anyString(), anyString());
+        verify(mockUserDataRepository)
+                .saveSessionToken(anyString(), anyInt(), anyString(), anyString());
 
-        Assertions.assertEquals("token", token);
+        Assertions.assertEquals("Ibrahim", response.firstname());
+        Assertions.assertEquals("IbraUser", response.username());
+        Assertions.assertEquals(email, response.email());
+        Assertions.assertNotNull(response.token());
     }
 
     @Test

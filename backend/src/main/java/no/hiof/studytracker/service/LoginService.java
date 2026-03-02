@@ -44,6 +44,7 @@ public class LoginService {
         if (authenticateUser(email, password)) {
             String token = UUID.randomUUID().toString();
             int userID = Integer.parseInt(userDataRepository.getId(email));
+
             Instant createdAt = Instant.now();
             TemporalAmount tma = Duration.ofMinutes(60);
             Instant expiresAt = createdAt.plus(tma);
