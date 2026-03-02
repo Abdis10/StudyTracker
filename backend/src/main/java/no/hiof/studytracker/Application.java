@@ -53,8 +53,9 @@ public class Application {
         AuthenticationController authenticationController = new AuthenticationController(authenticationService);
 
         app.get("/", ctx -> {
-           ctx.result("Hei fra Javalin!");
+            ctx.result("StudyTracker backend is live 🚀");
         });
+
 
         app.post("/auth/signup", ctx -> {
             signupController.signupUser(ctx);
