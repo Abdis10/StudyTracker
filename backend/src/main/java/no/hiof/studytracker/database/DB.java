@@ -84,9 +84,11 @@ public class DB {
 
     private static String convertUrl(String url) {
 
-        if (url.startsWith("postgres://")) {
+        if (url.startsWith("postgres://") || url.startsWith("postgresql://")) {
 
-            url = url.replace("postgres://", "");
+            // Fjern postgres eller postgresql
+            url = url.replace("postgres://", "")
+                    .replace("postgresql://", "");
 
             String[] parts = url.split("@");
 
