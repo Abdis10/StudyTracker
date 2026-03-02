@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 public class Application {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
         // Kjør migrations ved oppstart
         DB.migrate();

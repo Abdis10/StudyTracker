@@ -16,7 +16,8 @@ public class DB {
 
     private static final String URL = convertUrl(RAW_URL);
 
-    public static void migrate() {
+    public static void migrate() throws ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
         try (Connection conn = DriverManager.getConnection(URL)) {
 
             String createUsersTable = """
@@ -72,8 +73,9 @@ public class DB {
 
     public static Connection getConnection() {
         try {
+            Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(URL);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DatabaseException(
                     "Database connection failed",
                     "DB-CONNECTION-FAILED",
