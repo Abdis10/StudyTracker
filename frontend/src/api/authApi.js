@@ -1,6 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function signup(signupformata) {
-    const response = await fetch( "/auth/signup", {
+    const response = await fetch( `${BASE_URL}/auth/signup`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(signupformata)
@@ -16,7 +17,7 @@ export async function signup(signupformata) {
 
 
 export async function login(loginformData) {
-    const response = await fetch("/auth/login", {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
        method: "POST",
        headers: {"Content-Type": "application/json"},
        body: JSON.stringify(loginformData)
@@ -31,7 +32,7 @@ export async function login(loginformData) {
 
 
 export async function validateSession(token) {
-    const response = await fetch("/auth/validate-session", {
+    const response = await fetch(`${BASE_URL}/auth/validate-session`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });

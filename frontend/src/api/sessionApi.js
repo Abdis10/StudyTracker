@@ -1,6 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function registerSession(sessionData, token) {
-    const response = await fetch("/session/session-registration", {
+    const response = await fetch(`${BASE_URL}/session/session-registration`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -18,7 +19,7 @@ export async function registerSession(sessionData, token) {
 }
 
 export async function getSessions(token) {
-    const response = await fetch("session/sessions", {
+    const response = await fetch(`${BASE_URL}session/sessions`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });
@@ -31,7 +32,7 @@ export async function getSessions(token) {
 }
 
 export async function updateSession(updateData, sessionId, token) {
-    const response = await fetch(`/session/${sessionId}`, {
+    const response = await fetch(`${BASE_URL}/session/${sessionId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export async function updateSession(updateData, sessionId, token) {
 
 
 export async function deleteSession(sessionId, token) {
-    const response = await fetch(`/session/${sessionId}`, {
+    const response = await fetch(`${BASE_URL}/session/${sessionId}`, {
         method: "DELETE",
         headers: {"Authorization": `Bearer ${token}`}
     });
