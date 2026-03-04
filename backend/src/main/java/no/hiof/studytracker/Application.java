@@ -33,6 +33,14 @@ public class Application {
                 cors.addRule(rule -> rule.anyHost())
             );
         }).start(port);
+
+        // GLOBAL EXCEPTION HANDLER
+        app.exception(Exception.class, (e, ctx) -> {
+            System.err.println("GLOBAL EXCEPTION");
+            e.printStackTrace();
+            ctx.status(500).result("Internal error");
+        });
+
         UserDataRepository userDataRepository = new UserDataRepository();
 
         // Signup section
