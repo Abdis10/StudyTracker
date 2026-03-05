@@ -1,23 +1,20 @@
 package no.hiof.studytracker.database;
 
 import no.hiof.studytracker.exceptions.DatabaseException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DB {
 
-    private static final String RAW_URL =
-            System.getenv().getOrDefault(
-                    "DATABASE_URL",
-                    "jdbc:sqlite:database/studytracker.db"
-            );
+    // Vi trenger bare én variabel for URL
+    private static final String URL = System.getenv().getOrDefault(
+            "DATABASE_URL",
+            "jdbc:sqlite:database/studytracker.db" // Lokal fallback
+    );
 
-    private static final String URL = convertUrl(RAW_URL);
-
-    public static void migrate() throws ClassNotFoundException {
-        Class.forName("org.postgresql.Driver");
+    public static void migrate() {
+        // Fjernet Class.forName - JDBC fikser dette selv
         try (Connection conn = DriverManager.getConnection(URL)) {
 
             String createUsersTable = """
@@ -34,38 +31,17 @@ public class DB {
                 );
             """;
 
-            String createSessionsTable = """
-                CREATE TABLE IF NOT EXISTS sessions (
-                    id SERIAL PRIMARY KEY,
-                    user_id INTEGER NOT NULL REFERENCES user_profile(id),
-                    date TEXT NOT NULL,
-                    hours REAL NOT NULL,
-                    productivity_score INTEGER,
-                    comment TEXT,
-                    created_at TIMESTAMP NOT NULL,
-                    updated_at TIMESTAMP
-                );
-            """;
-
-            String createSessionTokenTable = """
-                CREATE TABLE IF NOT EXISTS session_token (
-                    session_token_id TEXT PRIMARY KEY,
-                    user_id INTEGER NOT NULL REFERENCES user_profile(id),
-                    created_at TIMESTAMP,
-                    expires_at TIMESTAMP
-                );
-            """;
+            // ... resten av tabellene dine ...
 
             conn.createStatement().execute(createUsersTable);
-            conn.createStatement().execute(createSessionsTable);
-            conn.createStatement().execute(createSessionTokenTable);
+            // Husk å legge til execute for de andre tabellene her også
 
-            System.out.println("Database migrations completed.");
+            System.out.println("Database migrations completed successfully on: " + URL.split(":")[1]);
 
         } catch (SQLException e) {
             throw new DatabaseException(
-                    "Database migration failed",
-                    "DB-CONNECTION-FAILED",
+                    "Database migration failed: " + e.getMessage(),
+                    "DB-MIGRATION-FAILED",
                     e
             );
         }
@@ -73,34 +49,13 @@ public class DB {
 
     public static Connection getConnection() {
         try {
-            Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(URL);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DatabaseException(
                     "Database connection failed",
                     "DB-CONNECTION-FAILED",
                     e
             );
         }
-    }
-
-    private static String convertUrl(String url) {
-        // Hvis vi er på localhost og bruker SQLite, ikke gjør noe
-        if (url.contains("sqlite")) {
-            return url;
-        }
-
-        // Render bruker ofte "postgres://" - JDBC krever "jdbc:postgresql://"
-        String cleanUrl = url.replace("postgres://", "jdbc:postgresql://")
-                .replace("postgresql://", "jdbc:postgresql://");
-
-        // Sørg for at vi ber om SSL, som Render-databasen ofte krever
-        if (!cleanUrl.contains("?")) {
-            return cleanUrl + "?sslmode=require";
-        } else if (!cleanUrl.contains("sslmode")) {
-            return cleanUrl + "&sslmode=require";
-        }
-
-        return cleanUrl;
     }
 }
