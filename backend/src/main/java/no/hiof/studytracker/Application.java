@@ -34,11 +34,10 @@ public class Application {
             );
         }).start(port);
 
-        // GLOBAL EXCEPTION HANDLER
         app.exception(Exception.class, (e, ctx) -> {
-            System.err.println("GLOBAL EXCEPTION");
-            e.printStackTrace();
-            ctx.status(500).result("Internal error");
+            e.printStackTrace(); // Skriver til Render-logg
+            // Send detaljene til Postman så vi ser dem med en gang!
+            ctx.status(500).result("Error: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         });
 
         UserDataRepository userDataRepository = new UserDataRepository();
