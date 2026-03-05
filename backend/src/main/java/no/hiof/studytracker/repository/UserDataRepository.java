@@ -100,10 +100,13 @@ public class UserDataRepository implements UserRepository {
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sessionData);
 
+            Timestamp created_At = Timestamp.valueOf(createdAt);
+            Timestamp expired_At = Timestamp.valueOf(expiresAt);
+
             pstm.setString(1, sessionTokenId);
             pstm.setInt(2, userId);
-            pstm.setString(3,createdAt);
-            pstm.setString(4, expiresAt);
+            pstm.setTimestamp(3,created_At);
+            pstm.setTimestamp(4, expired_At);
 
             pstm.executeUpdate();
         } catch (Exception e) {
