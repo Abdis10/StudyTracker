@@ -49,6 +49,9 @@ public class DB {
 
     public static Connection getConnection() {
         try {
+            if (URL.contains("postgresql")) {
+                Class.forName("org.postgresql.Driver");
+            }
             return DriverManager.getConnection(URL);
         } catch (SQLException e) {
             throw new DatabaseException(
@@ -56,6 +59,8 @@ public class DB {
                     "DB-CONNECTION-FAILED",
                     e
             );
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
