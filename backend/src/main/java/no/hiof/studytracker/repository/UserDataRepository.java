@@ -69,12 +69,10 @@ public class UserDataRepository implements UserRepository {
     }
 
     public void saveUser(User user) {
-        try (Connection connection = DB.getConnection()) {
-            String userData = "INSERT INTO user_profile(first_name, last_name, username, email, password_hash, gender, created_at) VALUES(?, ? , ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user_profile(first_name, last_name, username, email, password_hash, gender, created_at) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-            String createdAt = LocalDateTime.now().toString();
-
-            PreparedStatement pstm = connection.prepareStatement(userData);
+        try (Connection connection = DB.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)) {
 
             pstm.setString(1, user.getFirstname());
             pstm.setString(2, user.getLastname());
@@ -82,11 +80,17 @@ public class UserDataRepository implements UserRepository {
             pstm.setString(4, user.getEmail());
             pstm.setString(5, user.getPassword());
             pstm.setString(6, user.getGender());
-            pstm.setString(7, createdAt);
+
+            // FIKS: Bruker java.sql.Timestamp i stedet for String
+            pstm.setTimestamp(7, java.sql.Timestamp.valueOf(LocalDateTime.now()));
 
             pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            // Logg den faktiske SQL-feilen så du ser den i Render
+            throw new CustomException("Couldn't save user in database: " + e.getMessage(), e);
         } catch (Exception e) {
-            throw new CustomException("Couldn't save user in database", e);
+            throw new CustomException("Unexpected error during save", e);
         }
     }
 
