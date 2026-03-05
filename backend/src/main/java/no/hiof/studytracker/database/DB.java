@@ -85,27 +85,22 @@ public class DB {
     }
 
     private static String convertUrl(String url) {
-
-        if (url.startsWith("postgres://") || url.startsWith("postgresql://")) {
-
-            // Fjern postgres eller postgresql
-            url = url.replace("postgres://", "")
-                    .replace("postgresql://", "");
-
-            String[] parts = url.split("@");
-
-            String userPass = parts[0];
-            String hostDb = parts[1];
-
-            String[] userPassSplit = userPass.split(":");
-            String username = userPassSplit[0];
-            String password = userPassSplit[1];
-
-            return "jdbc:postgresql://" + hostDb +
-                    "?user=" + username +
-                    "&password=" + password;
+        // Hvis vi er på localhost og bruker SQLite, ikke gjør noe
+        if (url.contains("sqlite")) {
+            return url;
         }
 
-        return url;
+        // Render bruker ofte "postgres://" - JDBC krever "jdbc:postgresql://"
+        String cleanUrl = url.replace("postgres://", "jdbc:postgresql://")
+                .replace("postgresql://", "jdbc:postgresql://");
+
+        // Sørg for at vi ber om SSL, som Render-databasen ofte krever
+        if (!cleanUrl.contains("?")) {
+            return cleanUrl + "?sslmode=require";
+        } else if (!cleanUrl.contains("sslmode")) {
+            return cleanUrl + "&sslmode=require";
+        }
+
+        return cleanUrl;
     }
 }
