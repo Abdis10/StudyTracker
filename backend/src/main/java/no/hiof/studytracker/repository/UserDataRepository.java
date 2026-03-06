@@ -305,7 +305,7 @@ public class UserDataRepository implements UserRepository {
 
     }
 
-    public String getSessionTokenIdExpiresAt(String token) {
+    public Timestamp getSessionTokenIdExpiresAt(String token) {
         String sql = "SELECT expires_at FROM session_token WHERE session_token_id = ? ";
 
         try(Connection connection = DB.getConnection()) {
@@ -314,7 +314,7 @@ public class UserDataRepository implements UserRepository {
 
             ResultSet rs = pstm.executeQuery();
             while (rs.next())
-                return rs.getString("expires_at");
+                return rs.getTimestamp("expires_at");
 
         } catch (SQLException e) {
             throw new CustomException("Error when getting sessionTokenId his expires_at ", e);

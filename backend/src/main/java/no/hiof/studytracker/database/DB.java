@@ -31,10 +31,32 @@ public class DB {
                 );
             """;
 
-            // ... resten av tabellene dine ...
+            String createSessionsTable = """
+                CREATE TABLE IF NOT EXISTS sessions (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL REFERENCES user_profile(id),
+                    date TEXT NOT NULL,
+                    hours REAL NOT NULL,
+                    productivity_score INTEGER,
+                    comment TEXT,
+                    created_at TIMESTAMP NOT NULL,
+                    updated_at TIMESTAMP
+                );
+            """;
+
+            String createSessionTokenTable = """
+                CREATE TABLE IF NOT EXISTS session_token (
+                    session_token_id TEXT PRIMARY KEY,
+                    user_id INTEGER NOT NULL REFERENCES user_profile(id),
+                    created_at TIMESTAMP,
+                    expires_at TIMESTAMP
+                );
+            """;
+
 
             conn.createStatement().execute(createUsersTable);
-            // Husk å legge til execute for de andre tabellene her også
+            conn.createStatement().execute(createSessionsTable);
+            conn.createStatement().execute(createSessionTokenTable);
 
             System.out.println("Database migrations completed successfully on: " + URL.split(":")[1]);
 
