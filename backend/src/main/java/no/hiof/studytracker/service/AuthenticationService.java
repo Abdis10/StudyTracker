@@ -23,7 +23,7 @@ public class AuthenticationService {
 
         // tiden som har gått siden 1970 for expiresAt
         if (userDataRepository.doesTokenExist(token)) {
-            Instant expiresAt = Instant.parse(userDataRepository.getSessionTokenIdExpiresAt(token));
+            Instant expiresAt = Instant.parse((CharSequence) userDataRepository.getSessionTokenIdExpiresAt(token));
             long y = expiresAt.getEpochSecond();
             if (x < y) {
                 int userId = userDataRepository.getUserIdByToken(token);
