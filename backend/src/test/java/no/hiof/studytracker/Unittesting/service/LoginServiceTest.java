@@ -137,7 +137,7 @@ public class LoginServiceTest {
 
         doReturn(true).when(spyLogicService).authenticateUser(email, pw);
 
-        when(mockUserDataRepository.getId(email)).thenReturn("1");
+        when(mockUserDataRepository.getId(email)).thenReturn(1);
         when(mockUserDataRepository.getUserFirstname(1)).thenReturn("Ibrahim");
         when(mockUserDataRepository.getUsernameByUserid(1)).thenReturn("IbraUser");
 

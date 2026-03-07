@@ -114,7 +114,7 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public String getId(String email) {
+    public int getId(String email) {
         String sql = "SELECT id, 1 from user_profile WHERE email = ?";
 
         try (Connection connection = DB.getConnection()) {
@@ -123,14 +123,14 @@ public class UserDataRepository implements UserRepository {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                return rs.getString("id");
+                return rs.getInt("id");
             }
 
         } catch (Exception e) {
             throw new CustomException("User id doesn't exist!", e);
         }
 
-        return null;
+        return 0;
     }
 
 
