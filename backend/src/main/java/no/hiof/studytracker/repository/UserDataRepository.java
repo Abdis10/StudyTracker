@@ -94,19 +94,16 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public void saveSessionToken(String sessionTokenId, int userId, String createdAt, String expiresAt) {
+    public void saveSessionToken(String sessionTokenId, int userId, Timestamp createdAt, Timestamp expiresAt) {
         String sessionData = "INSERT INTO session_token(session_token_id, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)";
 
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sessionData);
 
-            Timestamp created_At = Timestamp.valueOf(createdAt);
-            Timestamp expired_At = Timestamp.valueOf(expiresAt);
-
             pstm.setString(1, sessionTokenId);
             pstm.setInt(2, userId);
-            pstm.setTimestamp(3,created_At);
-            pstm.setTimestamp(4, expired_At);
+            pstm.setObject(3,createdAt);
+            pstm.setObject(4, expiresAt);
 
             pstm.executeUpdate();
         } catch (Exception e) {

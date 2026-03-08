@@ -1,14 +1,15 @@
 package no.hiof.studytracker.model;
 
-import java.util.UUID;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 public class SessionToken {
     private String sessionTokenId;
     private int userId;
-    private String createdAt;
-    private String expiresAt;
+    private Timestamp createdAt;
+    private Timestamp expiresAt;
 
-    public SessionToken(String sessionTokenId, int userId, String createdAt, String expiresAt) {
+    public SessionToken(String sessionTokenId, int userId, Timestamp createdAt, Timestamp expiresAt) {
         this.sessionTokenId = sessionTokenId;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -23,11 +24,11 @@ public class SessionToken {
         return userId;
     }
 
-    public String getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public String getExpiresAt() {
+    public Timestamp getExpiresAt() {
         return expiresAt;
     }
 }
