@@ -5,6 +5,7 @@ import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.exceptions.InvalidTokenException;
 import no.hiof.studytracker.repository.UserDataRepository;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,7 +24,8 @@ public class AuthenticationService {
 
         // tiden som har gått siden 1970 for expiresAt
         if (userDataRepository.doesTokenExist(token)) {
-            Instant expiresAt = Instant.parse((CharSequence) userDataRepository.getSessionTokenIdExpiresAt(token));
+            Timestamp timestamp = userDataRepository.getSessionTokenIdExpiresAt(token);
+            Instant expiresAt = timestamp.toInstant();
             long y = expiresAt.getEpochSecond();
             if (x < y) {
                 int userId = userDataRepository.getUserIdByToken(token);

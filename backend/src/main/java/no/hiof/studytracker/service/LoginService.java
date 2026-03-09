@@ -49,7 +49,7 @@ public class LoginService {
             Timestamp createdAt = Timestamp.from(Instant.now());
             TemporalAmount tma = Duration.ofMinutes(60);
             Timestamp expiresAt = Timestamp.from(createdAt.toInstant().plus(tma));
-            SessionToken sessionToken = new SessionToken(token, userID, createdAt.toString(), expiresAt.toString());
+            SessionToken sessionToken = new SessionToken(token, userID, createdAt, expiresAt);
             userDataRepository.saveSessionToken(sessionToken.getSessionTokenId(), sessionToken.getUserId(),
                     sessionToken.getCreatedAt(), sessionToken.getExpiresAt());
 

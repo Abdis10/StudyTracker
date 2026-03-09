@@ -8,6 +8,7 @@ import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.model.User;
 
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,19 +95,16 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-    public void saveSessionToken(String sessionTokenId, int userId, String createdAt, String expiresAt) {
+    public void saveSessionToken(String sessionTokenId, int userId, Timestamp createdAt, Timestamp expiresAt) {
         String sessionData = "INSERT INTO session_token(session_token_id, user_id, created_at, expires_at) VALUES(?, ?, ?, ?)";
 
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sessionData);
 
-            Timestamp created_At = Timestamp.valueOf(createdAt);
-            Timestamp expired_At = Timestamp.valueOf(expiresAt);
-
             pstm.setString(1, sessionTokenId);
             pstm.setInt(2, userId);
-            pstm.setTimestamp(3,created_At);
-            pstm.setTimestamp(4, expired_At);
+            pstm.setObject(3,createdAt.toInstant().toString());
+            pstm.setObject(4, expiresAt.toInstant().toString());
 
             pstm.executeUpdate();
         } catch (Exception e) {
@@ -313,8 +311,11 @@ public class UserDataRepository implements UserRepository {
             pstm.setString(1, token);
 
             ResultSet rs = pstm.executeQuery();
-            while (rs.next())
-                return rs.getTimestamp("expires_at");
+            while (rs.next()) {
+                String dateString = rs.getString("expires_at");
+                Timestamp expiresAt = Timestamp.from(Instant.parse(dateString));
+                return expiresAt;
+            }
 
         } catch (SQLException e) {
             throw new CustomException("Error when getting sessionTokenId his expires_at ", e);

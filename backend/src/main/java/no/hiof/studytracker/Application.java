@@ -14,6 +14,11 @@ import no.hiof.studytracker.service.SignupService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 
 
 public class Application {
