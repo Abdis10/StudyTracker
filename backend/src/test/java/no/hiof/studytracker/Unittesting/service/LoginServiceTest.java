@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.Timestamp;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -146,7 +148,7 @@ public class LoginServiceTest {
 
         // assert
         verify(mockUserDataRepository)
-                .saveSessionToken(anyString(), anyInt(), anyString(), anyString());
+                .saveSessionToken(anyString(), anyInt(), any(Timestamp.class), any(Timestamp.class));
 
         Assertions.assertEquals("Ibrahim", response.firstname());
         Assertions.assertEquals("IbraUser", response.username());
@@ -165,6 +167,6 @@ public class LoginServiceTest {
         Assertions.assertThrows(CustomException.class, () -> {
             spyLogicService.createSessionToken(email, pw);
         });
-        verify(mockUserDataRepository, never()).saveSessionToken(anyString(), anyInt(), anyString(), anyString());
+        verify(mockUserDataRepository, never()).saveSessionToken(anyString(), anyInt(), any(Timestamp.class), any(Timestamp.class));
     }
 }
