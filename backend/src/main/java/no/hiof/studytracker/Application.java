@@ -96,18 +96,5 @@ public class Application {
         app.get("/auth/validate-session", ctx -> {
             authenticationController.sessionExpiration(ctx);
         });
-
-        Timestamp expiresAt = userDataRepository.getSessionTokenIdExpiresAt("ef9ee02e-70a8-4b08-9985-597c25597cce");
-        Timestamp createdAt = Timestamp.from(Instant.now());
-        TemporalAmount tma = Duration.ofMinutes(60);
-        Timestamp expires_At = Timestamp.from(createdAt.toInstant().plus(tma));
-        Instant instant = Instant.now();
-
-
-
-        //System.out.println(createdAt);
-        //System.out.println(expires_At);
-        System.out.println(expiresAt);
-        //System.out.println(instant);
     }
 }

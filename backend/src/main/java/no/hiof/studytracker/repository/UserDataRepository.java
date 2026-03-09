@@ -8,6 +8,7 @@ import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.model.User;
 
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,8 +103,8 @@ public class UserDataRepository implements UserRepository {
 
             pstm.setString(1, sessionTokenId);
             pstm.setInt(2, userId);
-            pstm.setObject(3,createdAt);
-            pstm.setObject(4, expiresAt);
+            pstm.setObject(3,createdAt.toInstant().toString());
+            pstm.setObject(4, expiresAt.toInstant().toString());
 
             pstm.executeUpdate();
         } catch (Exception e) {
@@ -310,8 +311,11 @@ public class UserDataRepository implements UserRepository {
             pstm.setString(1, token);
 
             ResultSet rs = pstm.executeQuery();
-            while (rs.next())
-                return rs.getTimestamp("expires_at");
+            while (rs.next()) {
+                String dateString = rs.getString("expires_at");
+                Timestamp expiresAt = Timestamp.from(Instant.parse(dateString));
+                return expiresAt;
+            }
 
         } catch (SQLException e) {
             throw new CustomException("Error when getting sessionTokenId his expires_at ", e);
