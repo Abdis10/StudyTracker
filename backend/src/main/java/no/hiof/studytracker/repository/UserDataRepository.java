@@ -63,7 +63,7 @@ public class UserDataRepository implements UserRepository {
             }
 
         } catch (Exception e) {
-                throw new CustomException("Database error, couldn't find email");
+            throw new CustomException("Database error, couldn't find email");
         }
 
         return null;

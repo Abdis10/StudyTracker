@@ -24,6 +24,11 @@ public class LoginController {
         try {
             loginService.authenticateUser(email, password);
             LoginResponseDTO loginResponseDTO = loginService.createSessionToken(email, password);
+
+            if (loginResponseDTO.firstname() == null || loginResponseDTO.token() == null || loginResponseDTO.email() == null || loginResponseDTO.username() == null) {
+                throw new CustomException("User data is missing from the database.", "MISSING_DATA");
+            }
+
             ctx.status(200).json(loginResponseDTO);
 
         } catch (UserAuthenticationException e) {
