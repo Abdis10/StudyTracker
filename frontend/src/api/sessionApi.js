@@ -19,7 +19,7 @@ export async function registerSession(sessionData, token) {
 }
 
 export async function getSessions(token) {
-    const response = await fetch(`${BASE_URL}session/sessions`, {
+    const response = await fetch(`${BASE_URL}/session/sessions`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
     });
