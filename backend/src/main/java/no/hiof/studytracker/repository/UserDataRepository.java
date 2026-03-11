@@ -182,7 +182,7 @@ public class UserDataRepository implements UserRepository {
             pstm.setFloat(3, session.getHours());
             pstm.setInt(4, session.getProductivityScore());
             pstm.setString(5, session.getComment());
-            pstm.setString(6, session.getCreatedAt());
+            pstm.setTimestamp(6, session.getCreatedAt());
 
             pstm.executeUpdate();
 
@@ -221,7 +221,7 @@ public class UserDataRepository implements UserRepository {
             while (rs.next()) {
                 SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getInt("id"), rs.getString("date"), rs.getFloat("hours"),
                         rs.getInt("productivity_score"), rs.getString("comment"),
-                        rs.getString("created_At"), rs.getString("updated_at"));
+                        rs.getTimestamp("created_At"), rs.getTimestamp("updated_at"));
 
                 arrayOfSessions.add(sessionResponseDTO);
             }

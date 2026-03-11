@@ -1,5 +1,7 @@
 package no.hiof.studytracker.model;
 
+import java.sql.Timestamp;
+
 public class Session {
     private int id;
     private int userId;
@@ -7,13 +9,13 @@ public class Session {
     private float hours;
     private int productivityScore;
     private String comment;
-    private String createdAt;
-    private String updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
 
     public Session() {}
 
-    public Session(int id, int userId, String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
+    public Session(int id, int userId, String date, float hours, int productivityScore, String comment, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.userId = userId;
         this.date = date;
@@ -24,7 +26,7 @@ public class Session {
         this.updatedAt = updatedAt;
     }
 
-    public Session(int userId, String date, float hours, int productivityScore, String comment, String createdAt) {
+    public Session(int userId, String date, float hours, int productivityScore, String comment, Timestamp createdAt) {
         this.userId = userId;
         this.date = date;
         this.hours = hours;
@@ -81,19 +83,19 @@ public class Session {
         this.comment = comment;
     }
 
-    public String getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 

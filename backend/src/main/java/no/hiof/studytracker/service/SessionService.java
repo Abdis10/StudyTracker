@@ -9,6 +9,8 @@ import no.hiof.studytracker.exceptions.SessionOwnershipException;
 import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.repository.UserDataRepository;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -35,7 +37,7 @@ public class SessionService {
             int userId = userDataRepository.getUserIdByToken(token);
 
             if (userId != 0) {
-                String createdAt = LocalDateTime.now().toString();
+                Timestamp createdAt = Timestamp.from(Instant.now());
                 sessionDataDTO.setCreatedAt(createdAt);
                 Session session = new Session(userId, sessionDataDTO.getDate(), sessionDataDTO.getHours(), sessionDataDTO.getProductivityScore(),
                         sessionDataDTO.getComment(), sessionDataDTO.getCreatedAt());
@@ -55,12 +57,6 @@ public class SessionService {
         }
         return false;
     }
-
-    /*
-        Vi får 2 utfall når vi prøver å hente studieøkter
-        1. Success - token er gyldig og da returnere liste av studieøkter (eventuelt en tom liste)
-        2. Invalid_token - ugyldig token
-    */
 
     public List<SessionResponseDTO>  getSessionsFromRepository(String token) {
         int userId = userDataRepository.getUserIdByToken(token);

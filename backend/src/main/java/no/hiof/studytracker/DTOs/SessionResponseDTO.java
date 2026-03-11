@@ -1,17 +1,19 @@
 package no.hiof.studytracker.DTOs;
 
+import java.sql.Timestamp;
+
 public class SessionResponseDTO {
     private int id;
     private String date;
     private float hours;
     private int productivityScore;
     private String comment;
-    private String createdAt;
-    private String updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public SessionResponseDTO() {}
 
-    public SessionResponseDTO(int id, String date, float hours, int productivityScore, String comment, String createdAt, String updatedAt) {
+    public SessionResponseDTO(int id, String date, float hours, int productivityScore, String comment, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.date = date;
         this.hours = hours;
@@ -53,19 +55,19 @@ public class SessionResponseDTO {
         this.comment = comment;
     }
 
-    public String getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
