@@ -103,8 +103,8 @@ public class UserDataRepository implements UserRepository {
 
             pstm.setString(1, sessionTokenId);
             pstm.setInt(2, userId);
-            pstm.setTimestamp(3, Timestamp.valueOf(createdAt.toInstant().toString()));
-            pstm.setTimestamp(4, Timestamp.valueOf(expiresAt.toInstant().toString()));
+            pstm.setTimestamp(3, createdAt);
+            pstm.setTimestamp(4, expiresAt);
 
             pstm.executeUpdate();
         } catch (Exception e) {
