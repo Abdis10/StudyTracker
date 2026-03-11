@@ -311,10 +311,8 @@ public class UserDataRepository implements UserRepository {
             pstm.setString(1, token);
 
             ResultSet rs = pstm.executeQuery();
-            while (rs.next()) {
-                String dateString = rs.getString("expires_at");
-                Timestamp expiresAt = Timestamp.from(Instant.parse(dateString));
-                return expiresAt;
+            if (rs.next()) {
+                return rs.getTimestamp("expires_at");
             }
 
         } catch (SQLException e) {
