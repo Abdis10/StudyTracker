@@ -16,6 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -248,7 +251,8 @@ public class SessionServiceTest {
         // arrange
         String token = "token";
         int sessionId = 1;
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", "2025-12-24");
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
         when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
         when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(updateSessionDTO);
         when(mockUserDataRepository.updateSession(anyInt(), any(UpdateSessionDTO.class))).thenReturn(1);
@@ -266,7 +270,8 @@ public class SessionServiceTest {
         // arrange
         String token = "token";
         int sessionId = 1;
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", "2025-12-24");
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
         when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
         when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(updateSessionDTO);
         when(mockUserDataRepository.updateSession(anyInt(), any(UpdateSessionDTO.class))).thenReturn(0);
@@ -285,7 +290,8 @@ public class SessionServiceTest {
         // arrange
         String token = "token";
         int sessionId = 1;
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", "2025-12-24");
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
         when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(false);
 
         // act + assert
@@ -301,7 +307,8 @@ public class SessionServiceTest {
         // arrange
         String token = "token";
         int sessionId = 1;
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", "2025-12-24");
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
         when(mockUserDataRepository.doesTokenExist(token)).thenReturn(true);
         doReturn(true).when(spySessionService).updateSession(updateSessionDTO, token, sessionId);
         // act
@@ -316,7 +323,8 @@ public class SessionServiceTest {
         // arrange
         String token = "token";
         int sessionId = 1;
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", "2025-12-24");
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
         when(mockUserDataRepository.doesTokenExist(token)).thenReturn(false);
 
         // act + assert

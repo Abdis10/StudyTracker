@@ -259,7 +259,7 @@ public class UserDataRepository implements UserRepository {
 
             ResultSet rs = pstm.executeQuery();
             UpdateSessionDTO sessionDataDTO = new UpdateSessionDTO(rs.getString("date"), rs.getFloat("hours"),
-                    rs.getInt("productivity_score"), rs.getString("comment"), rs.getString("created_at"));
+                    rs.getInt("productivity_score"), rs.getString("comment"), rs.getTimestamp("created_at"));
 
             return sessionDataDTO;
 
@@ -280,7 +280,7 @@ public class UserDataRepository implements UserRepository {
             pstm.setFloat(2, updateSessionDTO.getHours());
             pstm.setInt(3, updateSessionDTO.getProductivityScore());
             pstm.setString(4, updateSessionDTO.getComment());
-            pstm.setString(5, updateSessionDTO.getUpdatedAt());
+            pstm.setTimestamp(5, updateSessionDTO.getUpdatedAt());
             pstm.setInt(6, sessionId);
 
             return pstm.executeUpdate();

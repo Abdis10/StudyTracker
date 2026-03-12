@@ -111,7 +111,7 @@ public class SessionService {
         // Verify that token owner matches session owner
         if (doesTokenMatchUser(token, sessionId)) {
             // Set update timestamp
-            String updatedAt = LocalDateTime.now().toString();
+            Timestamp updatedAt = Timestamp.from(Instant.now());
             updateSessionDTO1.setUpdatedAt(updatedAt);
 
             // Preserve existing values when fields are null or empty
