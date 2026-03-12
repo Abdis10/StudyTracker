@@ -86,9 +86,10 @@ public class SessionController {
                     "Message", e.getErrorCode()
             ));
         } catch (CustomException e) {
-            ctx.status(404).json(Map.of(
-                    "Message", e.getErrorCode()
-            ));
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getErrorCode());
+            response.put("message", e.getMessage()); // e.getMessage() er standard fra Exception
+            ctx.status(404).json(response);
         }
     }
 

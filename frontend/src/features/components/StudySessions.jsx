@@ -249,7 +249,6 @@ function StudySessions() {
                     onSave={async (updatedSession) => {
                         if (editingSession) {
                             const editedSessionId = editingSession.id;
-                            updatedSession.id = editedSessionId;
                             await handleUpdateSession(updatedSession, editedSessionId);
                         } else {
                             await handleSessionRegistration(updatedSession);
