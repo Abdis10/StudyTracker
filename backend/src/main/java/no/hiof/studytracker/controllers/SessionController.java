@@ -53,19 +53,19 @@ public class SessionController {
             String token = cxt.header("Authorization").substring(7);
             sessionService.updateSessionInRepo(updateSessionDTO, token, sessionId);
             cxt.status(200).json(Map.of(
-                    "Message: ", "Session successfully updated"
+                    "Message", "Session successfully updated"
             ));
         } catch (SessionOwnershipException e) {
             cxt.status(401).json(Map.of(
-               "Message: ", e.getErrorCode()
+                    "message", (e.getErrorCode() != null) ? e.getErrorCode() : e.getMessage()
             ));
         } catch (InvalidTokenException e) {
             cxt.status(403).json(Map.of(
-                    "Message: ", e.getErrorCode()
+                    "message", (e.getErrorCode() != null) ? e.getErrorCode() : e.getMessage()
             ));
         } catch (CustomException e) {
             cxt.status(404).json(Map.of(
-                    "Message: ", e.getErrorCode()
+                    "message", (e.getErrorCode() != null) ? e.getErrorCode() : e.getMessage()
             ));
         }
     }

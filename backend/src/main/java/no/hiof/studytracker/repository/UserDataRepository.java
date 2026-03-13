@@ -157,18 +157,21 @@ public class UserDataRepository implements UserRepository {
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sql);
             pstm.setString(1, token);
-            ResultSet rs = pstm.executeQuery();
 
-            while (rs.next()) {
-                return rs.getInt("user_id");
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                }
             }
         }
 
-        catch (Exception e) {
-            throw new CustomException("Didn't find user id for the token:" + token);
+        catch (SQLException e) {
+            // Logg den faktiske databasefeilen for din egen del
+            throw new CustomException("Database error during token lookup", "DB_ERROR");
         }
 
-        return Integer.parseInt(null);
+        // Hvis vi kommer hit, betyr det at rs.next() var false (token finnes ikke)
+        throw new CustomException("No user found for the provided token", "INVALID_TOKEN");
     }
 
     public void registerStudySession(Session session) {
@@ -242,11 +245,17 @@ public class UserDataRepository implements UserRepository {
             PreparedStatement pstm = connection.prepareStatement(sql);
             pstm.setInt(1, sessionId);
 
-            ResultSet rs = pstm.executeQuery();
-            return rs.getInt("user_id");
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) { // Flytt markøren til første rad
+                    return rs.getInt("user_id");
+                } else {
+                    // Her håndterer vi at session_id ikke fantes i databasen
+                    throw new CustomException("No session found with ID: " + sessionId, "SESSION_NOT_FOUND");
+                }
+            }
 
         } catch (SQLException e) {
-            throw new CustomException("Didn't find user-id that matches given session-id", e);
+            throw new CustomException("Database error while fetching user ID", "DB_ERROR");
         }
     }
 
