@@ -266,12 +266,21 @@ public class UserDataRepository implements UserRepository {
             PreparedStatement pstm = connection.prepareStatement(sql);
             pstm.setInt(1, sessionId);
 
-            ResultSet rs = pstm.executeQuery();
-            UpdateSessionDTO sessionDataDTO = new UpdateSessionDTO(rs.getString("date"), rs.getFloat("hours"),
-                    rs.getInt("productivity_score"), rs.getString("comment"), rs.getTimestamp("created_at"));
-
-            return sessionDataDTO;
-
+            try (ResultSet rs = pstm.executeQuery()) {
+                // sjekke om det finnes en rad før vi henter data
+                if (rs.next()) {
+                    return new UpdateSessionDTO(
+                            rs.getString("date"),
+                            rs.getFloat("hours"),
+                            rs.getInt("productivity_score"),
+                            rs.getString("comment"),
+                            rs.getTimestamp("created_at")
+                    );
+                } else {
+                    // Hvis vi kommer hit, fantes ikke sessionId i databasen
+                    throw new CustomException("Session with ID " + sessionId + " not found", "NOT_FOUND");
+                }
+            }
         } catch (SQLException e) {
             throw new CustomException("Error in database when retrieving session by session-id", e);
         }
