@@ -28,7 +28,7 @@ public class Application {
         // Kjør migrations ved oppstart
         DB.migrate();
         try (Connection conn = DB.getConnection()) {
-            System.out.println("SQLite fungerer!");
+            System.out.println("Database connection successful");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -96,8 +96,5 @@ public class Application {
         app.get("/auth/validate-session", ctx -> {
             authenticationController.sessionExpiration(ctx);
         });
-
-        System.out.println(loginService.createSessionToken("yahye10@example.com", "12345678"));
-        System.out.println(userDataRepository.getSessionTokenIdExpiresAt("7f961352-7366-45b8-8a4d-c4e5bf8e66b8"));
     }
 }

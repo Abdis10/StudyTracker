@@ -7,15 +7,20 @@ import java.sql.SQLException;
 
 public class DB {
 
-    // Vi trenger bare én variabel for URL
-    private static final String URL = System.getenv().getOrDefault(
-            "DATABASE_URL",
-            "jdbc:sqlite:database/studytracker.db" // Lokal fallback
-    );
+    private static final String URL = System.getenv("DATABASE_URL") != null
+            ? System.getenv("DATABASE_URL")
+            : "jdbc:postgresql://localhost:5432/studytracker";
+
+    private static final String USER = System.getenv("DATABASE_USER") != null
+            ? System.getenv("DATABASE_USER")
+            : "postgres";
+
+    private static final String PASSWORD = System.getenv("DATABASE_PASSWORD") != null
+            ? System.getenv("DATABASE_PASSWORD")
+            : "postgres";
 
     public static void migrate() {
-        // Fjernet Class.forName - JDBC fikser dette selv
-        try (Connection conn = DriverManager.getConnection(URL)) {
+        try (Connection conn = getConnection()) {
 
             String createUsersTable = """
                 CREATE TABLE IF NOT EXISTS user_profile (
@@ -53,13 +58,11 @@ public class DB {
                 );
             """;
 
-
             conn.createStatement().execute(createUsersTable);
             conn.createStatement().execute(createSessionsTable);
             conn.createStatement().execute(createSessionTokenTable);
 
-            System.out.println("Database migrations completed successfully on: " + URL.split(":")[1]);
-
+            System.out.println("Database migrations completed successfully.");
         } catch (SQLException e) {
             throw new DatabaseException(
                     "Database migration failed: " + e.getMessage(),
@@ -71,18 +74,13 @@ public class DB {
 
     public static Connection getConnection() {
         try {
-            if (URL.contains("postgresql")) {
-                Class.forName("org.postgresql.Driver");
-            }
-            return DriverManager.getConnection(URL);
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             throw new DatabaseException(
                     "Database connection failed",
                     "DB-CONNECTION-FAILED",
                     e
             );
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 }
