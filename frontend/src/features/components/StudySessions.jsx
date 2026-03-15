@@ -16,6 +16,10 @@ function StudySessions() {
     const [editingSession, setEditingSession] = useState(null);
     const [sessionUpdator, setSessionUpdator] = useState(false);
     const [data, setData] = useState({ high: [], medium: [], low: [] });
+    const [currentPage, setCurrentPage] = useState(1);
+    const sessionsPerPage = 3;
+
+
 
     useEffect(() => {
         if (isAuth) {
@@ -34,6 +38,7 @@ function StudySessions() {
             sessionData();
         }
     }, [sessionUpdator, isAuth]);
+
 
     const getProductivityClass = (score) => {
         if (score >= 7) return "high";
@@ -58,6 +63,11 @@ function StudySessions() {
                 toast.success("Session is successfully deleted.");
                 logger.log("Delete result:", result);
                 setSessionUpdator(prev => !prev);
+
+                if (currentSessions.length === 1 && currentPage > 1) {
+                    setCurrentPage(prev => prev -1);
+                }
+
             } else {
                 toast.error("Couldn't delete session!");
             }
@@ -134,6 +144,16 @@ function StudySessions() {
         }))
         .filter(item => item.value > 0);
 
+    // beregn indekser
+    const indexOfLastItem = currentPage * sessionsPerPage;
+    const indexOfFirstItem = indexOfLastItem - sessionsPerPage;
+
+    // Hent ut kun de elementene som skal vises på nåværende side
+    const currentSessions = sessions.slice(indexOfFirstItem, indexOfLastItem);
+
+    // beregn antall sider totalt
+    const totalPages = (Math.ceil(sessions.length / sessionsPerPage));
+
     return (
         <div className="sessions-page-container">
             <Toaster />
@@ -166,7 +186,7 @@ function StudySessions() {
                             </tr>
                             </thead>
                             <tbody>
-                            {sessions.map(({ id, date, hours, productivityScore, comment }) => (
+                            {currentSessions.map(({ id, date, hours, productivityScore, comment }) => (
                                 <tr key={id}>
                                     <td>{date}</td>
                                     <td>{hours}</td>
@@ -207,6 +227,12 @@ function StudySessions() {
                         </div>
                     )}
                 </div>
+                {sessions.length > 0 ?
+                    ( <div className="pagination">
+                    <button disabled={currentPage === 1} onClick={() => setCurrentPage( prev => prev - 1 )}>Previous</button>
+                    <span> Side {currentPage} av {totalPages || 1} </span>
+                    <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
+                </div> ) : ( <h3>No sessions to browse!</h3> )}
             </div>
 
             <div className="session-diagram">
