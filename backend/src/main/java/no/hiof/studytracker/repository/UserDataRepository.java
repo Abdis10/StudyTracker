@@ -9,6 +9,7 @@ import no.hiof.studytracker.model.User;
 
 import java.sql.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -388,5 +389,27 @@ public class UserDataRepository implements UserRepository {
             throw new CustomException("Error when getting user's firstname by id", e);
         }
         return null;
+    }
+
+    public float getTodaysStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE date = ? AND user_id = ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            LocalDate date = LocalDate.now();
+
+            pstm.setString(1, String.valueOf(date));
+            pstm.setInt(2, userId);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getFloat("total");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
     }
 }
