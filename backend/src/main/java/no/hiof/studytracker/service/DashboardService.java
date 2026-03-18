@@ -19,6 +19,7 @@ public class DashboardService {
             DashboardDTO dashboardDTO = new DashboardDTO();
             StudySummaryDTO studySummaryDTO = new StudySummaryDTO();
             studySummaryDTO.setTodayStudyTime(userDataRepository.getTodaysStudyHours(userId));
+            studySummaryDTO.setWeekStudyTime(userDataRepository.getWeekStudyHours(userId));
 
         }
     }

@@ -15,7 +15,12 @@ import no.hiof.studytracker.service.SignupService;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 
 
 public class Application {
@@ -93,6 +98,5 @@ public class Application {
         app.get("/auth/validate-session", ctx -> {
             authenticationController.sessionExpiration(ctx);
         });
-
     }
 }

@@ -8,11 +8,16 @@ import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.model.User;
 
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class UserDataRepository implements UserRepository {
     public UserDataRepository() {}
@@ -410,6 +415,44 @@ public class UserDataRepository implements UserRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return 0;
+    }
+
+    public float getWeekStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE user_id = ? AND date BETWEEN ? AND ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            LocalDate today = LocalDate.now();
+            int weekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            int year = LocalDate.now().getYear();
+
+            LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
+                    .with(WeekFields.ISO.weekOfYear(), weekNumber)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+            LocalDate endOfTheWeek = startOfTheWeek.plusDays(6);
+
+            pstm.setString(2, startOfTheWeek.toString());
+            pstm.setString(3, endOfTheWeek.toString());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    float result = rs.getFloat("total");
+                    if (rs.wasNull()) {
+                        throw new CustomException("Total study hours of the week is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return 0;
     }
 }
