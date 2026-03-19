@@ -427,7 +427,7 @@ public class UserDataRepository implements UserRepository {
 
             LocalDate today = LocalDate.now();
             int weekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-            int year = LocalDate.now().getYear();
+            int year = today.get(IsoFields.WEEK_BASED_YEAR);
 
             LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
                     .with(WeekFields.ISO.weekOfYear(), weekNumber)
@@ -450,9 +450,44 @@ public class UserDataRepository implements UserRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
 
+        return 0;
+    }
+
+
+    public float getMonthStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE user_id = ? AND date >= ? AND date < ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            LocalDate today = LocalDate.now();
+            // Første dag i måneden (f.eks. 2026-03-01)
+            LocalDate startOfMonth = today.withDayOfMonth(1);
+
+            // Første dag i NESTE måned (f.eks. 2026-04-01)
+            LocalDate startOfNextMonth = startOfMonth.plusMonths(1);
+
+            pstm.setString(2, startOfMonth.toString());
+            pstm.setString(3, startOfNextMonth.toString());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    float result = rs.getFloat("total");
+                    if (rs.wasNull()) {
+                        throw new CustomException("Total study hours of the month is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         return 0;
     }
 }
