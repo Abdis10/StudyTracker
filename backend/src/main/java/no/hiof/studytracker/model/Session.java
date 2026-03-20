@@ -26,6 +26,13 @@ public class Session {
         this.updatedAt = updatedAt;
     }
 
+    public Session(String date, float hours, int productivityScore, String comment) {
+        this.date = date;
+        this.hours = hours;
+        this.productivityScore = productivityScore;
+        this.comment = comment;
+    }
+
     public Session(int userId, String date, float hours, int productivityScore, String comment, Timestamp createdAt) {
         this.userId = userId;
         this.date = date;

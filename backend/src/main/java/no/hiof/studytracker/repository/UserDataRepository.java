@@ -8,10 +8,16 @@ import no.hiof.studytracker.model.Session;
 import no.hiof.studytracker.model.User;
 
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class UserDataRepository implements UserRepository {
     public UserDataRepository() {}
@@ -388,5 +394,140 @@ public class UserDataRepository implements UserRepository {
             throw new CustomException("Error when getting user's firstname by id", e);
         }
         return null;
+    }
+
+    public float getTodaysStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE date = ? AND user_id = ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            LocalDate date = LocalDate.now();
+
+            pstm.setString(1, String.valueOf(date));
+            pstm.setInt(2, userId);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getFloat("total");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
+    public float getWeekStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE user_id = ? AND date BETWEEN ? AND ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            LocalDate today = LocalDate.now();
+            int currentWeekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            int year = today.get(IsoFields.WEEK_BASED_YEAR);
+
+            LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
+                    .with(WeekFields.ISO.weekOfYear(), currentWeekNumber)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+            LocalDate endOfTheWeek = startOfTheWeek.plusDays(6);
+
+            pstm.setString(2, startOfTheWeek.toString());
+            pstm.setString(3, endOfTheWeek.toString());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    float result = rs.getFloat("total");
+                    if (rs.wasNull()) {
+                        throw new CustomException("Total study hours of the week is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return 0;
+    }
+
+
+    public float getMonthStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE user_id = ? AND date >= ? AND date < ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            LocalDate today = LocalDate.now();
+            // Første dag i måneden (f.eks. 2026-03-01)
+            LocalDate startOfMonth = today.withDayOfMonth(1);
+
+            // Første dag i NESTE måned (f.eks. 2026-04-01)
+            LocalDate startOfNextMonth = startOfMonth.plusMonths(1);
+
+            pstm.setString(2, startOfMonth.toString());
+            pstm.setString(3, startOfNextMonth.toString());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    float result = rs.getFloat("total");
+                    if (rs.wasNull()) {
+                        throw new CustomException("Total study hours of the month is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return 0;
+    }
+
+
+    public float getLastWeekStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE user_id = ? AND date BETWEEN ? AND ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            LocalDate today = LocalDate.now();
+            int currentWeekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            currentWeekNumber = currentWeekNumber - 1; // -1 fordi vi ønsker uken før nåværende uke
+            int year = today.get(IsoFields.WEEK_BASED_YEAR);
+
+            LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
+                    .with(WeekFields.ISO.weekOfYear(), currentWeekNumber)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+            LocalDate endOfTheWeek = startOfTheWeek.plusDays(6);
+
+            pstm.setString(2, startOfTheWeek.toString());
+            pstm.setString(3, endOfTheWeek.toString());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    float result = rs.getFloat("total");
+                    if (rs.wasNull()) {
+                        throw new CustomException("Total study hours of the week is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        return 0;
     }
 }

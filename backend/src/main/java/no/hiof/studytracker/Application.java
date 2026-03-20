@@ -13,12 +13,15 @@ import no.hiof.studytracker.service.SessionService;
 import no.hiof.studytracker.service.SignupService;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.TemporalAmount;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 
 
 public class Application {
