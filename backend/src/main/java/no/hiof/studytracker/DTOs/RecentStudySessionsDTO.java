@@ -2,16 +2,18 @@ package no.hiof.studytracker.DTOs;
 
 import no.hiof.studytracker.model.Session;
 
+import java.util.List;
+
 public class RecentStudySessionsDTO {
-    private Session session;
+    private List<SessionResponseDTO> sessions;
 
     public RecentStudySessionsDTO() {}
 
-    public Session getSession() {
-        return session;
+    public List<SessionResponseDTO> getSessions() {
+        return sessions;
     }
 
-    public void setSession(Session session) {
-        this.session = session;
+    public void setSessions(List<SessionResponseDTO> sessions) {
+        this.sessions = sessions;
     }
 }

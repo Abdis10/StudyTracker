@@ -1,24 +1,24 @@
 package no.hiof.studytracker.DTOs;
 
 public class WeeklyProgressDTO {
-    private int thisWeekStudyHours;
-    private int lasWeekStudyHours;
+    private float thisWeekStudyHours;
+    private float lasWeekStudyHours;
 
     public WeeklyProgressDTO() {}
 
-    public int getThisWeekStudyHours() {
+    public float getThisWeekStudyHours() {
         return thisWeekStudyHours;
     }
 
-    public void setThisWeekStudyHours(int thisWeekStudyHours) {
+    public void setThisWeekStudyHours(float thisWeekStudyHours) {
         this.thisWeekStudyHours = thisWeekStudyHours;
     }
 
-    public int getLasWeekStudyHours() {
+    public float getLasWeekStudyHours() {
         return lasWeekStudyHours;
     }
 
-    public void setLasWeekStudyHours(int lasWeekStudyHours) {
+    public void setLasWeekStudyHours(float lasWeekStudyHours) {
         this.lasWeekStudyHours = lasWeekStudyHours;
     }
 }

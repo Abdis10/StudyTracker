@@ -1,7 +1,9 @@
 package no.hiof.studytracker.service;
 
 import no.hiof.studytracker.DTOs.DashboardDTO;
+import no.hiof.studytracker.DTOs.RecentStudySessionsDTO;
 import no.hiof.studytracker.DTOs.StudySummaryDTO;
+import no.hiof.studytracker.DTOs.WeeklyProgressDTO;
 import no.hiof.studytracker.repository.UserDataRepository;
 
 public class DashboardService {
@@ -22,6 +24,11 @@ public class DashboardService {
             studySummaryDTO.setWeekStudyTime(userDataRepository.getWeekStudyHours(userId));
             studySummaryDTO.setMonthStudyTime(userDataRepository.getMonthStudyHours(2));
 
+            RecentStudySessionsDTO recentStudySessionsDTO = new RecentStudySessionsDTO();
+            recentStudySessionsDTO.setSessions(userDataRepository.getSessions(userId));
+
+            WeeklyProgressDTO weeklyProgressDTO = new WeeklyProgressDTO();
+            weeklyProgressDTO.setThisWeekStudyHours(studySummaryDTO.getWeekStudyTime());
 
         }
     }

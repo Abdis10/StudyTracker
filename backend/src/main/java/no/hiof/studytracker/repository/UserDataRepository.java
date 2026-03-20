@@ -426,11 +426,11 @@ public class UserDataRepository implements UserRepository {
             pstm.setInt(1, userId);
 
             LocalDate today = LocalDate.now();
-            int weekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            int currentWeekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
             int year = today.get(IsoFields.WEEK_BASED_YEAR);
 
             LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
-                    .with(WeekFields.ISO.weekOfYear(), weekNumber)
+                    .with(WeekFields.ISO.weekOfYear(), currentWeekNumber)
                     .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
             LocalDate endOfTheWeek = startOfTheWeek.plusDays(6);
@@ -488,6 +488,46 @@ public class UserDataRepository implements UserRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
+        return 0;
+    }
+
+
+    public float getLastWeekStudyHours(int userId) {
+        String sql = "SELECT SUM(hours) as total FROM sessions WHERE user_id = ? AND date BETWEEN ? AND ?";
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            LocalDate today = LocalDate.now();
+            int currentWeekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+            currentWeekNumber = currentWeekNumber - 1; // -1 fordi vi ønsker uken før nåværende uke
+            int year = today.get(IsoFields.WEEK_BASED_YEAR);
+
+            LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
+                    .with(WeekFields.ISO.weekOfYear(), currentWeekNumber)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+            LocalDate endOfTheWeek = startOfTheWeek.plusDays(6);
+
+            pstm.setString(2, startOfTheWeek.toString());
+            pstm.setString(3, endOfTheWeek.toString());
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    float result = rs.getFloat("total");
+                    if (rs.wasNull()) {
+                        throw new CustomException("Total study hours of the week is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                    } else {
+                        return result;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
         return 0;
     }
 }
