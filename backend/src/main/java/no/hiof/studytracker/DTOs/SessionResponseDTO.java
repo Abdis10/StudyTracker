@@ -78,4 +78,17 @@ public class SessionResponseDTO {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "SessionResponseDTO{" +
+                "id=" + id +
+                ", date='" + date + '\'' +
+                ", hours=" + hours +
+                ", productivityScore=" + productivityScore +
+                ", comment='" + comment + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

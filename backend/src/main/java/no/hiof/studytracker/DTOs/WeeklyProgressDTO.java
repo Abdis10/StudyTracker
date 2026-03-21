@@ -21,4 +21,12 @@ public class WeeklyProgressDTO {
     public void setLasWeekStudyHours(float lasWeekStudyHours) {
         this.lasWeekStudyHours = lasWeekStudyHours;
     }
+
+    @Override
+    public String toString() {
+        return "WeeklyProgressDTO{" +
+                "thisWeekStudyHours=" + thisWeekStudyHours +
+                ", lasWeekStudyHours=" + lasWeekStudyHours +
+                '}';
+    }
 }

@@ -26,6 +26,8 @@ public class AuthenticationService {
                 String firstname = Objects.requireNonNullElse(userDataRepository.getUserFirstname(userId), "");
 
                 return new TokenValidationResponse(username, firstname, userId, email);
+            } else {
+                userDataRepository.deleteExpiredSession(token);
             }
         } else {
             throw new InvalidTokenException("Token doesn't exist", "INVALID_TOKEN");
