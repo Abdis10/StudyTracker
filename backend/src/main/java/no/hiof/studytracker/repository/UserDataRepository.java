@@ -501,7 +501,7 @@ public class UserDataRepository implements UserRepository {
 
             LocalDate today = LocalDate.now();
             int currentWeekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
-            currentWeekNumber = currentWeekNumber - 1; // -1 fordi vi ønsker uken før nåværende uke
+            currentWeekNumber = currentWeekNumber - 1;       // -1 fordi vi ønsker uken før nåværende uke
             int year = today.get(IsoFields.WEEK_BASED_YEAR);
 
             LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
@@ -529,5 +529,22 @@ public class UserDataRepository implements UserRepository {
         }
 
         return 0;
+    }
+
+    public void deleteExpiredSession(String token) {
+        String sql = "DELETE FROM session_token WHERE session_token_id = ?";
+
+        try (Connection connection = DB.getConnection(); PreparedStatement pstm = connection.prepareStatement(sql)) {
+
+            pstm.setString(1, token);
+            int rowsAffected = pstm.executeUpdate();
+            if (rowsAffected == 0) {
+                // This means the token was already gone or didn't exist
+                System.out.println("No session found to delete for token: " + token);
+            }
+
+        } catch (SQLException e) {
+            throw new CustomException("Database error during session removal.");
+        }
     }
 }

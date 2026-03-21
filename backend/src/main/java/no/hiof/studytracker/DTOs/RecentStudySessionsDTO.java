@@ -16,4 +16,11 @@ public class RecentStudySessionsDTO {
     public void setSessions(List<SessionResponseDTO> sessions) {
         this.sessions = sessions;
     }
+
+    @Override
+    public String toString() {
+        return "RecentStudySessionsDTO{" +
+                "sessions=" + sessions +
+                '}';
+    }
 }

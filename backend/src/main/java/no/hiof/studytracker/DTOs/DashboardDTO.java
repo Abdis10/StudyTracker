@@ -32,4 +32,13 @@ public class DashboardDTO {
     public void setWeeklyProgressDTO(WeeklyProgressDTO weeklyProgressDTO) {
         this.weeklyProgressDTO = weeklyProgressDTO;
     }
+
+    @Override
+    public String toString() {
+        return "DashboardDTO{" +
+                studySummaryDTO + "," +
+                recentStudySessionsDTO + "," +
+                weeklyProgressDTO +
+                '}';
+    }
 }

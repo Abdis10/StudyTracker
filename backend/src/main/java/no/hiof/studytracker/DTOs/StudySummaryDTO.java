@@ -30,4 +30,13 @@ public class StudySummaryDTO {
     public void setMonthStudyTime(float monthStudyTime) {
         this.monthStudyTime = monthStudyTime;
     }
+
+    @Override
+    public String toString() {
+        return "StudySummaryDTO{" +
+                "todayStudyTime=" + todayStudyTime +
+                ", weekStudyTime=" + weekStudyTime +
+                ", monthStudyTime=" + monthStudyTime +
+                '}';
+    }
 }

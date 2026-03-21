@@ -1,16 +1,11 @@
 package no.hiof.studytracker;
 
 import io.javalin.Javalin;
-import no.hiof.studytracker.controllers.AuthenticationController;
-import no.hiof.studytracker.controllers.LoginController;
-import no.hiof.studytracker.controllers.SessionController;
-import no.hiof.studytracker.controllers.SignupController;
+import no.hiof.studytracker.DTOs.RecentStudySessionsDTO;
+import no.hiof.studytracker.controllers.*;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.repository.UserDataRepository;
-import no.hiof.studytracker.service.AuthenticationService;
-import no.hiof.studytracker.service.LoginService;
-import no.hiof.studytracker.service.SessionService;
-import no.hiof.studytracker.service.SignupService;
+import no.hiof.studytracker.service.*;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -67,6 +62,11 @@ public class Application {
         AuthenticationService authenticationService = new AuthenticationService(userDataRepository);
         AuthenticationController authenticationController = new AuthenticationController(authenticationService);
 
+        // Dashboard data
+
+        DashboardService dashboardService = new DashboardService(userDataRepository, sessionService);
+        DashboardController dashboardController = new DashboardController(dashboardService);
+
         app.get("/", ctx -> {
             ctx.result("StudyTracker backend is live 🚀");
         });
@@ -98,6 +98,10 @@ public class Application {
 
         app.get("/auth/validate-session", ctx -> {
             authenticationController.sessionExpiration(ctx);
+        });
+
+        app.get("/session/dashboard", ctx -> {
+           dashboardController.getDashboard(ctx);
         });
     }
 }
