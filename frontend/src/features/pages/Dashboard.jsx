@@ -5,10 +5,42 @@ import "../css/dashboard.css";
 import RecentStudySessionsCard from "../components/RecentStudySessionsCard.jsx";
 import useAuth from "../auth/useAuth.js";
 import LogoutCard from "../components/LogoutCard.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {getSessions} from "../../api/sessionApi.js";
+import {logger} from "../utils/Logger.js";
+import {getDashboardData} from "../../api/dashboardApi.js";
 
 function Dashboard() {
-    const { setIsAuth, user } = useAuth();
+    const { isAuth, user } = useAuth();
+    const [studySummaryData, setStudySummaryData] = useState([]);
+    const [weeklyProgressData, setWeeklyProgressData] = useState([]);
+    const [recentStudySessions, setRecentStudySessions] = useState([]);
+    const [latestSessions, setLatestSessions] = useState([]);
+
+
+    useEffect(() => {
+        if (isAuth) {
+            const dashboardData = async () => {
+                try {
+                    const token = localStorage.getItem("token");
+                    const result = await getDashboardData(token);
+
+                    if (result.success) {
+                        setStudySummaryData(result.data.studySummaryDTO);
+
+                        setRecentStudySessions(result.data.recentStudySessionsDTO.sessions);
+
+                        setWeeklyProgressData(result.data.weeklyProgressDTO);
+                    }
+                } catch (e) {
+                    logger.error("Fetching sessions failed:", e);
+                }
+            };
+            dashboardData();
+        }
+    }, [isAuth]);
+
+
     return (
         <>
             <div className="dashboard-container">
@@ -21,13 +53,13 @@ function Dashboard() {
 
                 <div className="study-summary-section">
                     <Card title="Study Summary">
-                        <StudySessionCard />
+                        <StudySessionCard studySummaryData={studySummaryData} />
                     </Card>
                 </div>
 
                 <div className="recent-s-sessions">
                     <Card title="Recent Study Sessions">
-                        <RecentStudySessionsCard />
+                        <RecentStudySessionsCard recentStudySessions={recentStudySessions} />
                     </Card>
                 </div>
 
