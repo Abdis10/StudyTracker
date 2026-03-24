@@ -1,20 +1,26 @@
 import "../css/studySessionCard.css"
 
-function StudySessionCard() {
+function StudySessionCard( {studySummaryData} ) {
+    const util = (data) => {
+        let num = data;
+        let hours = Math.floor(num);
+        let minutes = (Math.ceil(num) - num)* 60;
+        return hours + "h" + " " + minutes + "m";
+    }
+
     return (
         <div className="study-session-card">
             <div className="card-body">
                 <p className="label">Today's Study Time</p>
-                <h1 className="time">2h 30m</h1>
-
+                {studySummaryData.todayStudyTime ? (<h1 className="time"> {util(studySummaryData.todayStudyTime)} </h1>) : 0 + "h"}
                 <hr />
 
                 <div className="summary">
                     <p>
-                        This Week: <span className="highlight">8h 45m</span>
+                        This Week: {studySummaryData.weekStudyTime ?  (<span className="highlight"> {util(studySummaryData.weekStudyTime)} </span>) : 0 + "h"}
                     </p>
                     <p>
-                        This Month: <span className="highlight">22h 15m</span>
+                        This Month: {studySummaryData.monthStudyTime ? (<span className="highlight"> {util(studySummaryData.monthStudyTime)} </span>) : 0 + "h"}
                     </p>
                 </div>
             </div>

@@ -13,8 +13,10 @@ import {getDashboardData} from "../../api/dashboardApi.js";
 function Dashboard() {
     const { isAuth, user } = useAuth();
     const [studySummaryData, setStudySummaryData] = useState([]);
-    const [recentStudySessions, setRecentStudySessions] = useState([]);
     const [weeklyProgressData, setWeeklyProgressData] = useState([]);
+    const [recentStudySessions, setRecentStudySessions] = useState([]);
+    const [latestSessions, setLatestSessions] = useState([]);
+
 
     useEffect(() => {
         if (isAuth) {
@@ -24,9 +26,10 @@ function Dashboard() {
                     const result = await getDashboardData(token);
 
                     if (result.success) {
-                        console.log(result.data);
                         setStudySummaryData(result.data.studySummaryDTO);
-                        setRecentStudySessions(result.data.recentStudySessionsDTO);
+
+                        setRecentStudySessions(result.data.recentStudySessionsDTO.sessions);
+
                         setWeeklyProgressData(result.data.weeklyProgressDTO);
                     }
                 } catch (e) {
@@ -50,13 +53,13 @@ function Dashboard() {
 
                 <div className="study-summary-section">
                     <Card title="Study Summary">
-                        <StudySessionCard />
+                        <StudySessionCard studySummaryData={studySummaryData} />
                     </Card>
                 </div>
 
                 <div className="recent-s-sessions">
                     <Card title="Recent Study Sessions">
-                        <RecentStudySessionsCard />
+                        <RecentStudySessionsCard recentStudySessions={recentStudySessions} />
                     </Card>
                 </div>
 
