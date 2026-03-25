@@ -1,10 +1,16 @@
 package no.hiof.studytracker.DTOs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WeeklyProgressDTO {
     private float thisWeekStudyHours;
     private float lasWeekStudyHours;
+    private List<AnalyticsDTO> analyticsDTOList;
 
-    public WeeklyProgressDTO() {}
+    public WeeklyProgressDTO() {
+        analyticsDTOList = new ArrayList<>();
+    }
 
     public float getThisWeekStudyHours() {
         return thisWeekStudyHours;
@@ -22,11 +28,20 @@ public class WeeklyProgressDTO {
         this.lasWeekStudyHours = lasWeekStudyHours;
     }
 
+    public List<AnalyticsDTO> getAnalyticsDTOList() {
+        return analyticsDTOList;
+    }
+
+    public void setAnalyticsDTOList(List<AnalyticsDTO> analyticsDTOList) {
+        this.analyticsDTOList = analyticsDTOList;
+    }
+
     @Override
     public String toString() {
         return "WeeklyProgressDTO{" +
                 "thisWeekStudyHours=" + thisWeekStudyHours +
                 ", lasWeekStudyHours=" + lasWeekStudyHours +
+                ", analyticsDTOList=" + analyticsDTOList +
                 '}';
     }
 }

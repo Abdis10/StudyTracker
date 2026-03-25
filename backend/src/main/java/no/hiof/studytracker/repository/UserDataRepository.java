@@ -1,5 +1,6 @@
 package no.hiof.studytracker.repository;
 
+import no.hiof.studytracker.DTOs.AnalyticsDTO;
 import no.hiof.studytracker.DTOs.SessionResponseDTO;
 import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.database.DB;
@@ -546,5 +547,44 @@ public class UserDataRepository implements UserRepository {
         } catch (SQLException e) {
             throw new CustomException("Database error during session removal.");
         }
+    }
+
+    public List<AnalyticsDTO> analyticsData(int userId) {
+        String sql = "SELECT date, SUM(hours) as total, productivity_score FROM sessions" +
+                " WHERE user_id = ? AND date BETWEEN ? AND ?" +
+                " GROUP BY date, productivity_score";
+
+        List<AnalyticsDTO> analyticsDTOS = new ArrayList<>();
+
+        try(Connection connection = DB.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(sql);
+
+            LocalDate today = LocalDate.now();
+            int currentWeekNumber = today.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR);
+
+            int year = today.get(IsoFields.WEEK_BASED_YEAR);
+
+            LocalDate startOfTheWeek = LocalDate.of(year, 1, 4)
+                    .with(WeekFields.ISO.weekOfYear(), currentWeekNumber)
+                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+            LocalDate endOfTheWeek = startOfTheWeek.plusDays(6);
+
+            pstm.setInt(1, userId);
+            pstm.setString(2, startOfTheWeek.toString());
+            pstm.setString(3, endOfTheWeek.toString());
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                AnalyticsDTO dto = new AnalyticsDTO(rs.getString("date"),
+                        rs.getFloat("total"),
+                        rs.getInt("productivity_score"));
+                analyticsDTOS.add(dto);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return analyticsDTOS;
     }
 }
