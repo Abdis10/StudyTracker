@@ -443,7 +443,7 @@ public class UserDataRepository implements UserRepository {
                 if (rs.next()) {
                     float result = rs.getFloat("total");
                     if (rs.wasNull()) {
-                        throw new CustomException("Total study hours of the week is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                        result = 0;
                     } else {
                         return result;
                     }
@@ -479,7 +479,7 @@ public class UserDataRepository implements UserRepository {
                 if (rs.next()) {
                     float result = rs.getFloat("total");
                     if (rs.wasNull()) {
-                        throw new CustomException("Total study hours of the month is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                        result = 0;
                     } else {
                         return result;
                     }
@@ -518,7 +518,7 @@ public class UserDataRepository implements UserRepository {
                 if (rs.next()) {
                     float result = rs.getFloat("total");
                     if (rs.wasNull()) {
-                        throw new CustomException("Total study hours of the week is 0", "NO_STUDY_HOURS_REGISTERED_FOR_THE_WEEK");
+                        result = 0;
                     } else {
                         return result;
                     }
