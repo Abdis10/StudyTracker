@@ -1,26 +1,33 @@
 .sessions-page-container {
-    display: flex;
-    gap: 40px;
-    padding: 30px;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 1.5rem;
+    width: min(1400px, 100%);
+    margin: 0 auto;
+    padding: 1.5rem;
 }
 
-.study-sessions {
-    flex: 2;
+.study-sessions,
+.session-diagram {
+    min-width: 0;
     background: #ffffff;
-    padding: 25px;
     border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
 }
 
 .sessions-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
 }
 
 .sessions-header h2 {
-    font-size: 22px;
+    margin: 0;
+    font-size: 1.375rem;
     font-weight: 600;
 }
 
@@ -31,7 +38,7 @@
     background: #4f46e5;
     color: white;
     border: none;
-    padding: 8px 14px;
+    padding: 0.65rem 1rem;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
@@ -42,12 +49,14 @@
     background: #4338ca;
 }
 
-.session-display table {
-    width: 100%;
-    border-collapse: collapse;
+.session-display {
+    overflow-x: auto;
 }
 
-table {
+.session-display table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
     table-layout: fixed;
 }
 
@@ -55,10 +64,12 @@ thead {
     background: #f3f4f6;
 }
 
-th, td {
+th,
+td {
     text-align: left;
     padding: 12px 10px;
     font-size: 14px;
+    overflow-wrap: anywhere;
 }
 
 th {
@@ -75,8 +86,9 @@ tbody tr:hover {
     background: #f9fafb;
 }
 
-/* Productivity Badges */
 .productivity {
+    display: inline-flex;
+    justify-content: center;
     width: 80px;
     padding: 10px;
     border-radius: 6px;
@@ -99,17 +111,14 @@ tbody tr:hover {
     color: #991b1b;
 }
 
-/* Placeholder for chart section */
-.session-diagram {
-    flex: 1;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    padding: 25px;
-}
-
 .menu-wrapper {
     position: relative;
+}
+
+.menu-wrapper button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
 }
 
 .dropdown {
@@ -118,7 +127,7 @@ tbody tr:hover {
     top: 25px;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     padding: 0.5rem;
     z-index: 100;
 }
@@ -139,6 +148,15 @@ tbody tr:hover {
 
 .dropdown .danger {
     color: #dc2626;
+}
+
+.session-diagram h3 {
+    margin-top: 0;
+}
+
+.chart-shell {
+    width: 100%;
+    height: 320px;
 }
 
 .pie-legend {
@@ -166,15 +184,38 @@ tbody tr:hover {
 .pagination {
     margin-top: 20px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .pagination button {
-    border: 3px solid blanchedalmond;
+    border: 1px solid #d6d3d1;
     border-radius: 10px;
-    background-color: blanchedalmond;
+    background-color: #fef7ed;
+    padding: 0.5rem 0.9rem;
     font-size: 15px;
 }
 
 .pagination button:hover {
     cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+    .sessions-page-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .sessions-page-container {
+        padding: 1rem;
+    }
+
+    .study-sessions,
+    .session-diagram {
+        padding: 1rem;
+    }
 }

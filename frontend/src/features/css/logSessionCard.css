@@ -5,18 +5,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1rem;
+    z-index: 1000;
 }
 
 .logsession-card {
+    width: min(600px, 100%);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
     background: white;
     padding: 2rem;
     border-radius: 12px;
-    width: 600px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .logsession-card h3 {
-    margin-bottom: 1rem;
+    margin: 0 0 1rem;
 }
 
 .logsession-card form {
@@ -26,17 +30,16 @@
 }
 
 .logsession-card input,
-.logsession-card {
-    padding: 0.6rem;
+.logsession-card textarea {
+    width: 100%;
+    padding: 0.75rem;
     border-radius: 8px;
     border: 1px solid #ddd;
 }
 
-textarea {
-    width: 500px;
-    height: 150px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
+.logsession-card textarea {
+    min-height: 150px;
+    resize: vertical;
 }
 
 .button-group {
@@ -44,6 +47,7 @@ textarea {
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 1rem;
+    flex-wrap: wrap;
 }
 
 .save {
@@ -64,4 +68,14 @@ textarea {
     border: none;
     padding: 0.6rem 1rem;
     border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+    .logsession-card {
+        padding: 1.25rem;
+    }
+
+    .button-group > * {
+        flex: 1 1 140px;
+    }
 }

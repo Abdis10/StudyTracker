@@ -5,6 +5,8 @@ import Dashboard from "./features/pages/Dashboard.jsx";
 import ProtectedRoute from "./features/auth/ProtectedRoute.jsx";
 import StudySessionsPage from "./features/pages/StudySessionsPage.jsx";
 import AppLayout from "./AppLayout.jsx";
+import Subjects from "./features/components/Subjects.jsx";
+import Reports from "./features/components/Reports.jsx";
 
 function App() {
     return (
@@ -19,8 +21,9 @@ function App() {
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/dashboard" element={<Dashboard />}/>
                     <Route path="/sessions" element={<StudySessionsPage />} />
+                    <Route path="/subjects" element={<Subjects />} />
+                    <Route path="/reports" element={<Reports />} />
                 </Route>
-
             </Route>
         </Routes>
   )

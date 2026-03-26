@@ -1,0 +1,20 @@
+.coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+
+    text-align: center;
+    color: #64748b;
+}
+
+.coming-soon h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #0f172a;
+}
+
+.coming-soon p {
+    font-size: 1rem;
+}
