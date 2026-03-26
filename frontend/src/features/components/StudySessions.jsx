@@ -232,7 +232,7 @@ function StudySessions() {
                     <button disabled={currentPage === 1} onClick={() => setCurrentPage( prev => prev - 1 )}>Previous</button>
                     <span> Side {currentPage} av {totalPages || 1} </span>
                     <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
-                </div> ) : ( <h3>No sessions to browse!</h3> )}
+                </div> ) : ( <h3>Start logging sessions!</h3> )}
             </div>
 
             <div className="session-diagram">
@@ -248,8 +248,15 @@ function StudySessions() {
                                 innerRadius="35%"
                                 paddingAngle={4}
                                 cornerRadius={8}
+                                label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                             />
-                            <Tooltip />
+                            <Tooltip
+                                formatter={(value, name) => {
+                                    const total = dataWithColors.reduce((sum, entry) => sum + entry.value, 0);
+                                    const percent = ((value / total) * 100).toFixed(0);
+                                    return [`${value} (${percent}%)`, name];
+                                }}
+                            />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
