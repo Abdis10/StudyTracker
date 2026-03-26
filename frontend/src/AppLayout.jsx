@@ -9,13 +9,13 @@ function AppLayout() {
     const [logoutIsClicked, setLogoutIsClicked] = useState(false);
     return (
         <>
-            <div className={`${logoutIsClicked ? "background-dimmed" : "container"}`}>
+            <div className={`app-layout ${logoutIsClicked ? "app-layout-dimmed" : ""}`}>
                 <Navbar onClickLogout={setLogoutIsClicked} />
-                <main>
+                <main className="app-main">
                     <Outlet />
                 </main>
                 <Footer />
-                {/* ✅ Modal OUTSIDE grid */}
+
                 {logoutIsClicked && (
                     <div className="logout-overlay">
                         <div className="logout-box">

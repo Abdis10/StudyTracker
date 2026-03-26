@@ -1,7 +1,23 @@
-/* Dim background */
-.dashboard-container-dimmed {
+.app-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-main {
+    flex: 1;
+    width: 100%;
+}
+
+.app-layout-dimmed {
+    overflow: hidden;
+}
+
+.app-layout-dimmed .app-main,
+.app-layout-dimmed .navbar,
+.app-layout-dimmed .app-footer {
     opacity: 0.3;
-    pointer-events: none; /* prevents clicking behind modal */
+    pointer-events: none;
 }
 
 /* Fullscreen overlay */
@@ -20,7 +36,7 @@
     background: white;
     border-radius: 24px;
     width: 400px;
-    max-width: 90%;
+    max-width: min(90vw, 400px);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
     text-align: center;
 }

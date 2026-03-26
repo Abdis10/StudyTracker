@@ -38,8 +38,26 @@ function Navbar( { onClickLogout } ) {
                     </NavLink>
 
                 </li>
-                <li>Subjects</li>
-                <li>Reports</li>
+                <li>
+                    <NavLink
+                        to="/subjects"
+                        className={({ isActive }) =>
+                            isActive ? "navbar-link active" : "navbar-link"
+                        }
+                    >
+                        Subjects
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/reports"
+                        className={({ isActive }) =>
+                            isActive ? "navbar-link active" : "navbar-link"
+                        }
+                    >
+                        Reports
+                    </NavLink>
+                </li>
             </ul>
 
             {/* Right: User actions */}

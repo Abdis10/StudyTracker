@@ -5,7 +5,7 @@ import useAuth from "../auth/useAuth.js";
 import { deleteSession, getSessions, registerSession, updateSession } from "../../api/sessionApi.js";
 import LogSessionCard from "./LogSessionCard.jsx";
 import { toast, Toaster } from "react-hot-toast";
-import { Pie, PieChart, Tooltip } from "recharts";
+import { Pie, PieChart, Tooltip, ResponsiveContainer } from "recharts";
 import { logger } from "../utils/Logger.js";
 
 function StudySessions() {
@@ -237,18 +237,22 @@ function StudySessions() {
 
             <div className="session-diagram">
                 <h3>Productivity rate</h3>
-                <PieChart width={400} height={400}>
-                    <Pie
-                        data={dataWithColors}
-                        dataKey="value"
-                        nameKey="name"
-                        outerRadius={150}
-                        innerRadius={60}
-                        paddingAngle={4}
-                        cornerRadius={8}
-                    />
-                    <Tooltip />
-                </PieChart>
+                <div className="chart-shell">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                                data={dataWithColors}
+                                dataKey="value"
+                                nameKey="name"
+                                outerRadius="70%"
+                                innerRadius="35%"
+                                paddingAngle={4}
+                                cornerRadius={8}
+                            />
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
 
                 <div className="pie-legend">
                     {dataWithColors.map(item => (

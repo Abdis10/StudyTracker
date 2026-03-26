@@ -1,106 +1,121 @@
-/*
-    CSS FOR LOGINFORM
-*/
-
 .login-page-container {
-    font-family: "Times New Roman";
-    display: flex;
-    justify-content: center;
-    column-gap-gap: 500px;
-    height: 100vh;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
     width: 100%;
-}
-
-.login-header-msg {
-    color: #76fb41;
-    font-weight: bolder;
-    font-size: 60px;
-}
-
-.subtitle {
-    margin-top: -15px;
-    font-size: 25px;
+    background: linear-gradient(135deg, #f8fbff 0%, #e9effd 100%);
 }
 
 .login-box {
-    width: 70%;
-    background-color: white;
     display: flex;
     flex-direction: column;
-    text-align: center;
-    margin: 300px;
+    justify-content: center;
+    width: min(100%, 720px);
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem);
 }
 
-form {
+.welcome-msg {
+    margin-bottom: 1.5rem;
+}
+
+.login-header-msg {
+    margin: 0;
+    color: #0f172a;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+}
+
+.subtitle {
+    margin: 0.75rem 0 0;
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    color: #475569;
+}
+
+.login-box form {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    align-items: center;
+    align-items: stretch;
+    gap: 1rem;
 }
 
-input {
-    font-family: "Times New Roman";
-    font-weight: bolder;
-    margin: 10px;
-    padding: 20px;
-    width: 500px;
-    border-radius: 10px;
-    border-color: #b2fdb2;;
+.login-box input {
+    width: 100%;
+    margin: 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background-color: #ffffff;
 }
 
-input::placeholder {
-    color: black;
-    text-align: center;
-    font-size: 15px;
+.login-box input::placeholder {
+    color: #64748b;
+    text-align: left;
+    font-size: 0.95rem;
 }
 
-.login-btn {
-    width: 200px;
-    border: 3px solid #b2fdb2;;
-    border-radius: 10px;
-    background-color: #7bfd7b;
-    padding: 5px;
+.login-btn,
+.btn {
+    width: fit-content;
+    min-width: 160px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb 0%, #22c55e 100%);
+    padding: 0.85rem 1.4rem;
     cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 700;
     color: white;
 }
 
 .signup-bar {
-    width: 30%;
-    background: #2A7B9B;
-    background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(123, 237, 224, 1) 100%);
-    color: white;
-    font-family: "Times New Roman";
-    text-align: center;
-    border: 3px #2A7B9B;
-    border-radius: 10px;
-    border-style: none;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-}
-
-.btn {
-    width: 200px;
-    border: 3px solid #b2fdb2;;
-    border-radius: 10px;
-    background-color: #7bfd7b;
-    padding: 5px;
-    cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
+    align-items: flex-start;
+    padding: clamp(2rem, 5vw, 4rem);
     color: white;
+    background: linear-gradient(180deg, #1d4ed8 0%, #0f766e 100%);
 }
 
 .sidebar-header {
-    font-size: 45px;
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2rem, 3vw, 3rem);
 }
 
 .sidebar-p {
-    margin-top: -10px;
-    font-size: 20px;
+    margin: 1rem 0 1.5rem;
+    max-width: 28ch;
+    font-size: 1.05rem;
+    line-height: 1.6;
 }
 
+@media (max-width: 900px) {
+    .login-page-container {
+        grid-template-columns: 1fr;
+    }
 
+    .signup-bar {
+        align-items: center;
+        text-align: center;
+    }
+
+    .sidebar-p {
+        max-width: 40ch;
+    }
+}
+
+@media (max-width: 640px) {
+    .login-box,
+    .signup-bar {
+        padding: 1.5rem;
+    }
+
+    .login-btn,
+    .btn {
+        width: 100%;
+    }
+}
