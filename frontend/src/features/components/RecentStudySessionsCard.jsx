@@ -25,7 +25,7 @@ function RecentStudySessionsCard( {recentStudySessions} ) {
 
                 {recentStudySessions.length > 0 ?
                     recentStudySessions.map( session =>
-                        <li className="session-item">
+                        <li className="session-item" key={session.id}>
                             <div className="session-main">
                                 <span className="date">{session.date}</span>
                                 <span className="comment">{session.comment}</span>
