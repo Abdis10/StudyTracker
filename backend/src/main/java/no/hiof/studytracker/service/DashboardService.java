@@ -1,13 +1,11 @@
 package no.hiof.studytracker.service;
 
-import no.hiof.studytracker.DTOs.DashboardDTO;
-import no.hiof.studytracker.DTOs.RecentStudySessionsDTO;
-import no.hiof.studytracker.DTOs.StudySummaryDTO;
-import no.hiof.studytracker.DTOs.WeeklyProgressDTO;
+import no.hiof.studytracker.DTOs.*;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.repository.UserDataRepository;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class DashboardService {
     private UserDataRepository userDataRepository;
@@ -37,6 +35,9 @@ public class DashboardService {
                 WeeklyProgressDTO weeklyProgressDTO = new WeeklyProgressDTO();
                 weeklyProgressDTO.setThisWeekStudyHours(studySummaryDTO.getWeekStudyTime());
                 weeklyProgressDTO.setLasWeekStudyHours(userDataRepository.getLastWeekStudyHours(userId));
+
+                //List<AnalyticsDTO> analyticsDTOList = userDataRepository.analyticsData(userId);
+                weeklyProgressDTO.setAnalyticsDTOList(userDataRepository.analyticsData(userId));
 
                 dashboardDTO.setStudySummaryDTO(studySummaryDTO);
                 dashboardDTO.setRecentStudySessionsDTO(recentStudySessionsDTO);

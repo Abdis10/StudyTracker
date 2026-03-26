@@ -9,6 +9,8 @@ import {useEffect, useState} from "react";
 import {getSessions} from "../../api/sessionApi.js";
 import {logger} from "../utils/Logger.js";
 import {getDashboardData} from "../../api/dashboardApi.js";
+import StudyHoursChart from "../components/StudyHoursChart.jsx";
+import ProductivityChart from "../components/ProductivityChart.jsx";
 
 function Dashboard() {
     const { isAuth, user } = useAuth();
@@ -63,8 +65,15 @@ function Dashboard() {
                     </Card>
                 </div>
 
-                <div className="weekly-chart">
-                    <Card title="Weekly Progress" />
+                <div className="weekly-study-hours-chart">
+                    <Card title="This weeks study hours Progress">
+                        <StudyHoursChart sessions={weeklyProgressData.analyticsDTOList} />
+                    </Card>
+                </div>
+                <div className="weekly-productivity-chart">
+                    <Card title="This weeks productivity Progress">
+                        <ProductivityChart sessions={weeklyProgressData.analyticsDTOList} />
+                    </Card>
                 </div>
             </div>
         </>
