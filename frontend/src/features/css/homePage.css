@@ -1,0 +1,295 @@
+/* ================= RESET ================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ================= BASE ================= */
+
+.home-page {
+    font-family: "Inter", sans-serif;
+    min-height: 100vh;
+
+    background: url("/background.png") no-repeat center;
+    background-size: cover;
+}
+
+/* ================= NAVBAR ================= */
+
+.home-page-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+}
+
+/* Left */
+.home-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon-svg {
+    color: #3b82f6;
+}
+
+.logo-text {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Right */
+.home-right-navbar {
+    display: flex;
+    align-items: center;
+}
+
+.home-navbar-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 25px;
+}
+
+/* Links */
+.navbar-link {
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.navbar-link:hover {
+    color: #2563eb;
+}
+
+.navbar-link.active {
+    color: #2563eb;
+    position: relative;
+}
+
+.navbar-link.active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #2563eb;
+}
+
+/* Buttons (now NavLink styled as buttons) */
+.home-login-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    color: #1e293b;
+}
+
+.home-signup-bnt {
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ================= HERO ================= */
+
+.home-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px;
+}
+
+/* Left content */
+.home {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+}
+
+/* Title */
+.motto {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+}
+
+/* Paragraph */
+.home-p {
+    font-size: 1.1rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* CTA */
+.home-btn {
+    width: fit-content;
+    padding: 14px 28px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.home-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Right image */
+.home-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.home-image img {
+    max-width: 450px;
+    width: 100%;
+}
+
+/* ================= FEATURES ================= */
+
+.features-section {
+    text-align: center;
+    padding: 80px 40px;
+}
+
+.features-section h2 {
+    font-size: 2rem;
+    color: #1e293b;
+}
+
+.features-section p {
+    color: #64748b;
+    margin-top: 10px;
+}
+
+.features-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 250px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card h3 {
+    margin-bottom: 10px;
+}
+
+/* ================= HOW ================= */
+
+.how-section {
+    text-align: center;
+    padding: 80px 40px;
+}
+
+.how-section h2 {
+    font-size: 2rem;
+    color: #1e293b;
+}
+
+.steps {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.step span {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* ================= CTA ================= */
+
+.cta-section {
+    text-align: center;
+    padding: 80px 40px;
+}
+
+.cta-section h2 {
+    font-size: 2rem;
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+
+    .home-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .home {
+        align-items: center;
+    }
+
+    .motto {
+        font-size: 2.2rem;
+    }
+
+    .home-image img {
+        margin-top: 30px;
+        max-width: 300px;
+    }
+
+    .home-page-navbar {
+        padding: 20px;
+    }
+
+    .home-navbar-links {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

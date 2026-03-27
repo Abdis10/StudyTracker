@@ -7,11 +7,13 @@ import StudySessionsPage from "./features/pages/StudySessionsPage.jsx";
 import AppLayout from "./AppLayout.jsx";
 import Subjects from "./features/components/Subjects.jsx";
 import Reports from "./features/components/Reports.jsx";
+import HomePage from "./features/pages/HomePage.jsx";
 
 function App() {
     return (
         <Routes>
             {/* Public */}
+            <Route path="/home" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
