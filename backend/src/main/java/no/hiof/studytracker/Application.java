@@ -1,28 +1,17 @@
 package no.hiof.studytracker;
 
 import io.javalin.Javalin;
-import no.hiof.studytracker.DTOs.RecentStudySessionsDTO;
 import no.hiof.studytracker.controllers.*;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.repository.UserDataRepository;
 import no.hiof.studytracker.service.*;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.WeekFields;
 
 
 public class Application {
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-
         // Kjør migrations ved oppstart
         DB.migrate();
         try (Connection conn = DB.getConnection()) {
