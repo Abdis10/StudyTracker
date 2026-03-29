@@ -1,8 +1,19 @@
 import { BookOpenCheck } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import "../css/homePage.css";
+import Footer from "../components/Footer.jsx";
 
 function HomePage() {
+
+    // Helper function for smooth scroll
+    const scrollToSection = (e, id) => {
+        e.preventDefault();
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
     return (
         <div className="home-page">
             {/* NAVBAR */}
@@ -14,9 +25,11 @@ function HomePage() {
 
                 <div className="home-right-navbar">
                     <ul className="home-navbar-links">
-                        <li><NavLink to="/home" end className="navbar-link">Home</NavLink></li>
-                        <li><NavLink to="/features" className="navbar-link">Features</NavLink></li>
-                        <li><NavLink to="/contact" className="navbar-link">Contact</NavLink></li>
+                        <li><a href="#home" onClick={(e) => scrollToSection(e, 'home')} className="navbar-link">Home</a></li>
+                        {/* Smooth Scroll Links */}
+                        <li><a href="#features" onClick={(e) => scrollToSection(e, 'features')} className="navbar-link">Features</a></li>
+                        <li><a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} className="navbar-link">Contact</a></li>
+
                         <li><NavLink to="/login" className="home-login-btn">Log In</NavLink></li>
                         <li><NavLink to="/signup" className="home-signup-btn">Sign Up</NavLink></li>
                     </ul>
@@ -24,13 +37,15 @@ function HomePage() {
             </nav>
 
             {/* HERO */}
-            <section className="home-hero">
+            <section id="home" className="home-hero">
                 <div className="home-content">
                     <h1 className="motto">Enhance Your Study Habits with StudyTracker</h1>
                     <p className="home-p">
                         Track your study sessions, review your productivity, and achieve your academic goals with ease.
                     </p>
-                    <button className="home-btn-primary">Get Started</button>
+                    <NavLink to="/login" className="home-login-btn">
+                        Get started
+                    </NavLink>
                     <p className="home-subtext">Get started for free. No credit card required.</p>
                 </div>
 
@@ -44,7 +59,7 @@ function HomePage() {
             <div className="wave-divider"></div>
 
             {/* INTERACTIVE DASHBOARD PREVIEW */}
-            <section className="dashboard-preview">
+            <section id="features" className="dashboard-preview">
                 <div className="preview-row">
                     <div className="preview-text">
                         <span className="badge">Insightful Analytics</span>
@@ -66,7 +81,7 @@ function HomePage() {
 
                 <div className="preview-row reverse">
                     <div className="preview-image shadow-left">
-                        <img src="/session-logging.png" alt="Log Study Session" />
+                        <img src="/Skjermbilde%202026-03-29%20003607.png" alt="Log Study Session" />
                     </div>
                     <div className="preview-text">
                         <span className="badge">Easy Logging</span>
@@ -109,10 +124,53 @@ function HomePage() {
                     </div>
                 </div>
 
-                <button className="monitor-btn">
+                <NavLink to="/login" className="monitor-login-btn">
                     Monitor Your Study Habits Effectively &rarr;
-                </button>
+                </NavLink>
             </section>
+
+            {/* CONTACT SECTION */}
+            <section id="contact" className="contact-section">
+                <div className="contact-container">
+                    <div className="contact-info">
+                        <span className="badge">Get in Touch</span>
+                        <h2>How can we help you?</h2>
+                        <p>
+                            Have questions about StudyTracker or need help setting up your dashboard?
+                            Our team is here to support your academic journey.
+                        </p>
+
+                        <div className="contact-details">
+                            <div className="contact-item">
+                                <span className="contact-icon">📧</span>
+                                <div>
+                                    <h4>Email us</h4>
+                                    <p>support@studytracker.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+                        <div className="form-group">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Jo Doe..." />
+                        </div>
+                        <div className="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="Jodoe@example.com" />
+                        </div>
+                        <div className="form-group">
+                            <label>Message</label>
+                            <textarea rows="4" placeholder="How can we help?"></textarea>
+                        </div>
+                        <button type="submit" className="home-btn-primary full-width">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </section>
+            <Footer />
         </div>
     );
 }

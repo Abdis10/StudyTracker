@@ -8,7 +8,7 @@ function ProtectedRoute( {children} ) {
     if (isChecking) {
         return <Loading />;
     } else if (!isAuth) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/home" replace />;
     } else {
         return <Outlet />
     }
