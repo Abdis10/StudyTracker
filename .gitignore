@@ -93,8 +93,9 @@ node_modules/
 dist/
 dist-ssr/
 
-# Local env config
-*.local
+# Environment variables
+.env
+.env.*
 
 # NPM/Yarn/Pnpm debug logs
 npm-debug.log*

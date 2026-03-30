@@ -1,5 +1,6 @@
 package no.hiof.studytracker.database;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import no.hiof.studytracker.exceptions.DatabaseException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,17 +8,23 @@ import java.sql.SQLException;
 
 public class DB {
 
-    private static final String URL = System.getenv("DATABASE_URL") != null
-            ? System.getenv("DATABASE_URL")
-            : "jdbc:postgresql://localhost:5432/studytracker";
+    private static final Dotenv dotenv = Dotenv.configure()
+            .filename(".env.local").ignoreIfMissing().load();
 
-    private static final String USER = System.getenv("DATABASE_USER") != null
-            ? System.getenv("DATABASE_USER")
-            : "postgres";
+    private static final String URL =
+            System.getenv("DATABASE_URL") != null
+                    ? System.getenv("DATABASE_URL")
+                    : dotenv.get("DATABASE_URL");
 
-    private static final String PASSWORD = System.getenv("DATABASE_PASSWORD") != null
-            ? System.getenv("DATABASE_PASSWORD")
-            : "postgres";
+    private static final String USER =
+            System.getenv("DATABASE_USER") != null
+                    ? System.getenv("DATABASE_USER")
+                    : dotenv.get("DATABASE_USER");
+
+    private static final String PASSWORD =
+            System.getenv("DATABASE_PASSWORD") != null
+                    ? System.getenv("DATABASE_PASSWORD")
+                    : dotenv.get("DATABASE_PASSWORD");
 
     public static void migrate() {
         try (Connection conn = getConnection()) {
@@ -73,6 +80,9 @@ public class DB {
     }
 
     public static Connection getConnection() {
+        validateEnv();
+
+        System.out.println("Connecting to database...");
         try {
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
@@ -80,6 +90,15 @@ public class DB {
                     "Database connection failed",
                     "DB-CONNECTION-FAILED",
                     e
+            );
+        }
+    }
+
+    private static void validateEnv() {
+        if (URL == null || USER == null || PASSWORD == null) {
+            throw new DatabaseException(
+                    "Missing DATABASE_URL, DATABASE_USER or DATABASE_PASSWORD",
+                    "DB-CONFIG-ERROR"
             );
         }
     }
