@@ -1,14 +1,15 @@
 # 📚 StudyTracker – Fullstack Web App
 
-StudyTracker is a fullstack web application designed to help users track their study sessions, measure productivity, and gain insights into their learning habits.
+StudyTracker is a fullstack web application that helps users track study sessions, measure productivity, and gain insights into their learning habits.
 
-The goal of this project was not just to build a working application, but to understand how fullstack systems are designed, connected, and deployed in real-world scenarios.
+This project was built to understand how real-world applications are designed, connected, and deployed — from backend architecture to frontend integration and production debugging.
 
 ---
 
 ## 🚀 Live Demo
 
-* 🌐 https://sparkly-churros-d400a3.netlify.app/
+* 🌐 Frontend: https://sparkly-churros-d400a3.netlify.app/
+* ⚙️ Backend: https://studytracker-cfmz.onrender.com/
 
 ---
 
@@ -24,8 +25,6 @@ The goal of this project was not just to build a working application, but to und
 ---
 
 ## 🧠 What I Learned
-
-While building this project, I gained practical experience with:
 
 * Designing REST APIs
 * Handling authentication and session management
@@ -60,8 +59,6 @@ While building this project, I gained practical experience with:
 
 ## 🔐 Environment Variables
 
-This project uses environment variables for secure configuration.
-
 Create a `.env` file in the root of the project:
 
 ```env
@@ -69,8 +66,6 @@ DATABASE_URL=your_database_url
 DATABASE_USER=your_database_user
 DATABASE_PASSWORD=your_database_password
 ```
-
-⚠️ Note: `.env` is not committed to version control. Use `.env.example` as a reference.
 
 ---
 
@@ -83,15 +78,35 @@ git clone https://github.com/your-username/studytracker.git
 cd studytracker
 ```
 
-### 2. Set up environment variables
+---
 
-Create a `.env` file as described above.
+### 2. Database Setup (PostgreSQL)
 
-### 3. Start backend
+#### Option 1: Local Installation
+
+* Create a database named `studytracker`
+* Update your `.env` file
+
+#### Option 2 (Recommended): Docker
+
+```bash
+docker run --name studytracker-postgres \
+  -e POSTGRES_DB=studytracker \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -p 5432:5432 \
+  -d postgres
+```
+
+---
+
+### 3. Start Backend
 
 Run the application from your IDE (e.g., IntelliJ)
 
-### 4. Start frontend
+---
+
+### 4. Start Frontend
 
 ```bash
 cd frontend
@@ -104,14 +119,14 @@ npm run dev
 ## 🧱 Project Structure
 
 ```
-backend/
+backend/src/main/java/no.hiof.studytracker
  ├── controllers/
  ├── service/
  ├── repository/
  ├── database/
  └── Application.java
 
-frontend/
+frontend/src/
  ├── components/
  ├── pages/
  ├── api/
@@ -123,8 +138,9 @@ frontend/
 ## 🔍 Key Design Decisions
 
 * Built with Javalin to understand backend fundamentals without heavy abstraction
-* Implemented custom session-token authentication
-* Designed database schema manually and handled migrations at application startup
+* Implemented custom session-based authentication instead of JWT
+* Designed database schema manually with migrations at application startup
+* Used environment variables instead of hardcoded configuration
 
 ---
 
@@ -133,19 +149,13 @@ frontend/
 * Add subjects & reports feature
 * Introduce Flyway for versioned database migrations
 * Implement connection pooling (HikariCP)
-* Upgrade authentication with Spring Security / JWT
+* Upgrade authentication using Spring Security
 * Improve UI/UX design
-
----
-
-## 📬 Contact
-
-If you have feedback or questions, feel free to reach out or open an issue.
 
 ---
 
 ## ⭐ Final Note
 
-This project represents my journey from learning backend fundamentals to building and deploying a complete fullstack application.
+This project represents my transition from learning backend fundamentals to building and deploying a complete fullstack application in production.
 
 ---
