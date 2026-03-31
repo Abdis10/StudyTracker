@@ -11,6 +11,18 @@ public class DB {
     private static final Dotenv dotenv = Dotenv.configure()
             .filename(".env.local").ignoreIfMissing().load();
 
+    public static String getEnvOrDotenv(String key) {
+        // brukes av render for å hente env
+        String value = System.getenv(key);
+
+        if (value != null && !value.isEmpty()) {
+            return value;
+        }
+
+        // brukes i local dev
+        return dotenv.get(key);
+    }
+
     private static final String URL = getEnvOrDotenv("DATABASE_URL");
     private static final String USER = getEnvOrDotenv("DATABASE_USER");
     private static final String PASSWORD = getEnvOrDotenv("DATABASE_PASSWORD");
@@ -90,17 +102,5 @@ public class DB {
                     "DB-CONFIG-ERROR"
             );
         }
-    }
-
-    public static String getEnvOrDotenv(String key) {
-        // brukes av render for å hente env
-        String value = System.getenv(key);
-
-        if (value != null && !value.isEmpty()) {
-            return value;
-        }
-
-        // brukes i local dev
-        return dotenv.get(key);
     }
 }
