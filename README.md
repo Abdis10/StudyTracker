@@ -8,8 +8,7 @@ The goal of this project was not just to build a working application, but to und
 
 ## 🚀 Live Demo
 
-* 🌐 Frontend: https://your-netlify-url.netlify.app
-* ⚙️ Backend: https://studytracker-cfmz.onrender.com/
+* 🌐 https://sparkly-churros-d400a3.netlify.app/
 
 ---
 
