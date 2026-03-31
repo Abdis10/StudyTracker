@@ -7,10 +7,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DB {
-
-    private static final Dotenv dotenv = Dotenv.configure()
-            .filename(".env.local").ignoreIfMissing().load();
-
     public static String getEnvOrDotenv(String key) {
         // brukes av render for å hente env
         String value = System.getenv(key);
@@ -19,8 +15,9 @@ public class DB {
             return value;
         }
 
-        // brukes i local dev
-        return dotenv.get(key);
+        // fallback for local dev
+        return Dotenv.configure()
+                .filename(".env.local").ignoreIfMissing().load().get(key);
     }
 
     private static final String URL = getEnvOrDotenv("DATABASE_URL");
@@ -97,6 +94,9 @@ public class DB {
 
     private static void validateEnv() {
         if (URL == null || USER == null || PASSWORD == null) {
+            System.out.println("URL:" + (URL != null ? "SET": "MISSING"));
+            System.out.println("USER: " + (USER != null ? "SET" : "MISSING"));
+            System.out.println("PASSWORD: " +  (PASSWORD != null ? "SET" : "MISSING"));
             throw new DatabaseException(
                     "Missing DATABASE_URL, DATABASE_USER or DATABASE_PASSWORD",
                     "DB-CONFIG-ERROR"
