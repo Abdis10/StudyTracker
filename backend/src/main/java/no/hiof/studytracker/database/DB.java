@@ -11,20 +11,9 @@ public class DB {
     private static final Dotenv dotenv = Dotenv.configure()
             .filename(".env.local").ignoreIfMissing().load();
 
-    private static final String URL =
-            System.getenv("DATABASE_URL") != null
-                    ? System.getenv("DATABASE_URL")
-                    : dotenv.get("DATABASE_URL");
-
-    private static final String USER =
-            System.getenv("DATABASE_USER") != null
-                    ? System.getenv("DATABASE_USER")
-                    : dotenv.get("DATABASE_USER");
-
-    private static final String PASSWORD =
-            System.getenv("DATABASE_PASSWORD") != null
-                    ? System.getenv("DATABASE_PASSWORD")
-                    : dotenv.get("DATABASE_PASSWORD");
+    private static final String URL = getEnvOrDotenv("DATABASE_URL");
+    private static final String USER = getEnvOrDotenv("DATABASE_USER");
+    private static final String PASSWORD = getEnvOrDotenv("DATABASE_PASSWORD");
 
     public static void migrate() {
         try (Connection conn = getConnection()) {
@@ -81,8 +70,8 @@ public class DB {
 
     public static Connection getConnection() {
         validateEnv();
-
         System.out.println("Connecting to database...");
+
         try {
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
@@ -101,5 +90,17 @@ public class DB {
                     "DB-CONFIG-ERROR"
             );
         }
+    }
+
+    public static String getEnvOrDotenv(String key) {
+        // brukes av render for å hente env
+        String value = System.getenv(key);
+
+        if (value != null && !value.isEmpty()) {
+            return value;
+        }
+
+        // brukes i local dev
+        return dotenv.get(key);
     }
 }
