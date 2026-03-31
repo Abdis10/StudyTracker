@@ -7,6 +7,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DB {
+    private static final Dotenv dotenv = Dotenv.configure()
+            .ignoreIfMissing().load();
+
     public static String getEnvOrDotenv(String key) {
         // brukes av render for å hente env
         String value = System.getenv(key);
@@ -16,8 +19,7 @@ public class DB {
         }
 
         // fallback for local dev
-        return Dotenv.configure()
-                .filename(".env.local").ignoreIfMissing().load().get(key);
+        return dotenv.get(key);
     }
 
     private static final String URL = getEnvOrDotenv("DATABASE_URL");
@@ -78,11 +80,17 @@ public class DB {
     }
 
     public static Connection getConnection() {
-        validateEnv();
         System.out.println("Connecting to database...");
 
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            if (URL != null && !URL.isEmpty()) {
+                // PRODUCTION
+                return DriverManager.getConnection(URL);
+            } else {
+                // LOCAL DEV
+                validateEnv();
+                return DriverManager.getConnection(URL, USER, PASSWORD);
+            }
         } catch (SQLException e) {
             throw new DatabaseException(
                     "Database connection failed",
