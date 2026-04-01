@@ -20,7 +20,7 @@ public class DashboardService {
         if (sessionService.validateToken(token)) {
             Timestamp expiresAtTimestamp = userDataRepository.getSessionTokenIdExpiresAt(token);
 
-            if (expiresAtTimestamp != null && expiresAtTimestamp.after(new Timestamp(System.currentTimeMillis())) ) {
+            if (expiresAtTimestamp != null && expiresAtTimestamp.after(new Timestamp(System.currentTimeMillis()))) {
 
                 int userId = userDataRepository.getUserIdByToken(token);
                 DashboardDTO dashboardDTO = new DashboardDTO();
@@ -30,7 +30,7 @@ public class DashboardService {
                 studySummaryDTO.setMonthStudyTime(userDataRepository.getMonthStudyHours(userId));
 
                 RecentStudySessionsDTO recentStudySessionsDTO = new RecentStudySessionsDTO();
-                recentStudySessionsDTO.setSessions(userDataRepository.getSessions(userId));
+                recentStudySessionsDTO.setSessions(userDataRepository.getRecentStudySessions(userId));
 
                 WeeklyProgressDTO weeklyProgressDTO = new WeeklyProgressDTO();
                 weeklyProgressDTO.setThisWeekStudyHours(studySummaryDTO.getWeekStudyTime());

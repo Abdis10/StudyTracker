@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DB {
     private static final Dotenv dotenv = Dotenv.configure()
-            .ignoreIfMissing().load();
+            .filename(".env.local").ignoreIfMissing().load();
 
     public static String getEnvOrDotenv(String key) {
         // brukes av render for å hente env
@@ -80,34 +80,30 @@ public class DB {
     }
 
     public static Connection getConnection() {
-        System.out.println("Connecting to database...");
-
         try {
-            if (URL != null && !URL.isEmpty()) {
+            // if dotenv.get("DATABASE_URL") == null is true, then it means we are in local dev
+            if (URL != null && !URL.isEmpty() && dotenv.get("DATABASE_URL") == null) {
                 // PRODUCTION
                 return DriverManager.getConnection(URL);
             } else {
                 // LOCAL DEV
-                validateEnv();
-                return DriverManager.getConnection(URL, USER, PASSWORD);
+                if (URL == null || USER == null || PASSWORD == null) {
+                    System.out.println("URL:" + (URL != null ? "SET": "MISSING"));
+                    System.out.println("USER: " + (USER != null ? "SET" : "MISSING"));
+                    System.out.println("PASSWORD: " +  (PASSWORD != null ? "SET" : "MISSING"));
+                    throw new DatabaseException(
+                            "Missing DATABASE_URL, DATABASE_USER or DATABASE_PASSWORD",
+                            "DB-CONFIG-ERROR"
+                    );
+                } else {
+                    return DriverManager.getConnection(URL, USER, PASSWORD);
+                }
             }
         } catch (SQLException e) {
             throw new DatabaseException(
                     "Database connection failed",
                     "DB-CONNECTION-FAILED",
                     e
-            );
-        }
-    }
-
-    private static void validateEnv() {
-        if (URL == null || USER == null || PASSWORD == null) {
-            System.out.println("URL:" + (URL != null ? "SET": "MISSING"));
-            System.out.println("USER: " + (USER != null ? "SET" : "MISSING"));
-            System.out.println("PASSWORD: " +  (PASSWORD != null ? "SET" : "MISSING"));
-            throw new DatabaseException(
-                    "Missing DATABASE_URL, DATABASE_USER or DATABASE_PASSWORD",
-                    "DB-CONFIG-ERROR"
             );
         }
     }

@@ -587,4 +587,32 @@ public class UserDataRepository implements UserRepository {
         }
         return analyticsDTOS;
     }
+
+    public List<SessionResponseDTO> getRecentStudySessions(int userId) {
+        String sql = "SELECT id, date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ? LIMIT 4";
+
+        try (Connection connection = DB.getConnection()) {
+            ArrayList<SessionResponseDTO> arrayOfSessions = new ArrayList<>();
+
+            PreparedStatement pstm = connection.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getInt("id"), rs.getString("date"), rs.getFloat("hours"),
+                        rs.getInt("productivity_score"), rs.getString("comment"),
+                        rs.getTimestamp("created_At"), rs.getTimestamp("updated_at"));
+
+                arrayOfSessions.add(sessionResponseDTO);
+            }
+
+            return arrayOfSessions;
+        }
+
+        catch (SQLException e) {
+            throw new CustomException("Database error!", e.getCause());
+        }
+
+    }
 }
