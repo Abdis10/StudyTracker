@@ -7,10 +7,7 @@ This project was built to understand how real-world applications are designed, c
 ---
 
 ## 🚀 Live Demo
-
-* 🌐 Frontend: https://sparkly-churros-d400a3.netlify.app/
-* ⚙️ Backend: https://studytracker-cfmz.onrender.com/
-
+🌐  https://sparkly-churros-d400a3.netlify.app/
 ---
 
 ## ✨ Features
