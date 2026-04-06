@@ -17,10 +17,18 @@ entity "User_profile" as User {
     created_at : TEXT NOT NULL
 }
 
+entity "Subjects" as Subjects {
+    + id : INTEGER <<PK>>
+    --
+    user_id : INTEGER <<FK>>
+    subject_name : TEXT
+}
+
 entity "Sessions" as Sessions {
     + id : INTEGER <<PK>>
     --
     user_id : INTEGER <<FK>>
+    subject_id : INTEGER <<FK>> <<NULLABLE>>
     date : TEXT
     hours : FLOAT
     productivity_score : INTEGER
@@ -54,7 +62,10 @@ entity "Articles" as Articles {
 ' ---------------------------------------------------
 
 User ||--o{ Sessions : "has many"
+User ||--o{ Subjects : "has many"
 User ||--o{ Notes : "has many"
 User ||--o{ Articles : "has many"
+
+Subjects ||--o{ Sessions : "categorizes"
 
 @enduml
