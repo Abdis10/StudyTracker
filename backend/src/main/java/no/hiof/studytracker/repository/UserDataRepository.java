@@ -613,6 +613,5 @@ public class UserDataRepository implements UserRepository {
         catch (SQLException e) {
             throw new CustomException("Database error!", e.getCause());
         }
-
     }
 }
