@@ -181,6 +181,7 @@ function StudySessions() {
                                 <th>Date</th>
                                 <th>Hours</th>
                                 <th>Productivity</th>
+                                <th>Subject</th>
                                 <th>Comment</th>
                                 <th>Actions</th>
                             </tr>
@@ -195,6 +196,7 @@ function StudySessions() {
                                                 {productivityScore}/10
                                             </span>
                                     </td>
+                                    <td >Math</td>
                                     <td>{comment}</td>
                                     <td>
                                         <div className="menu-wrapper">
