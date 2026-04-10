@@ -59,3 +59,21 @@ export async function deleteSession(sessionId, token) {
         status: response.status
     }
 }
+
+
+export async function createSubject(name) {
+    const res = await fetch( `${BASE_URL}/api/subjects`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name })
+    });
+
+    const data = await response.json();
+    return {
+        success: response.ok,
+        data,
+        status: response.status
+    }
+}
