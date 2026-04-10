@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import "../css/logSessionCard.css";
 import { Plus } from 'lucide-react';
+import {createSubject} from "../../api/sessionApi.js";
 
 function LogSessionCard({ onClose, onSave, initialData } ) {
     const [date, setDate] = useState("");
@@ -43,20 +44,18 @@ function LogSessionCard({ onClose, onSave, initialData } ) {
         }
     };
 
-    const handleAddSubject = () => {
+    const handleAddSubject = async () => {
         if (!newSubject.trim()) return;
 
-        const newObj = {
-            id: Date.now(), // midlertidig
-            name: newSubject
-        };
+        const created = await createSubject(newSubject);
 
-        setSubjects((prev) => [...prev, newObj]);
+        setSubjects(prev => [...prev, created]);
+        setSubject(created.id);
 
-        setSubject(newObj.id);
         setNewSubject("");
         setMode("select");
     };
+    console.log(subject);
 
     return (
         <div className="logsession-overlay">
@@ -115,7 +114,8 @@ function LogSessionCard({ onClose, onSave, initialData } ) {
                                 }}
                             >
                                 Cancel
-                            </button>                        </div>
+                            </button>
+                        </div>
                     )}
 
                     <label>Productivity (1–10)</label>
