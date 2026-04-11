@@ -1,5 +1,6 @@
 package no.hiof.studytracker.service;
 
+import io.javalin.http.Context;
 import no.hiof.studytracker.DTOs.TokenValidationResponse;
 import no.hiof.studytracker.exceptions.InvalidTokenException;
 import no.hiof.studytracker.repository.UserDataRepository;
@@ -36,6 +37,17 @@ public class AuthenticationService {
         throw new InvalidTokenException("Session token have expired", "EXPIRED_SESSION_TOKEN");
     }
 
+    public int getUserId(Context ctx) {
+        String authHeader = ctx.header("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        String token = authHeader.replace("Bearer ", "");
+
+        return userDataRepository.getUserIdByToken(token);
+    }
 }
 
 

@@ -56,10 +56,13 @@ public class Application {
         DashboardService dashboardService = new DashboardService(userDataRepository, sessionService);
         DashboardController dashboardController = new DashboardController(dashboardService);
 
+        // Subject
+        SubjectService subjectService = new SubjectService(new UserDataRepository());
+        SubjectController subjectController = new SubjectController(subjectService, authenticationService);
+
         app.get("/", ctx -> {
             ctx.result("StudyTracker backend is live 🚀");
         });
-
 
         app.post("/auth/signup", ctx -> {
             signupController.signupUser(ctx);
@@ -92,5 +95,8 @@ public class Application {
         app.get("/session/dashboard", ctx -> {
            dashboardController.getDashboard(ctx);
         });
+
+        app.post("api/subjects", subjectController::createSubject);
+        app.get("api/subjects", subjectController::getSubjects);
     }
 }

@@ -6,6 +6,7 @@ import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.exceptions.CustomException;
 import no.hiof.studytracker.model.Session;
+import no.hiof.studytracker.model.Subject;
 import no.hiof.studytracker.model.User;
 
 import java.sql.*;
@@ -612,6 +613,53 @@ public class UserDataRepository implements UserRepository {
 
         catch (SQLException e) {
             throw new CustomException("Database error!", e.getCause());
+        }
+    }
+
+    public Subject insertSubject(String name, int userId) {
+        String sql = "INSERT INTO subjects (subject_name, user_id) VALUES (?, ?) RETURNING id";
+
+        try (Connection conn = DB.getConnection()) {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setString(1, name);
+            pstm.setInt(2, userId);
+
+            ResultSet rs = pstm.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("id");
+                return new Subject(id, name);
+            }
+
+            throw new RuntimeException("Failed to create subject");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Subject> getSubjectsByUser(int userId) {
+        String sql = "SELECT id, subject_name FROM subjects WHERE user_id = ?";
+
+        List<Subject> subjects = new ArrayList<>();
+
+        try (Connection conn = DB.getConnection()) {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setInt(1, userId);
+
+            ResultSet rs = pstm.executeQuery();
+
+            while (rs.next()) {
+                subjects.add(new Subject(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                ));
+            }
+
+            return subjects;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
