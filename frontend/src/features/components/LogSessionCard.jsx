@@ -2,8 +2,10 @@ import {useEffect, useState} from "react";
 import "../css/logSessionCard.css";
 import { Plus } from 'lucide-react';
 import {createSubject} from "../../api/sessionApi.js";
+import useAuth from "../auth/useAuth.js";
 
-function LogSessionCard({ onClose, onSave, initialData } ) {
+function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
+    const { isAuth } = useAuth();
     const [date, setDate] = useState("");
     const [hours, setHours] = useState("");
     const [productivityScore, setProductivity] = useState(5);
@@ -47,7 +49,8 @@ function LogSessionCard({ onClose, onSave, initialData } ) {
     const handleAddSubject = async () => {
         if (!newSubject.trim()) return;
 
-        const created = await createSubject(newSubject);
+        const token = localStorage.getItem("token");
+        const created = await createSubject(token, newSubject);
 
         setSubjects(prev => [...prev, created]);
         setSubject(created.id);
@@ -55,7 +58,6 @@ function LogSessionCard({ onClose, onSave, initialData } ) {
         setNewSubject("");
         setMode("select");
     };
-    console.log(subject);
 
     return (
         <div className="logsession-overlay">
@@ -94,6 +96,12 @@ function LogSessionCard({ onClose, onSave, initialData } ) {
                                     {s.name}
                                 </option>
                             ))}
+
+                            {subjectsData.length > 0 ? subjectsData.map((s) => (
+                                <option key={s.id} value={s.id}>
+                                    {s.name}
+                                </option>
+                            )) : ""}
 
                             <option value="add-new">+ Add new subject</option>
                         </select>

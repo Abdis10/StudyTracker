@@ -2,7 +2,7 @@ import { MoreVertical, Plus } from "lucide-react";
 import "../css/studySessions.css";
 import { useEffect, useState } from "react";
 import useAuth from "../auth/useAuth.js";
-import { deleteSession, getSessions, registerSession, updateSession } from "../../api/sessionApi.js";
+import {deleteSession, getSessions, getSubjects, registerSession, updateSession} from "../../api/sessionApi.js";
 import LogSessionCard from "./LogSessionCard.jsx";
 import { toast, Toaster } from "react-hot-toast";
 import { Pie, PieChart, Tooltip, ResponsiveContainer } from "recharts";
@@ -18,6 +18,7 @@ function StudySessions() {
     const [data, setData] = useState({ high: [], medium: [], low: [] });
     const [currentPage, setCurrentPage] = useState(1);
     const sessionsPerPage = 3;
+    const [subjects, setSubjects] = useState([]);
 
 
 
@@ -27,9 +28,13 @@ function StudySessions() {
                 try {
                     const token = localStorage.getItem("token");
                     const result = await getSessions(token);
+                    const subjectResult = await getSubjects(token);
 
                     if (result.success) {
                         setSessions(result.data);
+                    }
+                    if (subjectResult.success) {
+                        console.log(subjectResult.data);
                     }
                 } catch (e) {
                     logger.error("Fetching sessions failed:", e);
@@ -39,6 +44,24 @@ function StudySessions() {
         }
     }, [sessionUpdator, isAuth]);
 
+    useEffect(() => {
+        if (isAuth) {
+            const subjectData = async () => {
+                try {
+                    const token = localStorage.getItem("token");
+                    const subjectResult = await getSubjects(token);
+
+                    if (subjectResult.success) {
+                        setSubjects(subjectResult.data);
+                        console.log(subjectResult.data);
+                    }
+                } catch (e) {
+                    logger.error("Fetching subjects failed:", e);
+                }
+            };
+            subjectData();
+        }
+    }, [isAuth]);
 
     const getProductivityClass = (score) => {
         if (score >= 7) return "high";
@@ -281,6 +304,7 @@ function StudySessions() {
             {showCard && (
                 <LogSessionCard
                     initialData={editingSession}
+                    subjectsData={subjects}
                     onClose={() => {
                         setShowCard(false);
                         setEditingSession(null);

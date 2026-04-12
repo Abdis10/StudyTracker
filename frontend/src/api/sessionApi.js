@@ -61,15 +61,29 @@ export async function deleteSession(sessionId, token) {
 }
 
 
-export async function createSubject(name) {
+export async function createSubject(token, name) {
     const res = await fetch( `${BASE_URL}/api/subjects`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ name })
     });
 
+    const data = await response.json();
+    return {
+        success: response.ok,
+        data,
+        status: response.status
+    }
+}
+
+export async function getSubjects(token) {
+    const response = await fetch(`${BASE_URL}/api/subjects`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     const data = await response.json();
     return {
         success: response.ok,

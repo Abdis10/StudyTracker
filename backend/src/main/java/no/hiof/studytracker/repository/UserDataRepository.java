@@ -652,7 +652,7 @@ public class UserDataRepository implements UserRepository {
             while (rs.next()) {
                 subjects.add(new Subject(
                         rs.getInt("id"),
-                        rs.getString("name")
+                        rs.getString("subject_name")
                 ));
             }
 
