@@ -15,4 +15,11 @@ public class Subject {
 
     public int getId() { return id; }
     public String getName() { return name; }
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

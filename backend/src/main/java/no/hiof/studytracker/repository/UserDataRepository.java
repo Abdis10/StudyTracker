@@ -630,9 +630,7 @@ public class UserDataRepository implements UserRepository {
                 int id = rs.getInt("id");
                 return new Subject(id, name);
             }
-
             throw new RuntimeException("Failed to create subject");
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

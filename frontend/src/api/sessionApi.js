@@ -71,11 +71,11 @@ export async function createSubject(token, name) {
         body: JSON.stringify({ name })
     });
 
-    const data = await response.json();
+    const data = await res.json();
     return {
-        success: response.ok,
+        success: res.ok,
         data,
-        status: response.status
+        status: res.status
     }
 }
 

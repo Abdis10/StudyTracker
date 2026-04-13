@@ -28,13 +28,9 @@ function StudySessions() {
                 try {
                     const token = localStorage.getItem("token");
                     const result = await getSessions(token);
-                    const subjectResult = await getSubjects(token);
 
                     if (result.success) {
                         setSessions(result.data);
-                    }
-                    if (subjectResult.success) {
-                        console.log(subjectResult.data);
                     }
                 } catch (e) {
                     logger.error("Fetching sessions failed:", e);
@@ -53,10 +49,12 @@ function StudySessions() {
 
                     if (subjectResult.success) {
                         setSubjects(subjectResult.data);
-                        console.log(subjectResult.data);
+                    } else {
+                        toast.error(subjectResult.data.message);
                     }
                 } catch (e) {
-                    logger.error("Fetching subjects failed:", e);
+                    logger.error("Register network error:", e);
+                    toast.error("Something went wrong with the connection to the server!");
                 }
             };
             subjectData();

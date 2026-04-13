@@ -3,6 +3,7 @@ package no.hiof.studytracker.service;
 import io.javalin.http.Context;
 import no.hiof.studytracker.DTOs.TokenValidationResponse;
 import no.hiof.studytracker.exceptions.InvalidTokenException;
+import no.hiof.studytracker.exceptions.UnauthorizedException;
 import no.hiof.studytracker.repository.UserDataRepository;
 
 import java.sql.Timestamp;
@@ -41,12 +42,18 @@ public class AuthenticationService {
         String authHeader = ctx.header("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Unauthorized");
+            throw new UnauthorizedException("Missing or invalid Authorization header");
         }
 
         String token = authHeader.replace("Bearer ", "");
 
-        return userDataRepository.getUserIdByToken(token);
+        Integer userId = userDataRepository.getUserIdByToken(token);
+
+        if (userId == null) {
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
+        return userId;
     }
 }
 

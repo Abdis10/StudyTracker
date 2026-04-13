@@ -1,8 +1,10 @@
 import {useEffect, useState} from "react";
 import "../css/logSessionCard.css";
 import { Plus } from 'lucide-react';
-import {createSubject} from "../../api/sessionApi.js";
+import {createSubject, getSubjects} from "../../api/sessionApi.js";
 import useAuth from "../auth/useAuth.js";
+import {toast} from "react-hot-toast";
+import {logger} from "../utils/Logger.js";
 
 function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
     const { isAuth } = useAuth();
@@ -47,16 +49,27 @@ function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
     };
 
     const handleAddSubject = async () => {
-        if (!newSubject.trim()) return;
+        try {
+            if (!newSubject.trim()) return;
 
-        const token = localStorage.getItem("token");
-        const created = await createSubject(token, newSubject);
+            const token = localStorage.getItem("token");
+            const created = await createSubject(token, newSubject);
+            console.log(created);
 
-        setSubjects(prev => [...prev, created]);
-        setSubject(created.id);
-
-        setNewSubject("");
-        setMode("select");
+            if (created.success) {
+                setSubjects(prev => [...prev, created.data.name]);
+                setSubject(created.data.id);
+                setNewSubject("");
+                setMode("select");
+                toast.success(created.data.message);
+                logger.log("Register message:", created.data.message);
+            } else {
+                toast.error(created.data.message);
+            }
+        } catch (e) {
+            logger.error("Register network error:", e);
+            toast.error("Something went wrong with the connection to the server!");
+        }
     };
 
     return (
