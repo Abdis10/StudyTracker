@@ -57,12 +57,11 @@ function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
             console.log(created);
 
             if (created.success) {
-                setSubjects(prev => [...prev, created.data.name]);
+                setSubjects(prev => [...prev, created]);
                 setSubject(created.data.id);
                 setNewSubject("");
                 setMode("select");
-                toast.success(created.data.message);
-                logger.log("Register message:", created.data.message);
+                toast.success(created.data.name + " " + "have been successfully created");
             } else {
                 toast.error(created.data.message);
             }
@@ -71,6 +70,8 @@ function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
             toast.error("Something went wrong with the connection to the server!");
         }
     };
+
+    subjects.map(s => console.log(s.data.name));
 
     return (
         <div className="logsession-overlay">
@@ -105,8 +106,8 @@ function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
                             <option value="">Select subject</option>
 
                             {subjects.map((s) => (
-                                <option key={s.id} value={s.id}>
-                                    {s.name}
+                                <option key={s.data.id} value={s.data.id}>
+                                    {s.data.name}
                                 </option>
                             ))}
 
