@@ -183,8 +183,10 @@ public class UserDataRepository implements UserRepository {
     }
 
     public void registerStudySession(Session session) {
-        String sql = "INSERT INTO sessions(user_id, date, hours, productivity_score, comment, created_at) VALUES(?, ?, ?, ?, ?, ?)";
-
+        String sql = """
+                        INSERT INTO sessions(user_id, date, hours, productivity_score, comment, created_at, subject_id)
+                        VALUES(?, ?, ?, ?, ?, ?, ?)
+                     """;
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sql);
 
@@ -194,6 +196,12 @@ public class UserDataRepository implements UserRepository {
             pstm.setInt(4, session.getProductivityScore());
             pstm.setString(5, session.getComment());
             pstm.setTimestamp(6, session.getCreatedAt());
+
+            if (session.getSubjectId() != null) {
+                pstm.setInt(7, session.getSubjectId());
+            } else {
+                pstm.setNull(7, Types.INTEGER);
+            }
 
             pstm.executeUpdate();
 
@@ -219,7 +227,21 @@ public class UserDataRepository implements UserRepository {
     }
 
     public List<SessionResponseDTO> getSessions(int userId) {
-        String sql = "SELECT id, date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ?";
+        String sql = """
+                        SELECT
+                            s.id,
+                            s.date,
+                            s.hours,
+                            s.productivity_score,
+                            s.comment,
+                            s.created_at,
+                            s.updated_at,
+                            s.subject_id,
+                            sub.subject_name
+                        FROM sessions s
+                        LEFT JOIN subjects sub ON s.subject_id = sub.id
+                        WHERE s.user_id = ?
+                    """;
 
         try (Connection connection = DB.getConnection()) {
             ArrayList<SessionResponseDTO> arrayOfSessions = new ArrayList<>();
@@ -230,11 +252,19 @@ public class UserDataRepository implements UserRepository {
 
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
-                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getInt("id"), rs.getString("date"), rs.getFloat("hours"),
-                        rs.getInt("productivity_score"), rs.getString("comment"),
-                        rs.getTimestamp("created_At"), rs.getTimestamp("updated_at"));
+                SessionResponseDTO dto = new SessionResponseDTO(
+                        rs.getInt("id"),
+                        rs.getString("date"),
+                        rs.getFloat("hours"),
+                        rs.getInt("productivity_score"),
+                        rs.getString("comment"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"),
+                        (Integer) rs.getObject("subject_id"),   // 👈 null-safe
+                        rs.getString("subject_name")
+                );
 
-                arrayOfSessions.add(sessionResponseDTO);
+                arrayOfSessions.add(dto);
             }
 
             return arrayOfSessions;
@@ -601,11 +631,19 @@ public class UserDataRepository implements UserRepository {
 
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
-                SessionResponseDTO sessionResponseDTO = new SessionResponseDTO(rs.getInt("id"), rs.getString("date"), rs.getFloat("hours"),
-                        rs.getInt("productivity_score"), rs.getString("comment"),
-                        rs.getTimestamp("created_At"), rs.getTimestamp("updated_at"));
+                SessionResponseDTO dto = new SessionResponseDTO(
+                        rs.getInt("id"),
+                        rs.getString("date"),
+                        rs.getFloat("hours"),
+                        rs.getInt("productivity_score"),
+                        rs.getString("comment"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"),
+                        (Integer) rs.getObject("subject_id"),   // 👈 null-safe
+                        rs.getString("subject_name")
+                );
 
-                arrayOfSessions.add(sessionResponseDTO);
+                arrayOfSessions.add(dto);
             }
 
             return arrayOfSessions;

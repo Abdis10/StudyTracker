@@ -11,6 +11,7 @@ public class SessionDataDTO {
     private String comment;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private Integer subjectId;
 
     public SessionDataDTO() {}
 
@@ -78,19 +79,26 @@ public class SessionDataDTO {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+    public Integer getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
+    }
 
     @Override
     public String toString() {
-        return "{" + '\n' +
-                "date: " + date + '\n' +
-                "hours: " + hours + '\n' +
-                "productivityScore: " + productivityScore + '\n' +
-                "comment: " + comment + '\n' +
-                "created at: " + createdAt + '\n' +
-                "updated_at: " + updatedAt + '\n' +
+        return "SessionDataDTO{" +
+                "token='" + token + '\'' +
+                ", userId=" + userId +
+                ", date='" + date + '\'' +
+                ", hours=" + hours +
+                ", productivityScore=" + productivityScore +
+                ", comment='" + comment + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", subjectId=" + subjectId +
                 '}';
     }
-
-
-
 }

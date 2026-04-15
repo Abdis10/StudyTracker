@@ -10,10 +10,13 @@ public class SessionResponseDTO {
     private String comment;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private Integer subjectId;
+    private String subjectName;
 
     public SessionResponseDTO() {}
 
-    public SessionResponseDTO(int id, String date, float hours, int productivityScore, String comment, Timestamp createdAt, Timestamp updatedAt) {
+    public SessionResponseDTO(int id, String date, float hours, int productivityScore, String comment,
+                              Timestamp createdAt, Timestamp updatedAt, Integer subjectId, String subjectName) {
         this.id = id;
         this.date = date;
         this.hours = hours;
@@ -21,6 +24,8 @@ public class SessionResponseDTO {
         this.comment = comment;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.subjectId = subjectId;
+        this.subjectName = subjectName;
     }
 
     public String getDate() {
@@ -77,6 +82,22 @@ public class SessionResponseDTO {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Integer getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
+    }
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
 
     @Override

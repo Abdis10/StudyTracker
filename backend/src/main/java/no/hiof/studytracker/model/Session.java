@@ -11,19 +11,20 @@ public class Session {
     private String comment;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private Integer subjectId;
 
 
     public Session() {}
 
-    public Session(int id, int userId, String date, float hours, int productivityScore, String comment, Timestamp createdAt, Timestamp updatedAt) {
-        this.id = id;
+    public Session(int userId, String date, float hours, int productivityScore,
+                   String comment, Timestamp createdAt, Integer subjectId) {
         this.userId = userId;
         this.date = date;
         this.hours = hours;
         this.productivityScore = productivityScore;
         this.comment = comment;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.subjectId = subjectId;
     }
 
     public Session(String date, float hours, int productivityScore, String comment) {
@@ -104,6 +105,14 @@ public class Session {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(Integer subjectId) {
+        this.subjectId = subjectId;
     }
 
     @Override

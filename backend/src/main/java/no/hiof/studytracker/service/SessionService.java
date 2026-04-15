@@ -39,8 +39,15 @@ public class SessionService {
             if (userId != 0) {
                 Timestamp createdAt = Timestamp.from(Instant.now());
                 sessionDataDTO.setCreatedAt(createdAt);
-                Session session = new Session(userId, sessionDataDTO.getDate(), sessionDataDTO.getHours(), sessionDataDTO.getProductivityScore(),
-                        sessionDataDTO.getComment(), sessionDataDTO.getCreatedAt());
+                Session session = new Session(
+                        userId,
+                        sessionDataDTO.getDate(),
+                        sessionDataDTO.getHours(),
+                        sessionDataDTO.getProductivityScore(),
+                        sessionDataDTO.getComment(),
+                        sessionDataDTO.getCreatedAt(),
+                        sessionDataDTO.getSubjectId()   // 👈 N
+                );
                 userDataRepository.registerStudySession(session);
             }
     }
