@@ -1,6 +1,7 @@
 package no.hiof.studytracker;
 
 import io.javalin.Javalin;
+import no.hiof.studytracker.DTOs.SessionDataDTO;
 import no.hiof.studytracker.controllers.*;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.repository.UserDataRepository;
@@ -8,6 +9,9 @@ import no.hiof.studytracker.service.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 
 public class Application {
@@ -98,5 +102,10 @@ public class Application {
 
         app.post("api/subjects", subjectController::createSubject);
         app.get("api/subjects", subjectController::getSubjects);
+        Timestamp created = Timestamp.from(Instant.now());
+        SessionDataDTO dto = new SessionDataDTO("5e982f64-4d50-4a45-a7ac-4b2a5e57f45a", "2026-04-16", 3, 110,
+                "Great session", created, 30);
+
+        sessionService.validateSessionData(dto);
     }
 }

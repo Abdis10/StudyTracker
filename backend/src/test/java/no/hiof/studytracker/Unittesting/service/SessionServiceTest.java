@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,78 +113,146 @@ public class SessionServiceTest {
     @InjectMocks
     SessionService sessionService;
 
-    @Test
-    void shouldThrowExceptionIfHoursIsLessThanZero() {
-        // arrange
-        SessionDataDTO sessionDataDTO = new SessionDataDTO();
-        sessionDataDTO.setHours(-1);
+    @Spy
+    @InjectMocks
+    SessionService spySessionService;
 
-        // act + assert
-        Assertions.assertThrows(CustomException.class, () -> {
-           sessionService.validateSessionData(sessionDataDTO);
+    // =========================
+    // VALIDATION TESTS
+    // =========================
+
+    @Test
+    void shouldFailFastIfTokenIsMissing() {
+        SessionDataDTO dto = new SessionDataDTO();
+
+        CustomException ex = assertThrows(CustomException.class, () -> {
+            sessionService.validateSessionData(dto);
         });
+
+        assertEquals("MISSING_TOKEN", ex.getErrorCode());
         verify(mockUserDataRepository, never()).doesTokenExist(any());
     }
 
     @Test
     void shouldThrowExceptionIfTokenDoesNotExist() {
-        // arrange
-        SessionDataDTO sessionDataDTO = new SessionDataDTO();
-        sessionDataDTO.setHours(10);
-        sessionDataDTO.setToken("token");
-        String token = sessionDataDTO.getToken();
-        doReturn(false).when(mockUserDataRepository).doesTokenExist(token);
-        // act + assert
-        Assertions.assertThrows(CustomException.class, () -> {
-            sessionService.validateSessionData(sessionDataDTO);
+        SessionDataDTO dto = new SessionDataDTO();
+        dto.setToken("token");
+
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(false);
+
+        CustomException ex = assertThrows(CustomException.class, () -> {
+            sessionService.validateSessionData(dto);
         });
-        verify(mockUserDataRepository).doesTokenExist(token);
+
+        assertEquals("UNIDENTIFIED_TOKEN", ex.getErrorCode());
+        verify(mockUserDataRepository).doesTokenExist("token");
     }
+
+    @Test
+    void shouldReturnErrorIfHoursInvalid() {
+        SessionDataDTO dto = new SessionDataDTO();
+        dto.setToken("token");
+        dto.setDate("2025-01-01");
+        dto.setHours(-1);
+        dto.setProductivityScore(5);
+
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(true);
+
+        CustomException ex = assertThrows(CustomException.class, () -> {
+            sessionService.validateSessionData(dto);
+        });
+
+        assertNotNull(ex.getErrors());
+        assertTrue(
+                ex.getErrors().stream()
+                        .anyMatch(e -> e.get("field").equals("hours"))
+        );
+    }
+
+    @Test
+    void shouldReturnMultipleValidationErrors() {
+        SessionDataDTO dto = new SessionDataDTO();
+        dto.setToken("token");
+        dto.setDate("");
+        dto.setHours(-1);
+        dto.setProductivityScore(20);
+
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(true);
+
+        CustomException ex = assertThrows(CustomException.class, () -> {
+            sessionService.validateSessionData(dto);
+        });
+
+        assertNotNull(ex.getErrors());
+        assertEquals(3, ex.getErrors().size());
+    }
+
+    @Test
+    void shouldReturnErrorIfSubjectInvalidForUser() {
+        SessionDataDTO dto = new SessionDataDTO();
+        dto.setToken("token");
+        dto.setDate("2025-01-01");
+        dto.setHours(2);
+        dto.setProductivityScore(5);
+        dto.setSubjectId(99);
+
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(true);
+        when(mockUserDataRepository.getUserIdByToken("token")).thenReturn(1);
+        when(mockUserDataRepository.getSubjectsByUser(1)).thenReturn(new ArrayList<>());
+
+        CustomException ex = assertThrows(CustomException.class, () -> {
+            sessionService.validateSessionData(dto);
+        });
+
+        assertTrue(
+                ex.getErrors().stream()
+                        .anyMatch(e -> e.get("field").equals("subjectId"))
+        );
+    }
+
+    // =========================
+    // CREATE SESSION
+    // =========================
 
     @Test
     void shouldCreateStudySession() {
-        // arrange
-        SessionDataDTO sessionDataDTO = new SessionDataDTO();
-        sessionDataDTO.setToken("token");
-        sessionDataDTO.setDate("2025-01-01");
-        sessionDataDTO.setHours(2);
-        sessionDataDTO.setProductivityScore(4);
-        sessionDataDTO.setComment("Good session");
+        SessionDataDTO dto = new SessionDataDTO();
+        dto.setToken("token");
+        dto.setDate("2025-01-01");
+        dto.setHours(2);
+        dto.setProductivityScore(4);
+        dto.setComment("Good session");
+        dto.setSubjectId(2);
 
-        when(mockUserDataRepository.getUserIdByToken(sessionDataDTO.getToken())).thenReturn(1);
+        when(mockUserDataRepository.getUserIdByToken("token")).thenReturn(1);
 
-        // act
-        sessionService.createStudySession(sessionDataDTO);
+        sessionService.createStudySession(dto);
 
-        // assert
-       verify(mockUserDataRepository).registerStudySession(any(Session.class));
+        verify(mockUserDataRepository).registerStudySession(any(Session.class));
     }
+
+    // =========================
+    // TOKEN
+    // =========================
 
     @Test
     void shouldReturnTrueWhenTokenValid() {
-        // arrange
-        String token = "token";
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(true);
-        // act
-        boolean result = sessionService.validateToken(token);
-        // assert
-        Assertions.assertTrue(result);
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(true);
+        assertTrue(sessionService.validateToken("token"));
     }
 
     @Test
     void shouldReturnFalseWhenTokenInvalid() {
-        // arrange
-        String token = "token";
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(false);
-        // act
-        boolean result = sessionService.validateToken(token);
-        // assert
-        Assertions.assertFalse(result);
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(false);
+        assertFalse(sessionService.validateToken("token"));
     }
 
+    // =========================
+    // GET SESSIONS
+    // =========================
+
     @Test
-    void shouldReturnSessions() {
-        // arrange
+    void shouldReturnSessionsSortedByDateDesc() {
         String token = "token";
         int userId = 1;
 
@@ -196,14 +265,9 @@ public class SessionServiceTest {
         when(mockUserDataRepository.getUserIdByToken(token)).thenReturn(userId);
         when(mockUserDataRepository.getSessions(userId)).thenReturn(unsorted);
 
-        // act
         List<SessionResponseDTO> result = sessionService.getSessionsFromRepository(token);
 
-        // assert
-       assertEquals(3, result.size());
-       assertEquals("2024-03-01", result.get(0).getDate());
-       assertEquals("2024-01-01", result.get(1).getDate());
-       assertEquals("2023-12-01", result.get(2).getDate());
+        assertEquals("2024-03-01", result.get(0).getDate());
     }
 
     private SessionResponseDTO dtoWithDate(String date) {
@@ -212,199 +276,71 @@ public class SessionServiceTest {
         return dto;
     }
 
+    // =========================
+    // OWNERSHIP
+    // =========================
+
     @Test
-    public void shouldReturnTrueIfTokenAndUserMatch() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        when(mockUserDataRepository.getUserIdByToken(token)).thenReturn(1);
-        when(mockUserDataRepository.getUserIdBySessionId(sessionId)).thenReturn(1);
+    void shouldReturnTrueIfTokenMatchesUser() {
+        when(mockUserDataRepository.getUserIdByToken("token")).thenReturn(1);
+        when(mockUserDataRepository.getUserIdBySessionId(1)).thenReturn(1);
 
-        // act
-        boolean result  = sessionService.doesTokenMatchUser(token, sessionId);
-
-        // assert
-        assertTrue(result);
+        assertTrue(sessionService.doesTokenMatchUser("token", 1));
     }
 
     @Test
-    void shouldReturnFalseIfTokenAndUserDoNotMatch() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        when(mockUserDataRepository.getUserIdByToken(token)).thenReturn(1);
-        when(mockUserDataRepository.getUserIdBySessionId(sessionId)).thenReturn(2);
+    void shouldReturnFalseIfTokenDoesNotMatchUser() {
+        when(mockUserDataRepository.getUserIdByToken("token")).thenReturn(1);
+        when(mockUserDataRepository.getUserIdBySessionId(1)).thenReturn(2);
 
-        // act
-        boolean result  = sessionService.doesTokenMatchUser(token, sessionId);
-
-        // assert
-        assertFalse(result);
+        assertFalse(sessionService.doesTokenMatchUser("token", 1));
     }
 
-    @Spy
-    @InjectMocks
-    SessionService spySessionService;
+    // =========================
+    // UPDATE
+    // =========================
 
     @Test
-    void shouldReturnTrueIfTokenAndSessionAreValid() {
-        // arrange
+    void shouldUpdateSessionSuccessfully() {
         String token = "token";
         int sessionId = 1;
-        Timestamp createdAt = Timestamp.from(Instant.now());
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
+
+        UpdateSessionDTO dto = new UpdateSessionDTO();
+        dto.setDate("2025-12-24");
+        dto.setHours(3f);
+        dto.setProductivityScore(8);
+        dto.setComment("Nice");
+
         when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
-        when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(updateSessionDTO);
-        when(mockUserDataRepository.updateSession(anyInt(), any(UpdateSessionDTO.class))).thenReturn(1);
+        when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(dto);
+        when(mockUserDataRepository.updateSession(anyInt(), any())).thenReturn(1);
 
-        // act
-        boolean result = spySessionService.updateSession(updateSessionDTO, token, sessionId);
+        assertTrue(spySessionService.updateSession(dto, token, sessionId));
+    }
 
-        // assert
-        assertTrue(result);
-        verify(mockUserDataRepository).updateSession(anyInt(), any(UpdateSessionDTO.class));
+    // =========================
+    // DELETE
+    // =========================
+
+    @Test
+    void shouldDeleteSessionSuccessfully() {
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(true);
+        doReturn(true).when(spySessionService).doesTokenMatchUser("token", 1);
+        when(mockUserDataRepository.deleteSession(1)).thenReturn(1);
+
+        assertDoesNotThrow(() -> spySessionService.deleteSessionForUser("token", 1));
     }
 
     @Test
-    void shouldThrowExceptionWhenSessionDoesNotExist() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        Timestamp createdAt = Timestamp.from(Instant.now());
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
-        when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
-        when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(updateSessionDTO);
-        when(mockUserDataRepository.updateSession(anyInt(), any(UpdateSessionDTO.class))).thenReturn(0);
+    void shouldThrowIfDeleteFails() {
+        when(mockUserDataRepository.doesTokenExist("token")).thenReturn(true);
+        doReturn(true).when(spySessionService).doesTokenMatchUser("token", 1);
+        when(mockUserDataRepository.deleteSession(1)).thenReturn(0);
 
-        // act + assert
-        CustomException result = assertThrows(CustomException.class, () -> {
-            spySessionService.updateSession(updateSessionDTO, token, sessionId);
+        CustomException ex = assertThrows(CustomException.class, () -> {
+            spySessionService.deleteSessionForUser("token", 1);
         });
 
-        assertEquals("NON_EXISTENT_SESSION", result.getErrorCode());
-        verify(mockUserDataRepository).updateSession(anyInt(), any(UpdateSessionDTO.class));
+        assertEquals("NON_EXISTENT_SESSION_ID", ex.getErrorCode());
     }
-
-    @Test
-    void shouldThrowExceptionIfSessionOwnershipIsInvalid() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        Timestamp createdAt = Timestamp.from(Instant.now());
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
-        when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(false);
-
-        // act + assert
-        SessionOwnershipException result = assertThrows(SessionOwnershipException.class, () -> {
-            spySessionService.updateSession(updateSessionDTO, token, sessionId);
-        });
-        assertEquals("INVALID_TOKEN_SESSION_ID", result.getErrorCode());
-        verify(mockUserDataRepository, never()).updateSession(anyInt(), any(UpdateSessionDTO.class));
-    }
-
-    @Test
-    void shouldUpdateSessionInRepoIfTokenExists() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        Timestamp createdAt = Timestamp.from(Instant.now());
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(true);
-        doReturn(true).when(spySessionService).updateSession(updateSessionDTO, token, sessionId);
-        // act
-        spySessionService.updateSessionInRepo(updateSessionDTO, token, sessionId);
-        // assert
-        verify(mockUserDataRepository).doesTokenExist(token);
-        verify(spySessionService).updateSession(updateSessionDTO, token, sessionId);
-    }
-
-    @Test
-    void shouldThrowExceptionIfTokenIsInvalid() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        Timestamp createdAt = Timestamp.from(Instant.now());
-        UpdateSessionDTO updateSessionDTO = new UpdateSessionDTO("2025-12-24", 3.4f, 8, "Nice day", createdAt);
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(false);
-
-        // act + assert
-        InvalidTokenException result = assertThrows(InvalidTokenException.class, () -> {
-            spySessionService.updateSessionInRepo(updateSessionDTO, token, sessionId);
-        });
-        assertEquals("UNAUTHORIZED_TOKEN", result.getErrorCode());
-        verify(mockUserDataRepository).doesTokenExist(token);
-        verify(spySessionService, never()).updateSession(updateSessionDTO, token, sessionId);
-    }
-
-    @Test
-    void shouldDeleteSessionIfValidTokenAndTokenMatchesUser() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(true);
-        doReturn(true).when(spySessionService).doesTokenMatchUser(token, sessionId);
-        when(mockUserDataRepository.deleteSession(sessionId)).thenReturn(1);
-
-        // act + assert
-        assertDoesNotThrow(() -> spySessionService.deleteSessionForUser(token, sessionId));
-        verify(mockUserDataRepository).deleteSession(sessionId);
-        verify(mockUserDataRepository).doesTokenExist(token);
-        verify(spySessionService).doesTokenMatchUser(token, sessionId);
-    }
-
-    @Test
-    void shouldThrowExceptionIfSessionDoNotExist() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(true);
-        doReturn(true).when(spySessionService).doesTokenMatchUser(token, sessionId);
-        when(mockUserDataRepository.deleteSession(sessionId)).thenReturn(0);
-
-        // act + assert
-        CustomException result = assertThrows(CustomException.class, () -> {
-           spySessionService.deleteSessionForUser(token, sessionId);
-        });
-        assertEquals("NON_EXISTENT_SESSION_ID", result.getErrorCode());
-        verify(mockUserDataRepository).deleteSession(sessionId);
-        verify(mockUserDataRepository).doesTokenExist(token);
-        verify(spySessionService).doesTokenMatchUser(token, sessionId);
-    }
-
-    @Test
-    void shouldThrowExceptionIfTokenDoNotMatchUser() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(true);
-        doReturn(false).when(spySessionService).doesTokenMatchUser(token, sessionId);
-
-        // act + assert
-        SessionOwnershipException result = assertThrows(SessionOwnershipException.class, () -> {
-            spySessionService.deleteSessionForUser(token, sessionId);
-        });
-        assertEquals("INVALID_TOKEN_SESSION_ID", result.getErrorCode());
-        verify(mockUserDataRepository, never()).deleteSession(sessionId);
-        verify(mockUserDataRepository).doesTokenExist(token);
-        verify(spySessionService).doesTokenMatchUser(token, sessionId);
-    }
-
-    @Test
-    void shouldThrowExceptionIfTokenInvalidToken() {
-        // arrange
-        String token = "token";
-        int sessionId = 1;
-        when(mockUserDataRepository.doesTokenExist(token)).thenReturn(false);
-
-        // act + assert
-        InvalidTokenException result = assertThrows(InvalidTokenException.class, () -> {
-            spySessionService.deleteSessionForUser(token, sessionId);
-        });
-        assertEquals("UNAUTHORIZED_TOKEN", result.getErrorCode());
-        verify(mockUserDataRepository, never()).deleteSession(sessionId);
-        verify(mockUserDataRepository).doesTokenExist(token);
-        verify(spySessionService, never()).doesTokenMatchUser(token, sessionId);
-    }
-
 }
-

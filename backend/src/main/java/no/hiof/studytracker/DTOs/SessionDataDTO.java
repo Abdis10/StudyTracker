@@ -15,12 +15,15 @@ public class SessionDataDTO {
 
     public SessionDataDTO() {}
 
-    public SessionDataDTO(String date, float hours, int productivityScore, String comment, Timestamp createdAt) {
+    public SessionDataDTO(String token, String date, float hours, int productivityScore,
+                          String comment, Timestamp createdAt, Integer subjectId) {
+        this.token = token;
         this.date = date;
         this.hours = hours;
         this.productivityScore = productivityScore;
         this.comment = comment;
         this.createdAt = createdAt;
+        this.subjectId = subjectId;
     }
 
     public String getToken() {

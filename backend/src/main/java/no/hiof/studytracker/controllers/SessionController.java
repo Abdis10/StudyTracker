@@ -28,10 +28,17 @@ public class SessionController {
             ));
 
         } catch (CustomException e) {
-            ctx.status(401).json(Map.of(
-                    "message: ", e.getMessage(),
-                    "errorcode", e.getErrorCode()
-            ));
+
+            if (e.getErrors() != null) {
+                ctx.status(400).json(Map.of(
+                        "errors", e.getErrors()
+                ));
+            } else {
+                ctx.status(400).json(Map.of(
+                        "message", e.getMessage(),
+                        "errorCode", e.getErrorCode()
+                ));
+            }
         }
     }
 

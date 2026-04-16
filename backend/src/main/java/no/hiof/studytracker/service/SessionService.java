@@ -21,14 +21,83 @@ public class SessionService {
         this.userDataRepository = userDataRepository;
     }
 
-    public void validateSessionData(SessionDataDTO sessionDataDTO) {
-        if (sessionDataDTO.getHours() < 0) {
-            throw new CustomException("Number of hours must be higher than 0", "INVALID_HOURS");
+    public void validateSessionData(SessionDataDTO dto) {
+
+        // FAIL FAST (security)
+        String token = dto.getToken();
+        if (token == null || token.isBlank()) {
+            throw new CustomException("Missing token", "MISSING_TOKEN");
         }
 
-        String token = sessionDataDTO.getToken();
         if (!userDataRepository.doesTokenExist(token)) {
             throw new CustomException("Token couldn't be verified", "UNIDENTIFIED_TOKEN");
+        }
+
+        // COLLECT VALIDATION ERRORS
+        List<Map<String, String>> errors = new ArrayList<>();
+
+        if (dto.getDate() == null || dto.getDate().isBlank()) {
+            errors.add(Map.of(
+                    "field", "date",
+                    "message", "Date is required"
+            ));
+        } else {
+            try {
+                LocalDateTime.parse(dto.getDate() + "T00:00:00");
+            } catch (Exception e) {
+                errors.add(Map.of(
+                        "field", "date",
+                        "message", "Invalid format (yyyy-MM-dd)"
+                ));
+            }
+        }
+
+        if (dto.getHours() <= 0) {
+            errors.add(Map.of(
+                    "field", "hours",
+                    "message", "Must be greater than 0"
+            ));
+        }
+
+        if (dto.getHours() > 24) {
+            errors.add(Map.of(
+                    "field", "hours",
+                    "message", "Cannot exceed 24"
+            ));
+        }
+
+        if (dto.getProductivityScore() < 1 || dto.getProductivityScore() > 10) {
+            errors.add(Map.of(
+                    "field", "productivityScore",
+                    "message", "Must be between 1 and 10"
+            ));
+        }
+
+        if (dto.getComment() != null && dto.getComment().length() > 255) {
+            errors.add(Map.of(
+                    "field", "comment",
+                    "message", "Max 255 characters"
+            ));
+        }
+
+        if (dto.getSubjectId() != null) {
+            int userId = userDataRepository.getUserIdByToken(token);
+
+            boolean subjectExists = userDataRepository
+                    .getSubjectsByUser(userId)
+                    .stream()
+                    .anyMatch(s -> s.getId() == dto.getSubjectId());
+
+            if (!subjectExists) {
+                errors.add(Map.of(
+                        "field", "subjectId",
+                        "message", "Invalid subject for user"
+                ));
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new CustomException(errors);
         }
     }
 
@@ -46,7 +115,7 @@ public class SessionService {
                         sessionDataDTO.getProductivityScore(),
                         sessionDataDTO.getComment(),
                         sessionDataDTO.getCreatedAt(),
-                        sessionDataDTO.getSubjectId()   // 👈 N
+                        sessionDataDTO.getSubjectId()
                 );
                 userDataRepository.registerStudySession(session);
             }
