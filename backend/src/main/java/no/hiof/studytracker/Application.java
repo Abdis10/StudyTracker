@@ -102,10 +102,5 @@ public class Application {
 
         app.post("api/subjects", subjectController::createSubject);
         app.get("api/subjects", subjectController::getSubjects);
-        Timestamp created = Timestamp.from(Instant.now());
-        SessionDataDTO dto = new SessionDataDTO("5e982f64-4d50-4a45-a7ac-4b2a5e57f45a", "2026-04-16", 3, 110,
-                "Great session", created, 30);
-
-        sessionService.validateSessionData(dto);
     }
 }

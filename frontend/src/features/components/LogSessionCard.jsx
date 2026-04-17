@@ -72,7 +72,6 @@ function LogSessionCard({ onClose, onSave, initialData, subjectsData } ) {
     };
 
     subjects.map(s => console.log(s.data.name));
-
     return (
         <div className="logsession-overlay">
             <div className="logsession-card">

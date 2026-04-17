@@ -15,16 +15,22 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class SessionService {
-    private UserDataRepository userDataRepository;
+
+    private final UserDataRepository userDataRepository;
 
     public SessionService(UserDataRepository userDataRepository) {
         this.userDataRepository = userDataRepository;
     }
 
+    // =========================
+    // VALIDATION
+    // =========================
+
     public void validateSessionData(SessionDataDTO dto) {
 
-        // FAIL FAST (security)
         String token = dto.getToken();
+
+        // 🔐 FAIL FAST
         if (token == null || token.isBlank()) {
             throw new CustomException("Missing token", "MISSING_TOKEN");
         }
@@ -33,54 +39,41 @@ public class SessionService {
             throw new CustomException("Token couldn't be verified", "UNIDENTIFIED_TOKEN");
         }
 
-        // COLLECT VALIDATION ERRORS
         List<Map<String, String>> errors = new ArrayList<>();
 
+        // 📅 DATE
         if (dto.getDate() == null || dto.getDate().isBlank()) {
-            errors.add(Map.of(
-                    "field", "date",
-                    "message", "Date is required"
-            ));
+            errors.add(Map.of("field", "date", "message", "Date is required"));
         } else {
             try {
                 LocalDateTime.parse(dto.getDate() + "T00:00:00");
             } catch (Exception e) {
-                errors.add(Map.of(
-                        "field", "date",
-                        "message", "Invalid format (yyyy-MM-dd)"
-                ));
+                errors.add(Map.of("field", "date", "message", "Invalid format (yyyy-MM-dd)"));
             }
         }
 
-        if (dto.getHours() <= 0) {
-            errors.add(Map.of(
-                    "field", "hours",
-                    "message", "Must be greater than 0"
-            ));
+        // ⏱ HOURS
+        if (dto.getHours() == null || dto.getHours() <= 0) {
+            errors.add(Map.of("field", "hours", "message", "Must be greater than 0"));
+        } else if (dto.getHours() > 24) {
+            errors.add(Map.of("field", "hours", "message", "Cannot exceed 24"));
         }
 
-        if (dto.getHours() > 24) {
-            errors.add(Map.of(
-                    "field", "hours",
-                    "message", "Cannot exceed 24"
-            ));
+        // 📊 PRODUCTIVITY
+        if (dto.getProductivityScore() == null ||
+                dto.getProductivityScore() < 1 ||
+                dto.getProductivityScore() > 10) {
+
+            errors.add(Map.of("field", "productivityScore", "message", "Must be between 1 and 10"));
         }
 
-        if (dto.getProductivityScore() < 1 || dto.getProductivityScore() > 10) {
-            errors.add(Map.of(
-                    "field", "productivityScore",
-                    "message", "Must be between 1 and 10"
-            ));
-        }
-
+        // 💬 COMMENT
         if (dto.getComment() != null && dto.getComment().length() > 255) {
-            errors.add(Map.of(
-                    "field", "comment",
-                    "message", "Max 255 characters"
-            ));
+            errors.add(Map.of("field", "comment", "message", "Max 255 characters"));
         }
 
-        if (dto.getSubjectId() != null) {
+        // 📚 SUBJECT (kun hvis ingen andre feil – spar DB kall)
+        if (errors.isEmpty() && dto.getSubjectId() != null) {
             int userId = userDataRepository.getUserIdByToken(token);
 
             boolean subjectExists = userDataRepository
@@ -89,10 +82,7 @@ public class SessionService {
                     .anyMatch(s -> s.getId() == dto.getSubjectId());
 
             if (!subjectExists) {
-                errors.add(Map.of(
-                        "field", "subjectId",
-                        "message", "Invalid subject for user"
-                ));
+                errors.add(Map.of("field", "subjectId", "message", "Invalid subject for user"));
             }
         }
 
@@ -101,200 +91,155 @@ public class SessionService {
         }
     }
 
-    public void createStudySession(SessionDataDTO sessionDataDTO) {
-            String token = sessionDataDTO.getToken();
-            int userId = userDataRepository.getUserIdByToken(token);
+    // =========================
+    // CREATE
+    // =========================
 
-            if (userId != 0) {
-                Timestamp createdAt = Timestamp.from(Instant.now());
-                sessionDataDTO.setCreatedAt(createdAt);
-                Session session = new Session(
-                        userId,
-                        sessionDataDTO.getDate(),
-                        sessionDataDTO.getHours(),
-                        sessionDataDTO.getProductivityScore(),
-                        sessionDataDTO.getComment(),
-                        sessionDataDTO.getCreatedAt(),
-                        sessionDataDTO.getSubjectId()
-                );
-                userDataRepository.registerStudySession(session);
-            }
+    public void createStudySession(SessionDataDTO dto) {
+
+        String token = dto.getToken();
+        int userId = userDataRepository.getUserIdByToken(token);
+
+        Timestamp createdAt = Timestamp.from(Instant.now());
+        dto.setCreatedAt(createdAt);
+
+        Session session = new Session(
+                userId,
+                dto.getDate(),
+                dto.getHours(),
+                dto.getProductivityScore(),
+                dto.getComment(),
+                createdAt,
+                dto.getSubjectId()
+        );
+
+        userDataRepository.registerStudySession(session);
     }
 
-    public void studySession(SessionDataDTO sessionDataDTO) {
-        validateSessionData(sessionDataDTO);
-        createStudySession(sessionDataDTO);
+    public void studySession(SessionDataDTO dto) {
+        validateSessionData(dto);
+        createStudySession(dto);
     }
 
+    // =========================
+    // TOKEN
+    // =========================
 
     public boolean validateToken(String token) {
-        if (userDataRepository.doesTokenExist(token)) {
-            return true;
-        }
-        return false;
+        return userDataRepository.doesTokenExist(token);
     }
 
-    public List<SessionResponseDTO>  getSessionsFromRepository(String token) {
-        int userId = userDataRepository.getUserIdByToken(token);
-        List<SessionResponseDTO> listOfSessions = userDataRepository.getSessions(userId);
+    // =========================
+    // GET
+    // =========================
 
-        List<SessionResponseDTO> sortedList = listOfSessions.stream()
-                        .sorted(Comparator.comparing(SessionResponseDTO::getDate,
-                                Comparator.nullsLast(Comparator.naturalOrder())).reversed())
-                        .toList();
-        return sortedList;
+    public List<SessionResponseDTO> getSessionsFromRepository(String token) {
+
+        int userId = userDataRepository.getUserIdByToken(token);
+
+        return userDataRepository.getSessions(userId)
+                .stream()
+                .sorted(Comparator.comparing(SessionResponseDTO::getDate,
+                        Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                .toList();
     }
 
     public List<SessionResponseDTO> getSessions(String token) {
         if (validateToken(token)) {
             return getSessionsFromRepository(token);
         }
-
-        else {
-            throw new CustomException("Invalid token", "UNAUTHORIZED_TOKEN");
-        }
+        throw new CustomException("Invalid token", "UNAUTHORIZED_TOKEN");
     }
 
+    // =========================
+    // OWNERSHIP
+    // =========================
 
     public boolean doesTokenMatchUser(String token, int sessionId) {
         int userIdByToken = userDataRepository.getUserIdByToken(token);
         int userIdBySessionId = userDataRepository.getUserIdBySessionId(sessionId);
-        if ((userIdByToken == userIdBySessionId)) {
-            return true;
-        }
-        return false;
+        return userIdByToken == userIdBySessionId;
     }
 
+    // =========================
+    // UPDATE
+    // =========================
 
-    /**
-     * Updates an existing session by merging new values with existing data.
-     * Fields that are null or empty in the request are preserved from the database.
-     * Validates that the given token belongs to the owner of the session.
-     *
-     * @param updateSessionDTO  incoming update data (partial update)
-     * @param token             authentication token
-     * @param sessionId         id of the session to update
-     * @return true if update succeeds
-     * @throws CustomException  if token is invalid or session does not belong to user
-     */
+    public boolean updateSession(UpdateSessionDTO dto, String token, int sessionId) {
 
-    public boolean updateSession(UpdateSessionDTO updateSessionDTO, String token, int sessionId) {
-        UpdateSessionDTO updateSessionDTO1 = new UpdateSessionDTO();
-
-        // Fetch existing session data for fallback values
-        UpdateSessionDTO existingSessionFromRepo = userDataRepository.getSessionBySessionId(sessionId);
-
-        // Verify that token owner matches session owner
-        if (doesTokenMatchUser(token, sessionId)) {
-            // Set update timestamp
-            Timestamp updatedAt = Timestamp.from(Instant.now());
-            updateSessionDTO1.setUpdatedAt(updatedAt);
-
-            // Preserve existing values when fields are null or empty
-            if (isEmptyOrNull(updateSessionDTO.getDate())) {
-                updateSessionDTO1.setDate(existingSessionFromRepo.getDate());
-            }
-
-            else {
-                updateSessionDTO1.setDate(updateSessionDTO.getDate());
-            }
-
-            if (isEmptyOrNull(updateSessionDTO.getComment())) {
-                updateSessionDTO1.setComment(existingSessionFromRepo.getComment());
-            }
-
-            else {
-                updateSessionDTO1.setComment(updateSessionDTO.getComment());
-            }
-
-            if (isNull(updateSessionDTO.getHours())) {
-                updateSessionDTO1.setHours(existingSessionFromRepo.getHours());
-            }
-
-            else {
-                updateSessionDTO1.setHours(updateSessionDTO.getHours());
-            }
-
-            if (isNull(updateSessionDTO.getProductivityScore())) {
-                updateSessionDTO1.setProductivityScore(existingSessionFromRepo.getProductivityScore());
-            }
-
-            else {
-                updateSessionDTO1.setProductivityScore(updateSessionDTO.getProductivityScore());
-            }
-
-            // Preserve original creation timestamp
-            updateSessionDTO1.setCreatedAt(existingSessionFromRepo.getCreatedAt());
-
-            // Execute update and verify that session exists
-            int valueOfUpdateSQLUpdateQuery = userDataRepository.updateSession(sessionId, updateSessionDTO1);
-
-            if (valueOfUpdateSQLUpdateQuery == 0) {             // No rows updated means session does not exist
-                throw new CustomException("Session does not exist", "NON_EXISTENT_SESSION");
-            }
-            return true;
+        if (!doesTokenMatchUser(token, sessionId)) {
+            throw new SessionOwnershipException("Given token and session-id doesn't match user", "INVALID_TOKEN_SESSION_ID");
         }
 
-        // Token does not match session owner
-        throw new SessionOwnershipException("Given token and session-id doesn't match user", "INVALID_TOKEN_SESSION_ID");
+        UpdateSessionDTO existing = userDataRepository.getSessionBySessionId(sessionId);
+
+        UpdateSessionDTO merged = new UpdateSessionDTO();
+
+        merged.setUpdatedAt(Timestamp.from(Instant.now()));
+
+        // DATE
+        merged.setDate(isEmptyOrNull(dto.getDate()) ? existing.getDate() : dto.getDate());
+
+        // COMMENT
+        merged.setComment(isEmptyOrNull(dto.getComment()) ? existing.getComment() : dto.getComment());
+
+        // HOURS
+        merged.setHours(dto.getHours() == null ? existing.getHours() : dto.getHours());
+
+        // PRODUCTIVITY
+        merged.setProductivityScore(dto.getProductivityScore() == null
+                ? existing.getProductivityScore()
+                : dto.getProductivityScore());
+
+        // SUBJECT (NY)
+        merged.setSubjectId(dto.getSubjectId() == null
+                ? existing.getSubjectId()
+                : dto.getSubjectId());
+
+        merged.setCreatedAt(existing.getCreatedAt());
+
+        int updatedRows = userDataRepository.updateSession(sessionId, merged);
+
+        if (updatedRows == 0) {
+            throw new CustomException("Session does not exist", "NON_EXISTENT_SESSION");
+        }
+
+        return true;
     }
 
-
-    public void updateSessionInRepo(UpdateSessionDTO updateSessionDTO, String token, int sessionId) {
-        if (userDataRepository.doesTokenExist(token)) {
-            updateSession(updateSessionDTO, token, sessionId);
-        } else {
+    public void updateSessionInRepo(UpdateSessionDTO dto, String token, int sessionId) {
+        if (!userDataRepository.doesTokenExist(token)) {
             throw new InvalidTokenException("Unauthorized token is given", "UNAUTHORIZED_TOKEN");
         }
+        updateSession(dto, token, sessionId);
     }
 
-
-    public boolean isEmptyOrNull(String s) {
-        if (Objects.equals(s, "") || s == null) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isNull(Integer i) {
-        if (i == null) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isNull(Float f) {
-        if (f == null) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Delete session by token and sessionId
-     * Validate token, then check if token and sessionId belongs to the user of the token and sessionId
-     * This method throws an exception on failure and returns normally on success.
-     * @param token                         authentication token
-     * @param sessionId                     id of the session to be deleted
-     * @throws CustomException              if session doesn't exist
-     * @throws SessionOwnershipException    if the token does not have access to the specified session
-     * @throws InvalidTokenException        if token is Invalid
-     */
+    // =========================
+    // DELETE
+    // =========================
 
     public void deleteSessionForUser(String token, int sessionId) {
-        if (userDataRepository.doesTokenExist(token)) {
-            if (doesTokenMatchUser(token, sessionId)) {
-                int valueOfDeleteSessionQuery = userDataRepository.deleteSession(sessionId);
-                if (valueOfDeleteSessionQuery == 0) {
-                    throw new CustomException("Session couldn't be deleted", "NON_EXISTENT_SESSION_ID");
-                }
-            }
-            else {
-                throw new SessionOwnershipException("Invalid token or sessionId, therefore can't delete session", "INVALID_TOKEN_SESSION_ID");
-            }
-        } else {
+
+        if (!userDataRepository.doesTokenExist(token)) {
             throw new InvalidTokenException("Token couldn't be verified", "UNAUTHORIZED_TOKEN");
+        }
+
+        if (!doesTokenMatchUser(token, sessionId)) {
+            throw new SessionOwnershipException("Invalid token or sessionId", "INVALID_TOKEN_SESSION_ID");
+        }
+
+        int deleted = userDataRepository.deleteSession(sessionId);
+
+        if (deleted == 0) {
+            throw new CustomException("Session couldn't be deleted", "NON_EXISTENT_SESSION_ID");
         }
     }
 
+    // =========================
+    // HELPERS
+    // =========================
+
+    public boolean isEmptyOrNull(String s) {
+        return s == null || s.isEmpty();
+    }
 }
