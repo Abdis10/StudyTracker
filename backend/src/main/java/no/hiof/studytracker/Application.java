@@ -2,6 +2,7 @@ package no.hiof.studytracker;
 
 import io.javalin.Javalin;
 import no.hiof.studytracker.DTOs.SessionDataDTO;
+import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.controllers.*;
 import no.hiof.studytracker.database.DB;
 import no.hiof.studytracker.repository.UserDataRepository;

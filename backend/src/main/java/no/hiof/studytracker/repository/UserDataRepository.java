@@ -298,7 +298,7 @@ public class UserDataRepository implements UserRepository {
     }
 
     public UpdateSessionDTO getSessionBySessionId(int sessionId) {
-        String sql = "SELECT date, hours, productivity_score, comment, created_at FROM sessions WHERE id = ?";
+        String sql = "SELECT date, hours, productivity_score, comment, created_at, subject_id FROM sessions WHERE id = ?";
 
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sql);
@@ -312,6 +312,7 @@ public class UserDataRepository implements UserRepository {
                             rs.getFloat("hours"),
                             rs.getInt("productivity_score"),
                             rs.getString("comment"),
+                            (Integer) rs.getObject("subject_id"),   // 👈 null-safe
                             rs.getTimestamp("created_at")
                     );
                 } else {
@@ -324,11 +325,17 @@ public class UserDataRepository implements UserRepository {
         }
     }
 
-
     public int updateSession(int sessionId, UpdateSessionDTO updateSessionDTO) {
-        String sql = "UPDATE sessions " +
-                "SET date = ?, hours = ?, productivity_score = ?, comment = ?, updated_at = ? " +
-                "WHERE id = ?";
+        String sql = """
+                        UPDATE sessions
+                        SET date = ?,
+                            hours = ?,
+                            productivity_score = ?,
+                            comment = ?,
+                            subject_id = ?,     
+                            updated_at = ?
+                        WHERE id = ?
+                    """;
 
         try (Connection connection = DB.getConnection()) {
             PreparedStatement pstm = connection.prepareStatement(sql);
@@ -336,8 +343,9 @@ public class UserDataRepository implements UserRepository {
             pstm.setFloat(2, updateSessionDTO.getHours());
             pstm.setInt(3, updateSessionDTO.getProductivityScore());
             pstm.setString(4, updateSessionDTO.getComment());
-            pstm.setTimestamp(5, updateSessionDTO.getUpdatedAt());
-            pstm.setInt(6, sessionId);
+            pstm.setInt(5, updateSessionDTO.getSubjectId());
+            pstm.setTimestamp(6, updateSessionDTO.getUpdatedAt());
+            pstm.setInt(7, sessionId);
 
             return pstm.executeUpdate();
         } catch (SQLException e) {
@@ -691,9 +699,7 @@ public class UserDataRepository implements UserRepository {
                         rs.getString("subject_name")
                 ));
             }
-
             return subjects;
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

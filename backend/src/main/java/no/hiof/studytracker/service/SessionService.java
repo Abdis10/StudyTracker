@@ -30,7 +30,7 @@ public class SessionService {
 
         String token = dto.getToken();
 
-        // 🔐 FAIL FAST
+        // FAIL FAST
         if (token == null || token.isBlank()) {
             throw new CustomException("Missing token", "MISSING_TOKEN");
         }
@@ -41,7 +41,6 @@ public class SessionService {
 
         List<Map<String, String>> errors = new ArrayList<>();
 
-        // 📅 DATE
         if (dto.getDate() == null || dto.getDate().isBlank()) {
             errors.add(Map.of("field", "date", "message", "Date is required"));
         } else {
@@ -52,27 +51,21 @@ public class SessionService {
             }
         }
 
-        // ⏱ HOURS
-        if (dto.getHours() == null || dto.getHours() <= 0) {
+        if (dto.getHours() <= 0) {
             errors.add(Map.of("field", "hours", "message", "Must be greater than 0"));
         } else if (dto.getHours() > 24) {
             errors.add(Map.of("field", "hours", "message", "Cannot exceed 24"));
         }
 
-        // 📊 PRODUCTIVITY
-        if (dto.getProductivityScore() == null ||
-                dto.getProductivityScore() < 1 ||
-                dto.getProductivityScore() > 10) {
-
+        if (dto.getProductivityScore() < 1 || dto.getProductivityScore() > 10) {
             errors.add(Map.of("field", "productivityScore", "message", "Must be between 1 and 10"));
         }
 
-        // 💬 COMMENT
         if (dto.getComment() != null && dto.getComment().length() > 255) {
             errors.add(Map.of("field", "comment", "message", "Max 255 characters"));
         }
 
-        // 📚 SUBJECT (kun hvis ingen andre feil – spar DB kall)
+        // SUBJECT (kun hvis ingen andre feil – spar DB kall)
         if (errors.isEmpty() && dto.getSubjectId() != null) {
             int userId = userDataRepository.getUserIdByToken(token);
 
@@ -92,7 +85,7 @@ public class SessionService {
     }
 
     // =========================
-    // CREATE
+    // CREATE SESSION
     // =========================
 
     public void createStudySession(SessionDataDTO dto) {
@@ -122,7 +115,7 @@ public class SessionService {
     }
 
     // =========================
-    // TOKEN
+    // TOKEN VALIDATION
     // =========================
 
     public boolean validateToken(String token) {
@@ -130,7 +123,7 @@ public class SessionService {
     }
 
     // =========================
-    // GET
+    // FETCH SESSIONS
     // =========================
 
     public List<SessionResponseDTO> getSessionsFromRepository(String token) {
@@ -152,7 +145,7 @@ public class SessionService {
     }
 
     // =========================
-    // OWNERSHIP
+    // OWNERSHIP VALIDATION
     // =========================
 
     public boolean doesTokenMatchUser(String token, int sessionId) {
@@ -162,7 +155,7 @@ public class SessionService {
     }
 
     // =========================
-    // UPDATE
+    // UPDATE SESSION
     // =========================
 
     public boolean updateSession(UpdateSessionDTO dto, String token, int sessionId) {
@@ -176,22 +169,15 @@ public class SessionService {
         UpdateSessionDTO merged = new UpdateSessionDTO();
 
         merged.setUpdatedAt(Timestamp.from(Instant.now()));
-
-        // DATE
-        merged.setDate(isEmptyOrNull(dto.getDate()) ? existing.getDate() : dto.getDate());
-
-        // COMMENT
         merged.setComment(isEmptyOrNull(dto.getComment()) ? existing.getComment() : dto.getComment());
-
-        // HOURS
         merged.setHours(dto.getHours() == null ? existing.getHours() : dto.getHours());
 
-        // PRODUCTIVITY
+        merged.setDate(isEmptyOrNull(dto.getDate()) ? existing.getDate() : dto.getDate());
+
         merged.setProductivityScore(dto.getProductivityScore() == null
                 ? existing.getProductivityScore()
                 : dto.getProductivityScore());
 
-        // SUBJECT (NY)
         merged.setSubjectId(dto.getSubjectId() == null
                 ? existing.getSubjectId()
                 : dto.getSubjectId());
@@ -215,7 +201,7 @@ public class SessionService {
     }
 
     // =========================
-    // DELETE
+    // DELETE SESSION
     // =========================
 
     public void deleteSessionForUser(String token, int sessionId) {
