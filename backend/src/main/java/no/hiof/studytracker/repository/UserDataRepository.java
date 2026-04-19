@@ -1,6 +1,7 @@
 package no.hiof.studytracker.repository;
 
 import no.hiof.studytracker.DTOs.AnalyticsDTO;
+import no.hiof.studytracker.DTOs.SessionDataDTO;
 import no.hiof.studytracker.DTOs.SessionResponseDTO;
 import no.hiof.studytracker.DTOs.UpdateSessionDTO;
 import no.hiof.studytracker.database.DB;
@@ -628,14 +629,21 @@ public class UserDataRepository implements UserRepository {
     }
 
     public List<SessionResponseDTO> getRecentStudySessions(int userId) {
-        String sql = "SELECT id, date, hours, productivity_score, comment, created_at, updated_at FROM sessions WHERE user_id = ? LIMIT 4";
-
+        //String sql = "SELECT id, date, hours, productivity_score, comment, created_at, updated_at, subject_id FROM sessions WHERE user_id = ? ORDER BY date DESC LIMIT 4";
+        String sql = """
+                         SELECT se.id, se.date, se.hours, se.productivity_score, se.comment, se.created_at, se.updated_at,
+                                su.subject_name
+                         FROM sessions AS se 
+                         LEFT JOIN subjects AS su ON se.subject_id = su.id
+                         WHERE se.user_id = ?
+                         ORDER BY se.date DESC
+                         LIMIT 3
+                     """;
         try (Connection connection = DB.getConnection()) {
             ArrayList<SessionResponseDTO> arrayOfSessions = new ArrayList<>();
 
             PreparedStatement pstm = connection.prepareStatement(sql);
             pstm.setInt(1, userId);
-
 
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
@@ -647,13 +655,10 @@ public class UserDataRepository implements UserRepository {
                         rs.getString("comment"),
                         rs.getTimestamp("created_at"),
                         rs.getTimestamp("updated_at"),
-                        (Integer) rs.getObject("subject_id"),   // 👈 null-safe
                         rs.getString("subject_name")
                 );
-
                 arrayOfSessions.add(dto);
             }
-
             return arrayOfSessions;
         }
 

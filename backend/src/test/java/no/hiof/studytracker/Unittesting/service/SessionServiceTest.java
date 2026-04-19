@@ -343,4 +343,45 @@ public class SessionServiceTest {
 
         assertEquals("NON_EXISTENT_SESSION_ID", ex.getErrorCode());
     }
+
+    @Test
+    void shouldUpdateSubjectIfProvided() {
+
+        String token = "token";
+        int sessionId = 1;
+
+        UpdateSessionDTO existing = new UpdateSessionDTO();
+        existing.setSubjectId(1);
+
+        UpdateSessionDTO dto = new UpdateSessionDTO();
+        dto.setSubjectId(2);
+
+        when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
+        when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(existing);
+        when(mockUserDataRepository.updateSession(anyInt(), any())).thenReturn(1);
+
+        boolean result = spySessionService.updateSession(dto, token, sessionId);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void shouldKeepExistingSubjectIfNull() {
+
+        String token = "token";
+        int sessionId = 1;
+
+        UpdateSessionDTO existing = new UpdateSessionDTO();
+        existing.setSubjectId(1);
+
+        UpdateSessionDTO dto = new UpdateSessionDTO(); // subject null
+
+        when(spySessionService.doesTokenMatchUser(token, sessionId)).thenReturn(true);
+        when(mockUserDataRepository.getSessionBySessionId(sessionId)).thenReturn(existing);
+        when(mockUserDataRepository.updateSession(anyInt(), any())).thenReturn(1);
+
+        boolean result = spySessionService.updateSession(dto, token, sessionId);
+
+        assertTrue(result);
+    }
 }

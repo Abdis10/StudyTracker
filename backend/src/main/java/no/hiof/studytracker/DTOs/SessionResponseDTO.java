@@ -28,6 +28,18 @@ public class SessionResponseDTO {
         this.subjectName = subjectName;
     }
 
+    public SessionResponseDTO(int id, String date, float hours, int productivityScore, String comment,
+                              Timestamp createdAt, Timestamp updatedAt, String subjectName) {
+        this.id = id;
+        this.date = date;
+        this.hours = hours;
+        this.productivityScore = productivityScore;
+        this.comment = comment;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.subjectName = subjectName;
+    }
+
     public String getDate() {
         return date;
     }
@@ -110,6 +122,8 @@ public class SessionResponseDTO {
                 ", comment='" + comment + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", subjectId=" + subjectId +
+                ", subjectName='" + subjectName + '\'' +
                 '}';
     }
 }

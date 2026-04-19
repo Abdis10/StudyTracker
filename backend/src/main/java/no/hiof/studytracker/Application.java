@@ -48,13 +48,13 @@ public class Application {
         LoginController loginController = new LoginController(loginService);
 
 
-        // Session operations section
-        SessionService sessionService = new SessionService(userDataRepository);
-        SessionController sessionController = new SessionController(sessionService);
-
         // Session authentication
         AuthenticationService authenticationService = new AuthenticationService(userDataRepository);
         AuthenticationController authenticationController = new AuthenticationController(authenticationService);
+
+        // Session operations section
+        SessionService sessionService = new SessionService(userDataRepository, authenticationService);
+        SessionController sessionController = new SessionController(sessionService);
 
         // Dashboard data
 

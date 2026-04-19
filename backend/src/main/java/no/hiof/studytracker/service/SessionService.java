@@ -17,9 +17,11 @@ import java.util.*;
 public class SessionService {
 
     private final UserDataRepository userDataRepository;
+    private AuthenticationService authService;
 
-    public SessionService(UserDataRepository userDataRepository) {
+    public SessionService(UserDataRepository userDataRepository, AuthenticationService authService) {
         this.userDataRepository = userDataRepository;
+        this.authService = authService;
     }
 
     // =========================
@@ -35,9 +37,7 @@ public class SessionService {
             throw new CustomException("Missing token", "MISSING_TOKEN");
         }
 
-        if (!userDataRepository.doesTokenExist(token)) {
-            throw new CustomException("Token couldn't be verified", "UNIDENTIFIED_TOKEN");
-        }
+        authService.isSessionValid(token);
 
         List<Map<String, String>> errors = new ArrayList<>();
 
@@ -89,7 +89,6 @@ public class SessionService {
     // =========================
 
     public void createStudySession(SessionDataDTO dto) {
-
         String token = dto.getToken();
         int userId = userDataRepository.getUserIdByToken(token);
 
@@ -159,7 +158,6 @@ public class SessionService {
     // =========================
 
     public boolean updateSession(UpdateSessionDTO dto, String token, int sessionId) {
-
         if (!doesTokenMatchUser(token, sessionId)) {
             throw new SessionOwnershipException("Given token and session-id doesn't match user", "INVALID_TOKEN_SESSION_ID");
         }

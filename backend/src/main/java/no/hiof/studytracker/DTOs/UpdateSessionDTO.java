@@ -11,7 +11,7 @@ public class UpdateSessionDTO {
     private Float hours;
     private Integer productivityScore;
     private String comment;
-    private Integer subjectId; // 👈 NY
+    private Integer subjectId;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;
