@@ -208,7 +208,7 @@ function StudySessions() {
                             </tr>
                             </thead>
                             <tbody>
-                            {currentSessions.map(({ id, date, hours, productivityScore, comment }) => (
+                            {currentSessions.map(({ id, date, hours, productivityScore, subjectName, comment }) => (
                                 <tr key={id}>
                                     <td>{date}</td>
                                     <td>{hours}</td>
@@ -217,7 +217,7 @@ function StudySessions() {
                                                 {productivityScore}/10
                                             </span>
                                     </td>
-                                    <td >Math</td>
+                                    <td >{subjectName != null ? subjectName : "None"}</td>
                                     <td>{comment}</td>
                                     <td>
                                         <div className="menu-wrapper">

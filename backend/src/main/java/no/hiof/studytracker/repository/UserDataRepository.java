@@ -629,7 +629,6 @@ public class UserDataRepository implements UserRepository {
     }
 
     public List<SessionResponseDTO> getRecentStudySessions(int userId) {
-        //String sql = "SELECT id, date, hours, productivity_score, comment, created_at, updated_at, subject_id FROM sessions WHERE user_id = ? ORDER BY date DESC LIMIT 4";
         String sql = """
                          SELECT se.id, se.date, se.hours, se.productivity_score, se.comment, se.created_at, se.updated_at,
                                 su.subject_name
@@ -660,9 +659,7 @@ public class UserDataRepository implements UserRepository {
                 arrayOfSessions.add(dto);
             }
             return arrayOfSessions;
-        }
-
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new CustomException("Database error!", e.getCause());
         }
     }

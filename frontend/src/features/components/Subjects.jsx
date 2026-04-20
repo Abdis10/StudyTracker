@@ -1,11 +1,11 @@
 import ComingSoon from "./ComingSoon.jsx";
+import SubjectSummaryBar from "./SubjectSummaryBar.jsx";
 
 function Subjects() {
     return (
-        <ComingSoon
-            title="Subjects"
-            message="🚧 This feature is currently under development"
-        />
+        <>
+            <SubjectSummaryBar />
+        </>
     );
 }
 
