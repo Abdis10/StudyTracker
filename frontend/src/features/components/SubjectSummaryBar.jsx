@@ -1,19 +1,23 @@
 import "../css/subjectSummaryBar.css";
-import {useEffect, useMemo, useState} from "react";
+import {useMemo} from "react";
 
 function SubjectSummaryBar({ sessionData = [], subjectData = []} ) {
-    const subjectsLength = subjectData?.length || 0;
-    console.log(sessionData);
-    console.log(subjectData);
     const summary = useMemo(() => {
-        const subjectIdsUsed = new Set(
-            sessionData.map( s => s.subjectId).filter(id => id != null)
+        const validSessions = Array.isArray(sessionData) ? sessionData : [];
+        const validSubjects = Array.isArray(subjectData) ? subjectData : [];
+        const usedSubjectIds = new Set(
+            validSessions.map((session) => session.subjectId).filter((id) => id != null)
         );
+        const uncategorizedSessions = validSessions.filter(
+            (session) => session.subjectId == null
+        ).length;
 
 
         return {
-            subjectUsed: subjectIdsUsed.size
-        }
+            totalSubjects: validSubjects.length,
+            subjectsUsed: usedSubjectIds.size,
+            uncategorizedSessions,
+        };
     }, [subjectData, sessionData]);
 
     return (
@@ -21,18 +25,18 @@ function SubjectSummaryBar({ sessionData = [], subjectData = []} ) {
             <h2>Subjects summary</h2>
             <div className="summary-bar">
                 <div className="summary-card">
-                    <p className="summary-label">Total Subjects {subjectsLength}</p>
-                    <h3>{}</h3>
+                    <p className="summary-label">Total Subjects</p>
+                    <h3>{summary.totalSubjects}</h3>
                 </div>
 
                 <div className="summary-card">
-                    <p className="summary-label">Subjects Used {summary.subjectIdsUsed}</p>
-                    <h3>{}</h3>
+                    <p className="summary-label">Subjects Used</p>
+                    <h3>{summary.subjectsUsed}</h3>
                 </div>
 
                 <div className="summary-card">
                     <p className="summary-label">Uncategorized Sessions</p>
-                    <h3>{}</h3>
+                    <h3>{summary.uncategorizedSessions}</h3>
                 </div>
             </div>
         </div>
