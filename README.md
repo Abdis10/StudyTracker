@@ -1,4 +1,8 @@
+<!-- ⚠️ ARCHIVED — Read-only as of 2026-07-03 -->
+
 # 📚 StudyTracker – Fullstack Web App
+
+> ⚠️ This repository was archived and set to read-only on 2026-07-03. The code remains available for viewing and forking. If you want to continue development or submit changes, please fork this repository and work in your fork.
 
 StudyTracker is a fullstack web application that helps users track study sessions, measure productivity, and gain insights into their learning habits.
 
@@ -68,11 +72,13 @@ DATABASE_PASSWORD=your_database_password
 
 ## 📦 Running Locally
 
+> Note: This repository is archived. Clone or fork it first if you plan to run it locally.
+
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/studytracker.git
-cd studytracker
+git clone https://github.com/Abdis10/StudyTracker.git
+cd StudyTracker
 ```
 
 ---
@@ -156,3 +162,10 @@ frontend/src/
 This project represents my transition from learning backend fundamentals to building and deploying a complete fullstack application in production.
 
 ---
+
+## Archive details
+
+- Archived by: Abdis10
+- Archive date: 2026-07-03
+
+If you depend on this project or want to continue development, please fork it or contact the repository owner.
