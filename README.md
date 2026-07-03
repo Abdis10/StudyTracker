@@ -154,11 +154,11 @@ See the `LICENSE` file at the project root for license details.
 
 ## Contact
 
-Maintainer: Abdis10
+Maintainer: Abdullahi Abdiqadir
 
 ---
 
 ## Archive details
 
-- Archived by: Abdis10
+- Archived by: Abdullahi Abdiqadir
 - Archive date: 2026-07-03
